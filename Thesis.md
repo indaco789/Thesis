@@ -70,7 +70,13 @@ Senza definire uno schema dei dati chiaro e preciso, si correrebbe il rischio di
 > Esempio di utilizzo di event sourcing
 
 > Problemi risolti da event sourcing
+
 ### 1.4 Stream Processing 
+
+> Descrivere le caratteristiche principali di un sistema di streaming : distribuito, append only, etc.
+
+> Differenza tra Message Brokers e transactional append only logs: Rabbit MQ vs Kafka
+
 
 ### 1.5. Svantaggi di un processo ETL: perchè favorire stream processing ed event sourcing
   > Introdurre il concetto di schema
