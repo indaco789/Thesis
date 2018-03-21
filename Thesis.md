@@ -16,7 +16,7 @@ Kafka nasce per sfruttare a pieno lo stream processing e favorire una gestione i
 ## 1. Introduzione: [Il ruolo dello streaming nelle architetture moderne] / [Storia] / [Confronto ETL-ES+stream]  
 
 Prima di poter discutere della architettura fornita da Apache Kafka, è necessario comprendere le differenze tra ETL e stream processing.  
-Per poter utilizzare pienamente stream processing, è inoltre necessario comprendere come una comune gestione di dati basata su inserimento, cancellazione e modifica delle sorgenti, può essere modellata come una serie di eventi e quali sono i vantaggi di un approccio alla visione dei dati basato su **event sourcing** (ES).
+Per poter utilizzare pienamente stream processing, è inoltre necessario comprendere come la gestione di dati basata su inserimento, cancellazione e modifica da database, può essere modellata come una serie di eventi e quali sono i vantaggi di un approccio alla gestione di questi dati basato su **event sourcing** (ES).
 
 ### 1.1 ETL
 
@@ -61,7 +61,21 @@ Per generare un buon target è buona norma definire uno schema _preciso e chiaro
 Come detto in precedenza un processo di ETL è utilizzato per aggregare più fonti di informazioni comuni ad un processo aziendale, questo suppone che le informazioni presenti nella data warehouse potrebbero venire usate da più parti di una azienda, le quali potrebbero essere abituate a particolari formati dei dati.  
 Senza definire uno schema dei dati chiaro e preciso, si correrebbe il rischio di generare un insieme di dati inutilizzabile da determinati reparti in quanto non conforme al formato di dati da loro conosciuto.
 
-### 1.2 L'importanza dei dati e degli eventi
+### 1.2 L'importanza dei dati e degli eventi {piccola introduzione per ES}
+Lo status quo delle moderne applicazioni web è basato sul utilizzo di database per rappresentare le specifiche di dominio, spesso espresse da un cliente e/o da un esperto del dominio esterno all'ambiente di sviluppo.  
+
+Durante la fase di analisi dei requisiti (supponendo un modello di sviluppo del software agile) cliente e team di sviluppo si confrontano, cercando di trovare un linguaggio comune per definire la logica e l'utilizzo del software richiesto; Una volta stabiliti i requisti, il team di sviluppo generalmente inizia uno studio interno atto a produrre un **modello dei dati** che verrà usato come base per definire lo schema dei database utilizzati dal sistema.  
+Un cliente comune molto spesso non ha padronanza del concetto di 'stato di una applicazione', ma piuttosto si limita ad esporre i propri requisiti descrivendo i possibili **eventi** che, traslati sul modello di sviluppo incentrato su i database, portano il team di sviluppo a ragionare sui possibili stati di un database in risposta a questi eventi. 
+
+Lo stato di un database di una applicazione è strettamente legato all'insieme degli eventi del dominio applicativo; L'unico modo per modificare o interagire con questo database è tramite i comandi di inserimento, cancellazione o lettura, tutti comandi che vengono eseguiti solamente all'avvenire di un particolare evento.  
+
+Un database mantiene solo lo stato corrente di una applicazione; Non esiste il concetto di cronologia del database a meno dell'utilizzo dei pattern di **Change Data Capture** (CDC), che generalmente sono utilizzati per generare un transactional log contenete tutte le operazioni eseguite sul suddetto database.  
+In questo modello database-driven, un evento genera un cambiamento su una base di dati; Gli eventi e lo stato di un database sono però concetti diversi e slegati tra loro, l'esecuzione di un evento a volte può portare ad una asincronia tra l'esecuzione di un evento e lo stato di un database, tanto più se questo database è utilizzato da tutti i microservizi di una applicazione.  
+
+Una soluzione al problema di più microservizi che utilizzano lo stesso database è di utilizzare delle views del database locali ad ogni microservizio: ogni servizio lavorerà su una copia locale del database ed un job esterno si occuperà di compattare le views e mantenere il database aggiornato rispetto a tutti i cambiamenti.  
+Questa soluzione ha un enorme problema: supponiamo di notare un errore sul database e di doverlo correggere, come possiamo decidere quale delle views ha "più ragione" delle altre? Per aiutarci nella ricerca dell'errore potremmo utilizzare il transactional log di ogni views, ma su database di grandezze importanti potrebbe essere un problema non indifferente.  
+
+Event sourcing propone di risolvere questo genere di problemi allontanandosi da una progettazione database-driven, evitando quindi la gestione di database ma piuttosto elevando gli eventi a elementi chiavi del modello dei dati di una applicazione.
 
 ### 1.3. Event sourcing
 
