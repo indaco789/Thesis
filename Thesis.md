@@ -75,15 +75,23 @@ In questo modello database-driven, un evento genera un cambiamento su una base d
 Una soluzione al problema di più microservizi che utilizzano lo stesso database è di utilizzare delle views del database locali ad ogni microservizio: ogni servizio lavorerà su una copia locale del database ed un job esterno si occuperà di compattare le views e mantenere il database aggiornato rispetto a tutti i cambiamenti.  
 Questa soluzione ha un enorme problema: supponiamo di notare un errore sul database e di doverlo correggere, come possiamo decidere quale delle views ha "più ragione" delle altre? Per aiutarci nella ricerca dell'errore potremmo utilizzare il transactional log di ogni views, ma su database di grandezze importanti potrebbe essere un problema non indifferente.  
 
-Event sourcing propone di risolvere questo genere di problemi allontanandosi da una progettazione database-driven, evitando quindi la gestione di database ma piuttosto elevando gli eventi a elementi chiavi del modello dei dati di una applicazione.
+Event sourcing propone di risolvere questo genere di problemi allontanandosi da una progettazione database-driven e basata sul pattern di richiesta/risposta elevando gli eventi a elementi chiavi del modello dei dati di una applicazione.
 
 ### 1.3. Event sourcing
 
-> Cos'è event sourcing
+ > Event Sourcing ensures that all changes to application state are stored as a sequence of events. Not just can we query these events, we can also use the event log to reconstruct past states, and as a foundation to automatically adjust the state to cope with retroactive changes.  
 
-> Esempio di utilizzo di event sourcing
+ Event sourcing è un pattern basato su due fondamenti:  
+ * Ogni cambiamento di stato del mondo^ è da vedersi come un evento; Ogni evento deve essere salvato  
+ * Tutti gli eventi devono essere salvati in sequenza, seguendo l'ordine in cui sono avvenuti
 
-> Problemi risolti da event sourcing
+> Esempio di utilizzo di event sourcing => come faccio? è giusto copiare l'esempio che c'è già su un sito in modo da sfruttarne le figure?
+
+> Problemi risolti da event sourcing => ho un log di cambiamenti, semplicità nella gestione dei cambiamenti
+
+> Problemi creati da event sourcing   
+> => può essere complicato eseguire query del tipo "voglio tutti gli ordini con valore >50€" in quanto richiede la generazione dello stato corrente del mondo, ovvero la lettura ed esecuzione di tutto il log   
+> -> risolvibile creando views parallele al log
 
 ### 1.4 Stream Processing 
 
@@ -132,6 +140,7 @@ Event sourcing propone di risolvere questo genere di problemi allontanandosi da 
 
 ## 4. Bibliografia
 
+https://martinfowler.com/eaaDev/EventSourcing.html  
 https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/  
 https://www.confluent.io/blog/build-services-backbone-events/  
 https://www.confluent.io/blog/apache-kafka-for-service-architectures/  
