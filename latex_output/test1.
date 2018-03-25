@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
+<h1 id="kafka-streaming-data">Kafka: streaming data</h1>
+<h2 id="indice">Indice</h2>
+<ol style="list-style-type: decimal">
+<li><a href="#motivazioni">Motivazioni</a><br />
+</li>
+<li><a href="#introduzione">Introduzione</a><br />
+2.1. <a href="#etl">ETL</a><br />
+2.2. <a href="#intro-data">L'importanza dei dati e degli eventi</a><br />
+2.3. <a href="#event-sourcing">Event sourcing</a><br />
+2.4. [Stream processing]<br />
+2.5. [Svantaggi di un processo ETL: confronto ETL ~ ES+Stream processing]</li>
+<li>[Apache Kafka e l'ecosistema]<br />
+3.1. [Struttura generica di Kafka]<br />
+3.2. [Kafka Connect]<br />
+3.3. [Kafka Streams]<br />
+</li>
+<li>[Esempi di utilizzo]<br />
+</li>
+<li>[Bibliografia] </li>
+</ol>
+<div id='motivazioni'/>
+
+<h2 id="motivazioni">1. Motivazioni</h2>
+<p>Negli ultimi anni l'avvento delle architetture a microservizi ha portato la necessità di studiare nuove soluzioni al problema della gestione di molteplici fonti di dati.</p>
+<p>In sistemi complessi formati da più microservizi tanti componenti interdipendenti comunicano tra loro scambiandosi dati e attingendo da numerose fonti di dati comuni come database, data warehouses oppure servizi esterni.</p>
+<p>La necessità di filtrare, standardizzare e gestire molte fonti di dati aveva portato alla nascita del processo di <strong>Extract, Transform, Load</strong> (ETL) per l'estrazione, trasformazione e caricamento di dati in sistemi di sintesi come data warehouse o data mart, questo processo si sta però rivelando complicato ed impegnativo in un mondo dove la mole di dati prodotta dal logging di eventi critici ad un qualsiasi business è in continua crescita: semplici esempi sono la gestione degli eventi in un sistema <strong>Internet of things</strong> (IoT) oppure lo studio delle abitudini dei propri clienti per un servizio di e-commerce.</p>
+<p>Lo stream processing tra microservizi propone un nuovo approccio per la gestione di questi problemi, fornendo una soluzione adatta alla gestione di dati in real-time altamente scalabile e ad alto throughput.</p>
+<p>Apache Kafka è una piattaforma nata in un contesto aziendale importante che mira a rivoluzionare il modo con cui i microservizi di un business comunicano tra loro, favorendo un approccio improntato sulla gestione di eventi legati al comportamento dei dati, più che i dati in se.<br />
+Kafka nasce per sfruttare a pieno lo stream processing e favorire una gestione intelligente di grosse moli di dati, abbandonando il classico processo &quot;batch&quot; ETL per una soluzione, appunto, basata sullo streaming dei dati tra microservizi.</p>
+
+<div id='introduzione'/>
+
+<h2 id="introduzione">2. Introduzione</h2>
+<p>Prima di poter discutere della architettura fornita da Apache Kafka, è necessario comprendere le differenze tra ETL e stream processing.<br />
+Per poter utilizzare pienamente stream processing, è inoltre necessario comprendere come la gestione di dati basata su inserimento, cancellazione e modifica da database, può essere modellata come una serie di eventi e quali sono i vantaggi di un approccio alla gestione di questi dati basato su <strong>event sourcing</strong> (ES).</p>
+<h3 id="etl">2.1 ETL</h3>
+<blockquote>
+<p>Cos'è un processo di etl</p>
+</blockquote>
+<p>Un processo di Extract, Transform, Load (ETL) è un processo mirato alla trasformazione di dati contenuti su più database per ottenere un nuovo insieme di dati, filtrato e traformato secondo una particolare logica, destinato ad essere salvato in una data warehouse.<br />
+Verso la fine degli anni '70 molte aziende iniziarono ad utilizzare molteplici database per salvare e gestire informazioni, è proprio in questo contesto che nascono i processi di ETL: con l'avanzare del tempo è stato necessario studiare un metodo per l'aggregazione e gestione delle varie fonti di dati.</p>
+<p>Un qualsiasi processo di ETL si compone di tre parti:</p>
+<blockquote>
+<p>Extract</p>
+</blockquote>
+<p>E' la prima parte del processo di ETL ed involve l'estrazione dei dati da più data sources come database relazionali o non-relazionali, file JSON od XML ma anche risorse &quot;adhoc&quot; come, ad esempio, dei dati generati da programmi di web analytics.</p>
+<p>L'obiettivo di questa fase è estrarre tutti i dati necessari dalle possibili sorgenti e prepararli alla fase di Transform.</p>
+<p>Un importante problema legato a questa fase è il processo di <strong>validazione delle sorgenti dati</strong>: con più sorgenti dati spesso ci si ritrova a dover gestire più <em>formati</em> non necessariamente compatibili tra loro.<br />
+Per poter garantire alla fase di Transform dei dati comprensibili, durante la fase di Extract vengono definite delle <em>regole di validazione</em> per filtrare i dati provenienti dalle varie sorgenti, un esempio di regola di validazione è il controllo dei tipi di dati presenti nella fonte.</p>
+<blockquote>
+<p>Transform</p>
+</blockquote>
+<p>Nella fase di Transform una serie di regole e funzioni vengono applicate ai dati generati dalla fase di Extract per prepararli alla fase di Load nella data warehouse.</p>
+<p>Il primo compito della fase di Transform è la <strong>pulizia dei dati</strong>: spesso le varie fonti di dati, nonostante siano state validate, possono presentare incongruenze tra loro come caratteri speciali legati all'encoding della propria sorgente oppure formati dei dati diversi ma compatibili (un esempio può essere la differneza di formattazione tra date americane ed europee).<br />
+Per garantire un corretto funzionamento delle operazioni di trasformazione è quindi necessario pulire i dati ed adattarli ad un formato comune.</p>
+<p>Il secondo compito della fase di Transform è la <strong>trasformazione dei dati</strong> in nuovi dati richiesti dal business, esempi di trasformazioni sono:<br />
+- Joining di tabelle da più sorgenti<br />
+- Mapping e trasformazione di dati (esempio: &quot;Maschio&quot; in &quot;M&quot;)<br />
+- Aggregazione di dati<br />
+- Generazione/calcolo di nuovi dati<br />
+- Selezione di insiemi di dati<br />
+- Validazione del nuovo formato di dati prodotto</p>
+<blockquote>
+<p>Load</p>
+</blockquote>
+<p>Nella fase di Load l'insieme di dati generati dalla fase di Transform vengono inseriti in un target, il quale potrebbe essere una data warehouse ma anche più semplicemente un file in un formato utile.<br />
+Business diversi hanno necessità diverse, per questo l'implementazione della fase di load può avere più modalità implementative, il punto focale di questa fase è proprio stabilire la frequenza e le modalità di aggiornamento dei dati presenti nel target.<br />
+Decidere la frequenza (giornaliera, mensile, ecc.) e le modalità (sovrascrizione dei vecchi dati o meno) del target possono portare ad un processo di ETL più o meno utile ad una azienda.</p>
+<p>Per generare un buon target è buona norma definire uno schema <em>preciso e chiaro</em> della tipologia di dati a cui il target deve aderire.<br />
+Come detto in precedenza un processo di ETL è utilizzato per aggregare più fonti di informazioni comuni ad un processo aziendale, questo suppone che le informazioni presenti nella data warehouse potrebbero venire usate da più parti di una azienda, le quali potrebbero essere abituate a particolari formati dei dati.<br />
+Senza definire uno schema dei dati chiaro e preciso, si correrebbe il rischio di generare un insieme di dati inutilizzabile da determinati reparti in quanto non conforme al formato di dati da loro conosciuto.</p>
+
+<div id='intro-data'/>
+
+<h3 id="limportanza-dei-dati-e-degli-eventi-piccola-introduzione-per-es">2.2 L'importanza dei dati e degli eventi {piccola introduzione per ES}</h3>
+<p>Lo status quo delle moderne applicazioni web è basato sul utilizzo di database per rappresentare le specifiche di dominio, spesso espresse da un cliente e/o da un esperto del dominio esterno all'ambiente di sviluppo.</p>
+<p>Durante la fase di analisi dei requisiti (supponendo un modello di sviluppo del software agile) cliente e team di sviluppo si confrontano, cercando di trovare un linguaggio comune per definire la logica e l'utilizzo del software richiesto; Una volta stabiliti i requisti, il team di sviluppo generalmente inizia uno studio interno atto a produrre un <strong>modello dei dati</strong> che verrà usato come base per definire lo schema dei database utilizzati dal sistema.<br />
+Un cliente comune molto spesso non ha padronanza del concetto di 'stato di una applicazione', ma piuttosto si limita ad esporre i propri requisiti descrivendo i possibili <strong>eventi</strong> che, traslati sul modello di sviluppo incentrato su i database, portano il team di sviluppo a ragionare sui possibili stati di un database in risposta a questi eventi.</p>
+<p>Lo stato di un database di una applicazione è strettamente legato all'insieme degli eventi del dominio applicativo; L'unico modo per modificare o interagire con questo database è tramite i comandi di inserimento, cancellazione o lettura, tutti comandi che vengono eseguiti solamente all'avvenire di un particolare evento.</p>
+<p>Un database mantiene solo lo stato corrente di una applicazione; Non esiste il concetto di cronologia del database a meno di utilizzare soluzioni basate su <strong>Change Data Capture</strong> (CDC), generalmente utilizzate per generare un transactional log contenente tutte le operazioni eseguite sul suddetto database.<br />
+In questo modello database-driven, un evento genera un cambiamento su una base di dati; Gli eventi e lo stato di un database sono però concetti diversi e slegati tra loro, l'esecuzione di un evento a volte può portare ad una asincronia tra l'esecuzione di un evento e lo stato di un database, tanto più se questo database è utilizzato da tutti i microservizi di una applicazione.</p>
+<p>Una soluzione al problema di più microservizi che utilizzano lo stesso database è di utilizzare delle views del database locali ad ogni microservizio: ogni servizio lavorerà su una copia locale del database ed un job esterno si occuperà di compattare le views e mantenere il database aggiornato rispetto a tutti i cambiamenti.<br />
+Questa soluzione ha un enorme problema: supponiamo di notare un errore sul database e di doverlo correggere, come possiamo decidere quale delle views è &quot;più corretta&quot; delle altre? Per aiutarci nella ricerca dell'errore potremmo utilizzare il transactional log di ogni views, ma su database di grandezze importanti potrebbe essere un problema non indifferente.</p>
+<p>Event sourcing propone di risolvere questo genere di problemi allontanandosi da una progettazione database-driven e basata sul pattern di richiesta/risposta a risorse elevando gli eventi a elementi chiavi del modello dei dati di una applicazione.</p>
+
+<div id='event-sourcing'/>
+
+<h3 id="event-sourcing">2.3. Event sourcing</h3>
+<blockquote>
+<p>Event Sourcing ensures that all changes to application state are stored as a sequence of events. Not just can we query these events, we can also use the event log to reconstruct past states, and as a foundation to automatically adjust the state to cope with retroactive changes.</p>
+</blockquote>
+<p>Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo^ basata su tabelle e schemi di uno o più database.</p>
+<p>Durante l'analisi dei requisiti di una applicazione, spesso ci si trova a confronto con esperti di un dominio applicativo che non hanno particolare conoscenza delle tecnologie necessarie per implementare le loro richieste, è compito del programmatore (o del team di programmatore) analizzare le sue richieste e trasformarle in idee gestibili.<br />
+In genere questi esperti spiegheranno al programmatore le loro necessità illustrando il funzionamento del dominio utilizzando concetti molto più vicini a degli <em>eventi</em> piuttosto che <em>sequenze di richieste/risposte a/da un database</em>.</p>
+<p>Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-commerce, avremo tre microservizi:<br />
+- UI / frontend<br />
+- Servizio per la gestione degli ordini<br />
+- Servizio stock</p>
+<p>Event sourcing (ES) è un design pattern basato su due fondamenti:<br />
+- Ogni cambiamento di stato del mondo è da vedersi come un evento; Ogni evento deve essere salvato<br />
+- Tutti gli eventi devono essere salvati in sequenza, seguendo l'ordine in cui sono avvenuti</p>
+<p>In eve</p>
+<blockquote>
+<p>Esempio di utilizzo di event sourcing =&gt; come faccio? è giusto copiare l'esempio che c'è già su un sito in modo da sfruttarne le figure?</p>
+</blockquote>
+<blockquote>
+<p>Problemi risolti da event sourcing =&gt; ho un log di cambiamenti, semplicità nella gestione dei cambiamenti</p>
+</blockquote>
+<blockquote>
+<p>Problemi creati da event sourcing<br />
+=&gt; può essere complicato eseguire query del tipo &quot;voglio tutti gli ordini con valore &gt;50€&quot; in quanto richiede la generazione dello stato corrente del mondo, ovvero la lettura ed esecuzione di tutto il log<br />
+-&gt; risolvibile creando views parallele al log</p>
+</blockquote>
+<h3 id="stream-processing">2.4 Stream Processing</h3>
+<blockquote>
+<p>Descrivere le caratteristiche principali di un sistema di streaming : distribuito, append only, etc.</p>
+</blockquote>
+<blockquote>
+<p>Differenza tra Message Brokers e transactional append only logs: Rabbit MQ vs Kafka</p>
+</blockquote>
+<h3 id="svantaggi-di-un-processo-etl-perchè-favorire-stream-processing-ed-event-sourcing">2.5. Svantaggi di un processo ETL: perchè favorire stream processing ed event sourcing</h3>
+<blockquote>
+<p>Introdurre il concetto di schema</p>
+</blockquote>
+<blockquote>
+<p>Perchè la gestione dei dati è importante nelle architetture a microservizi</p>
+</blockquote>
+<h2 id="apache-kafka-e-lecosistema">3. Apache Kafka e l'ecosistema</h2>
+<h3 id="descrizione-generica-kafka">3.1 Descrizione generica Kafka</h3>
+<blockquote>
+<p>Struttura di base: log =&gt; log compaction</p>
+</blockquote>
+<blockquote>
+<p>Struttura architetturale: * brokers * clusters * topic</p>
+</blockquote>
+<blockquote>
+<p>Come collegare event sourcing e kafka =&gt; perchè kafka è una buona piattaforma per event sourcing</p>
+</blockquote>
+<h3 id="kafka-connect">3.2 Kafka Connect</h3>
+<blockquote>
+<p>Schema</p>
+</blockquote>
+<blockquote>
+<p>Source connectors</p>
+</blockquote>
+<blockquote>
+<p>Sink connectors</p>
+</blockquote>
+<blockquote>
+<p>Community involment</p>
+</blockquote>
+<h3 id="kafka-streams">3.3 Kafka Streams</h3>
+<blockquote>
+<p>cos'è streams</p>
+</blockquote>
+<blockquote>
+<p>KSQL/LSQL</p>
+</blockquote>
+<h2 id="esempi-di-utilizzo-di-kafka">4. Esempi di utilizzo di Kafka</h2>
+
+<h2 id="bibliografia">5. Bibliografia</h2>
+<p>https://martinfowler.com/eaaDev/EventSourcing.html<br />
+https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/<br />
+https://www.confluent.io/blog/build-services-backbone-events/<br />
+https://www.confluent.io/blog/apache-kafka-for-service-architectures/<br />
+https://www.confluent.io/blog/messaging-single-source-truth/<br />
+https://www.confluent.io/blog/building-a-microservices-ecosystem-with-kafka-streams-and-ksql/<br />
+https://content.pivotal.io/blog/understanding-when-to-use-rabbitmq-or-apache-kafka<br />
+https://qconsf.com/sf2016/system/files/keynotes-slides/etl_is_dead_long-live_streams.pdf &lt;= https://www.youtube.com/watch?v=I32hmY4diFY</p>
+</body>
+</html>

@@ -85,7 +85,7 @@
 \item
   {[}Esempi di utilizzo{]}\\
 \item
-  {[}Bibliografia{]}
+  {[}Bibliografia{]} \newpage
 \end{enumerate}
 
 \hypertarget{motivazioni}{\subsection{1.
@@ -122,6 +122,8 @@ Kafka nasce per sfruttare a pieno lo stream processing e favorire una
 gestione intelligente di grosse moli di dati, abbandonando il classico
 processo ``batch'' ETL per una soluzione, appunto, basata sullo
 streaming dei dati tra microservizi.
+
+\newpage
 
 \hypertarget{introduzione}{\subsection{2.
 Introduzione}\label{introduzione}}
@@ -194,10 +196,23 @@ formato comune.
 
 Il secondo compito della fase di Transform è la \textbf{trasformazione
 dei dati} in nuovi dati richiesti dal business, esempi di trasformazioni
-sono: * Joining di tabelle da più sorgenti * Mapping e trasformazione di
-dati (esempio: ``Maschio'' in ``M'') * Aggregazione di dati *
-Generazione/calcolo di nuovi dati * Selezione di insiemi di dati *
-Validazione del nuovo formato di dati prodotto
+sono:
+
+\begin{itemize}
+\tightlist
+\item
+  Joining di tabelle da più sorgenti
+\item
+  Mapping e trasformazione di dati (esempio: ``Maschio'' in ``M'')
+\item
+  Aggregazione di dati
+\item
+  Generazione/calcolo di nuovi dati
+\item
+  Selezione di insiemi di dati
+\item
+  Validazione del nuovo formato di dati prodotto
+\end{itemize}
 
 \begin{quote}
 Load
@@ -225,6 +240,8 @@ abituate a particolari formati dei dati.\\
 Senza definire uno schema dei dati chiaro e preciso, si correrebbe il
 rischio di generare un insieme di dati inutilizzabile da determinati
 reparti in quanto non conforme al formato di dati da loro conosciuto.
+
+\newpage
 
 \subsubsection{2.2 L'importanza dei dati e degli eventi \{piccola
 introduzione per
@@ -256,10 +273,10 @@ inserimento, cancellazione o lettura, tutti comandi che vengono eseguiti
 solamente all'avvenire di un particolare evento.
 
 Un database mantiene solo lo stato corrente di una applicazione; Non
-esiste il concetto di cronologia del database a meno delle soluzioni
-basate su \textbf{Change Data Capture} (CDC), generalmente utilizzate
-per generare un transactional log contenente tutte le operazioni
-eseguite sul suddetto database.\\
+esiste il concetto di cronologia del database a meno di utilizzare
+soluzioni basate su \textbf{Change Data Capture} (CDC), generalmente
+utilizzate per generare un transactional log contenente tutte le
+operazioni eseguite sul suddetto database.\\
 In questo modello database-driven, un evento genera un cambiamento su
 una base di dati; Gli eventi e lo stato di un database sono però
 concetti diversi e slegati tra loro, l'esecuzione di un evento a volte
@@ -283,6 +300,8 @@ Event sourcing propone di risolvere questo genere di problemi
 allontanandosi da una progettazione database-driven e basata sul pattern
 di richiesta/risposta a risorse elevando gli eventi a elementi chiavi
 del modello dei dati di una applicazione.
+
+\newpage
 
 \hypertarget{event-sourcing}{\subsubsection{2.3. Event
 sourcing}\label{event-sourcing}}
@@ -309,14 +328,33 @@ vicini a degli \emph{eventi} piuttosto che \emph{sequenze di
 richieste/risposte a/da un database}.
 
 Supponiamo di dover sviluppare una soluzione software per una
-piattaforma di e-commerce, avremo tre microservizi: * UI / frontend *
-Servizio per la gestione degli ordini * Servizio stock
+piattaforma di e-commerce, avremo tre microservizi:
 
-Event sourcing (ES) è un design pattern basato su due fondamenti:\\
-* Ogni cambiamento di stato del mondo è da vedersi come un evento; Ogni
-evento deve essere salvato\\
-* Tutti gli eventi devono essere salvati in sequenza, seguendo l'ordine
-in cui sono avvenuti In eve
+\begin{itemize}
+\tightlist
+\item
+  UI / frontend
+\item
+  Servizio per la gestione degli ordini
+\item
+  Servizio stock
+\end{itemize}
+
+{[}\ldots{}{]}
+
+Event sourcing (ES) è un design pattern basato su due fondamenti:
+
+\begin{itemize}
+\tightlist
+\item
+  Ogni cambiamento di stato del mondo è da vedersi come un evento; Ogni
+  evento deve essere salvato
+\item
+  Tutti gli eventi devono essere salvati in sequenza, seguendo l'ordine
+  in cui sono avvenuti
+\end{itemize}
+
+{[}\ldots{}{]}
 
 \begin{quote}
 Esempio di utilizzo di event sourcing =\textgreater{} come faccio? è
@@ -412,6 +450,8 @@ KSQL/LSQL
 
 \subsection{4. Esempi di utilizzo di
 Kafka}\label{esempi-di-utilizzo-di-kafka}
+
+\newpage
 
 \subsection{5. Bibliografia}\label{bibliografia}
 

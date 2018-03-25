@@ -14,7 +14,7 @@
     3.3. [Kafka Streams]  
 4. [Esempi di utilizzo]  
 5. [Bibliografia]
-
+\newpage
 
 <div id='motivazioni'/>
 
@@ -30,6 +30,8 @@ Lo stream processing tra microservizi propone un nuovo approccio per la gestione
 
 Apache Kafka è una piattaforma nata in un contesto aziendale importante che mira a rivoluzionare il modo con cui i microservizi di un business comunicano tra loro, favorendo un approccio improntato sulla gestione di eventi legati al comportamento dei dati, più che i dati in se.  
 Kafka nasce per sfruttare a pieno lo stream processing e favorire una gestione intelligente di grosse moli di dati, abbandonando il classico processo "batch" ETL per una soluzione, appunto, basata sullo streaming dei dati tra microservizi.
+
+\newpage
 
 <div id='introduzione'/>
 
@@ -64,12 +66,14 @@ Il primo compito della fase di Transform è la **pulizia dei dati**: spesso le v
  Per garantire un corretto funzionamento delle operazioni di trasformazione è quindi necessario pulire i dati ed adattarli ad un formato comune.
 
 Il secondo compito della fase di Transform è la **trasformazione dei dati** in nuovi dati richiesti dal business, esempi di trasformazioni sono:
-  * Joining di tabelle da più sorgenti
-  * Mapping e trasformazione di dati (esempio: "Maschio" in "M")
-  * Aggregazione di dati
-  * Generazione/calcolo di nuovi dati
-  * Selezione di insiemi di dati
-  * Validazione del nuovo formato di dati prodotto
+
+
+- Joining di tabelle da più sorgenti
+- Mapping e trasformazione di dati (esempio: "Maschio" in "M")
+- Aggregazione di dati
+- Generazione/calcolo di nuovi dati
+- Selezione di insiemi di dati
+- Validazione del nuovo formato di dati prodotto
 
 > Load
 
@@ -81,6 +85,8 @@ Per generare un buon target è buona norma definire uno schema _preciso e chiaro
 Come detto in precedenza un processo di ETL è utilizzato per aggregare più fonti di informazioni comuni ad un processo aziendale, questo suppone che le informazioni presenti nella data warehouse potrebbero venire usate da più parti di una azienda, le quali potrebbero essere abituate a particolari formati dei dati.  
 Senza definire uno schema dei dati chiaro e preciso, si correrebbe il rischio di generare un insieme di dati inutilizzabile da determinati reparti in quanto non conforme al formato di dati da loro conosciuto.
 
+\newpage
+
 <div id='intro-data'/>
 
 ### 2.2 L'importanza dei dati e degli eventi {piccola introduzione per ES}
@@ -91,7 +97,7 @@ Un cliente comune molto spesso non ha padronanza del concetto di 'stato di una a
 
 Lo stato di un database di una applicazione è strettamente legato all'insieme degli eventi del dominio applicativo; L'unico modo per modificare o interagire con questo database è tramite i comandi di inserimento, cancellazione o lettura, tutti comandi che vengono eseguiti solamente all'avvenire di un particolare evento.  
 
-Un database mantiene solo lo stato corrente di una applicazione; Non esiste il concetto di cronologia del database a meno delle soluzioni basate su **Change Data Capture** (CDC), generalmente utilizzate per generare un transactional log contenente tutte le operazioni eseguite sul suddetto database.  
+Un database mantiene solo lo stato corrente di una applicazione; Non esiste il concetto di cronologia del database a meno di utilizzare soluzioni basate su **Change Data Capture** (CDC), generalmente utilizzate per generare un transactional log contenente tutte le operazioni eseguite sul suddetto database.  
 In questo modello database-driven, un evento genera un cambiamento su una base di dati; Gli eventi e lo stato di un database sono però concetti diversi e slegati tra loro, l'esecuzione di un evento a volte può portare ad una asincronia tra l'esecuzione di un evento e lo stato di un database, tanto più se questo database è utilizzato da tutti i microservizi di una applicazione.  
 
 Una soluzione al problema di più microservizi che utilizzano lo stesso database è di utilizzare delle views del database locali ad ogni microservizio: ogni servizio lavorerà su una copia locale del database ed un job esterno si occuperà di compattare le views e mantenere il database aggiornato rispetto a tutti i cambiamenti.  
@@ -99,26 +105,35 @@ Questa soluzione ha un enorme problema: supponiamo di notare un errore sul datab
 
 Event sourcing propone di risolvere questo genere di problemi allontanandosi da una progettazione database-driven e basata sul pattern di richiesta/risposta a risorse elevando gli eventi a elementi chiavi del modello dei dati di una applicazione.
 
+\newpage
+
 <div id='event-sourcing'/>
 
 ### 2.3. Event sourcing
 
  > Event Sourcing ensures that all changes to application state are stored as a sequence of events. Not just can we query these events, we can also use the event log to reconstruct past states, and as a foundation to automatically adjust the state to cope with retroactive changes.  
- 
+
 Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo^ basata su tabelle e schemi di uno o più database.
 
 Durante l'analisi dei requisiti di una applicazione, spesso ci si trova a confronto con esperti di un dominio applicativo che non hanno particolare conoscenza delle tecnologie necessarie per implementare le loro richieste, è compito del programmatore (o del team di programmatore) analizzare le sue richieste e trasformarle in idee gestibili.  
 In genere questi esperti spiegheranno al programmatore le loro necessità illustrando il funzionamento del dominio utilizzando concetti molto più vicini a degli _eventi_ piuttosto che _sequenze di richieste/risposte a/da un database_.
 
-Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-commerce, avremo tre microservizi:
-* UI / frontend
-* Servizio per la gestione degli ordini
-* Servizio stock
+Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-commerce, avremo tre microservizi:  
+
+
+- UI / frontend
+- Servizio per la gestione degli ordini
+- Servizio stock
+
+[...]
 
 Event sourcing (ES) è un design pattern basato su due fondamenti:  
- * Ogni cambiamento di stato del mondo è da vedersi come un evento; Ogni evento deve essere salvato  
- * Tutti gli eventi devono essere salvati in sequenza, seguendo l'ordine in cui sono avvenuti
-In eve
+
+
+- Ogni cambiamento di stato del mondo è da vedersi come un evento; Ogni evento deve essere salvato
+- Tutti gli eventi devono essere salvati in sequenza, seguendo l'ordine in cui sono avvenuti
+
+[...]
  
 
 > Esempio di utilizzo di event sourcing => come faccio? è giusto copiare l'esempio che c'è già su un sito in modo da sfruttarne le figure?
@@ -173,6 +188,8 @@ In eve
 
 
 ## 4. Esempi di utilizzo di Kafka
+
+\newpage
 
 ## 5. Bibliografia
 
