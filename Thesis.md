@@ -125,6 +125,9 @@ Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-c
 - Servizio per la gestione degli ordini
 - Servizio stock
 
+![Esempio setup \label{my_label}](../images/figure1.png){ width=50% }
+
+
 [...]
 
 Event sourcing (ES) è un design pattern basato su due fondamenti:  
