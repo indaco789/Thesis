@@ -61,7 +61,35 @@
 
 \section{Kafka: streaming data}\label{kafka-streaming-data}
 
-\subsection{Motivazioni}\label{motivazioni}
+\subsection{Indice}\label{indice}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \protect\hyperlink{motivazioni}{Motivazioni}\\
+\item
+  \protect\hyperlink{introduzione}{Introduzione}\\
+  2.1. \protect\hyperlink{etl}{ETL}\\
+  2.2. \protect\hyperlink{intro-data}{L'importanza dei dati e degli
+  eventi}\\
+  2.3. \protect\hyperlink{event-sourcing}{Event sourcing}\\
+  2.4. {[}Stream processing{]}\\
+  2.5. {[}Svantaggi di un processo ETL: confronto ETL \textasciitilde{}
+  ES+Stream processing{]}
+\item
+  {[}Apache Kafka e l'ecosistema{]}\\
+  3.1. {[}Struttura generica di Kafka{]}\\
+  3.2. {[}Kafka Connect{]}\\
+  3.3. {[}Kafka Streams{]}\\
+\item
+  {[}Esempi di utilizzo{]}\\
+\item
+  {[}Bibliografia{]}
+\end{enumerate}
+
+\hypertarget{motivazioni}{\subsection{1.
+Motivazioni}\label{motivazioni}}
 
 Negli ultimi anni l'avvento delle architetture a microservizi ha portato
 la necessità di studiare nuove soluzioni al problema della gestione di
@@ -95,9 +123,8 @@ gestione intelligente di grosse moli di dati, abbandonando il classico
 processo ``batch'' ETL per una soluzione, appunto, basata sullo
 streaming dei dati tra microservizi.
 
-\subsection{1. Introduzione: {[}Il ruolo dello streaming nelle
-architetture moderne{]} / {[}Storia{]} / {[}Confronto
-ETL-ES+stream{]}}\label{introduzione-il-ruolo-dello-streaming-nelle-architetture-moderne-storia-confronto-etl-esstream}
+\hypertarget{introduzione}{\subsection{2.
+Introduzione}\label{introduzione}}
 
 Prima di poter discutere della architettura fornita da Apache Kafka, è
 necessario comprendere le differenze tra ETL e stream processing.\\
@@ -107,7 +134,7 @@ cancellazione e modifica da database, può essere modellata come una
 serie di eventi e quali sono i vantaggi di un approccio alla gestione di
 questi dati basato su \textbf{event sourcing} (ES).
 
-\subsubsection{1.1 ETL}\label{etl}
+\hypertarget{etl}{\subsubsection{2.1 ETL}\label{etl}}
 
 \begin{quote}
 Cos'è un processo di etl
@@ -199,7 +226,7 @@ Senza definire uno schema dei dati chiaro e preciso, si correrebbe il
 rischio di generare un insieme di dati inutilizzabile da determinati
 reparti in quanto non conforme al formato di dati da loro conosciuto.
 
-\subsubsection{1.2 L'importanza dei dati e degli eventi \{piccola
+\subsubsection{2.2 L'importanza dei dati e degli eventi \{piccola
 introduzione per
 ES\}}\label{limportanza-dei-dati-e-degli-eventi-piccola-introduzione-per-es}
 
@@ -229,10 +256,10 @@ inserimento, cancellazione o lettura, tutti comandi che vengono eseguiti
 solamente all'avvenire di un particolare evento.
 
 Un database mantiene solo lo stato corrente di una applicazione; Non
-esiste il concetto di cronologia del database a meno dell'utilizzo dei
-pattern di \textbf{Change Data Capture} (CDC), che generalmente sono
-utilizzati per generare un transactional log contenete tutte le
-operazioni eseguite sul suddetto database.\\
+esiste il concetto di cronologia del database a meno delle soluzioni
+basate su \textbf{Change Data Capture} (CDC), generalmente utilizzate
+per generare un transactional log contenente tutte le operazioni
+eseguite sul suddetto database.\\
 In questo modello database-driven, un evento genera un cambiamento su
 una base di dati; Gli eventi e lo stato di un database sono però
 concetti diversi e slegati tra loro, l'esecuzione di un evento a volte
@@ -247,17 +274,18 @@ ed un job esterno si occuperà di compattare le views e mantenere il
 database aggiornato rispetto a tutti i cambiamenti.\\
 Questa soluzione ha un enorme problema: supponiamo di notare un errore
 sul database e di doverlo correggere, come possiamo decidere quale delle
-views ha ``più ragione'' delle altre? Per aiutarci nella ricerca
+views è ``più corretta'' delle altre? Per aiutarci nella ricerca
 dell'errore potremmo utilizzare il transactional log di ogni views, ma
 su database di grandezze importanti potrebbe essere un problema non
 indifferente.
 
 Event sourcing propone di risolvere questo genere di problemi
 allontanandosi da una progettazione database-driven e basata sul pattern
-di richiesta/risposta elevando gli eventi a elementi chiavi del modello
-dei dati di una applicazione.
+di richiesta/risposta a risorse elevando gli eventi a elementi chiavi
+del modello dei dati di una applicazione.
 
-\subsubsection{1.3. Event sourcing}\label{event-sourcing}
+\hypertarget{event-sourcing}{\subsubsection{2.3. Event
+sourcing}\label{event-sourcing}}
 
 \begin{quote}
 Event Sourcing ensures that all changes to application state are stored
@@ -266,11 +294,29 @@ use the event log to reconstruct past states, and as a foundation to
 automatically adjust the state to cope with retroactive changes.
 \end{quote}
 
-Event sourcing è un pattern basato su due fondamenti:\\
-* Ogni cambiamento di stato del mondo\^{} è da vedersi come un evento;
-Ogni evento deve essere salvato\\
+Event sourcing (ES) è un design pattern che si contrappone ad una
+visione del mondo\^{} basata su tabelle e schemi di uno o più database.
+
+Durante l'analisi dei requisiti di una applicazione, spesso ci si trova
+a confronto con esperti di un dominio applicativo che non hanno
+particolare conoscenza delle tecnologie necessarie per implementare le
+loro richieste, è compito del programmatore (o del team di
+programmatore) analizzare le sue richieste e trasformarle in idee
+gestibili.\\
+In genere questi esperti spiegheranno al programmatore le loro necessità
+illustrando il funzionamento del dominio utilizzando concetti molto più
+vicini a degli \emph{eventi} piuttosto che \emph{sequenze di
+richieste/risposte a/da un database}.
+
+Supponiamo di dover sviluppare una soluzione software per una
+piattaforma di e-commerce, avremo tre microservizi: * UI / frontend *
+Servizio per la gestione degli ordini * Servizio stock
+
+Event sourcing (ES) è un design pattern basato su due fondamenti:\\
+* Ogni cambiamento di stato del mondo è da vedersi come un evento; Ogni
+evento deve essere salvato\\
 * Tutti gli eventi devono essere salvati in sequenza, seguendo l'ordine
-in cui sono avvenuti
+in cui sono avvenuti In eve
 
 \begin{quote}
 Esempio di utilizzo di event sourcing =\textgreater{} come faccio? è
@@ -292,7 +338,7 @@ esecuzione di tutto il log\\
 -\textgreater{} risolvibile creando views parallele al log
 \end{quote}
 
-\subsubsection{1.4 Stream Processing}\label{stream-processing}
+\subsubsection{2.4 Stream Processing}\label{stream-processing}
 
 \begin{quote}
 Descrivere le caratteristiche principali di un sistema di streaming :
@@ -304,7 +350,7 @@ Differenza tra Message Brokers e transactional append only logs: Rabbit
 MQ vs Kafka
 \end{quote}
 
-\subsubsection{1.5. Svantaggi di un processo ETL: perchè favorire stream
+\subsubsection{2.5. Svantaggi di un processo ETL: perchè favorire stream
 processing ed event
 sourcing}\label{svantaggi-di-un-processo-etl-perchuxe8-favorire-stream-processing-ed-event-sourcing}
 
@@ -317,11 +363,11 @@ Perchè la gestione dei dati è importante nelle architetture a
 microservizi
 \end{quote}
 
-\subsection{2. Apache Kafka e
+\subsection{3. Apache Kafka e
 l'ecosistema}\label{apache-kafka-e-lecosistema}
 
-\subsubsection{2.1 Cos'è - come funziona:
-Log}\label{cosuxe8---come-funziona-log}
+\subsubsection{3.1 Descrizione generica
+Kafka}\label{descrizione-generica-kafka}
 
 \begin{quote}
 Struttura di base: log =\textgreater{} log compaction
@@ -336,7 +382,7 @@ Come collegare event sourcing e kafka =\textgreater{} perchè kafka è una
 buona piattaforma per event sourcing
 \end{quote}
 
-\subsubsection{2.2 Kafka Connect}\label{kafka-connect}
+\subsubsection{3.2 Kafka Connect}\label{kafka-connect}
 
 \begin{quote}
 Schema
@@ -354,7 +400,7 @@ Sink connectors
 Community involment
 \end{quote}
 
-\subsubsection{2.3 Kafka Streams}\label{kafka-streams}
+\subsubsection{3.3 Kafka Streams}\label{kafka-streams}
 
 \begin{quote}
 cos'è streams
@@ -364,10 +410,10 @@ cos'è streams
 KSQL/LSQL
 \end{quote}
 
-\subsection{3. Esempi di utilizzo di
+\subsection{4. Esempi di utilizzo di
 Kafka}\label{esempi-di-utilizzo-di-kafka}
 
-\subsection{4. Bibliografia}\label{bibliografia}
+\subsection{5. Bibliografia}\label{bibliografia}
 
 https://martinfowler.com/eaaDev/EventSourcing.html\\
 https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/\\

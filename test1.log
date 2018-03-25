@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  25 MAR 2018 09:31
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  25 MAR 2018 19:34
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -847,40 +847,55 @@ LaTeX Info: Redefining \nameref on input line 60.
 \@outlinefile=\write3
 \openout3 = `test1.out'.
 
- [1
 
-{/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
- [4]
-Underfull \hbox (badness 10000) in paragraph at lines 372--381
+Underfull \hbox (badness 10000) in paragraph at lines 70--72
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 81--86
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 86--88
+
+ []
+
+[1
+
+{/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+[2] [3] [4] [5]
+Underfull \hbox (badness 10000) in paragraph at lines 418--427
 \T1/lmr/m/n/10 (+20) https://www.confluent.io/blog/data-dichotomy-rethinking-th
 e-way-we-treat-
  []
 
 
-Overfull \hbox (0.15797pt too wide) in paragraph at lines 372--381
+Overfull \hbox (0.15797pt too wide) in paragraph at lines 418--427
 \T1/lmr/m/n/10 (+10) https://www.confluent.io/blog/building-a-microservices-eco
 system-with-kafka-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 372--381
+Underfull \hbox (badness 10000) in paragraph at lines 418--427
 \T1/lmr/m/n/10 (+20) https://content.pivotal.io/blog/understanding-when-to-use-
 rabbitmq-or-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 372--381
+Underfull \hbox (badness 10000) in paragraph at lines 418--427
 \T1/lmr/m/n/10 (+20) https://qconsf.com/sf2016/system/files/keynotes-slides/etl
 _is_dead_long-
  []
 
-[5]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 382.
- [6]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 382.
+[6]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 428.
+ [7]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 428.
  (./test1.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 382.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 382.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 428.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 428.
 
 
 Package rerunfilecheck Warning: File `test1.out' has changed.
@@ -888,31 +903,34 @@ Package rerunfilecheck Warning: File `test1.out' has changed.
 (rerunfilecheck)                or use package `bookmark'.
 
 Package rerunfilecheck Info: Checksums for `test1.out':
-(rerunfilecheck)             Before: E5080402C4464F609190796FBA7F508F;1944
-(rerunfilecheck)             After:  03E3DF4E71DD4DF4E94639E8A9C4024D;3366.
+(rerunfilecheck)             Before: 03E3DF4E71DD4DF4E94639E8A9C4024D;3366
+(rerunfilecheck)             After:  419C63CF743AAB5F5321B0FB60F314AA;2958.
 
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 382.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 428.
  ) 
 Here is how much of TeX's memory you used:
- 10879 strings out of 492995
- 156237 string characters out of 6132705
- 251731 words of memory out of 5000000
- 14273 multiletter control sequences out of 15000+600000
- 29777 words of font info for 58 fonts, out of 8000000 for 9000
+ 10897 strings out of 492995
+ 156320 string characters out of 6132705
+ 252044 words of memory out of 5000000
+ 14275 multiletter control sequences out of 15000+600000
+ 29943 words of font info for 60 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 32i,4n,38p,441b,387s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2017/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</usr/local/
-texlive/2017/texmf-dist/fonts/type1/public/eurosym/feymr10.pfb></usr/local/texl
-ive/2017/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2017/t
-exmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2017/texmf-dist/
-fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1
-/public/lm/lmri10.pfb>
-Output written on test1.pdf (6 pages, 127974 bytes).
+ 32i,4n,38p,679b,391s stack positions out of 5000i,500n,10000p,200000b,80000s
+pdfTeX warning (dest): name{intro-data} has been referenced but does not exis
+t, replaced by a fixed one
+
+{/usr/local/texlive/2017/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</usr/local/te
+xlive/2017/texmf-dist/fonts/type1/public/eurosym/feymr10.pfb></usr/local/texliv
+e/2017/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2017/tex
+mf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2017/texmf-dist/fo
+nts/type1/public/lm/lmr10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/p
+ublic/lm/lmri10.pfb>
+Output written on test1.pdf (7 pages, 130910 bytes).
 PDF statistics:
- 106 PDF objects out of 1000 (max. 8388607)
- 92 compressed objects within 1 object stream
- 21 named destinations out of 1000 (max. 500000)
- 6233 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 140 PDF objects out of 1000 (max. 8388607)
+ 124 compressed objects within 2 object streams
+ 33 named destinations out of 1000 (max. 500000)
+ 6257 words of extra memory for PDF output out of 10000 (max. 10000000)
 
