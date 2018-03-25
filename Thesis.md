@@ -20,7 +20,7 @@ Per poter utilizzare pienamente stream processing, è inoltre necessario compren
 
 ### 1.1 ETL
 
-> Cos'è un processo di etl
+> Cos'è un processo di etl  
 
 Un processo di Extract, Transform, Load (ETL) è un processo mirato alla trasformazione di dati contenuti su più database per ottenere un nuovo insieme di dati, filtrato e traformato secondo una particolare logica, destinato ad essere salvato in una data warehouse.  
  Verso la fine degli anni '70 molte aziende iniziarono ad utilizzare molteplici database per salvare e gestire informazioni, è proprio in questo contesto che nascono i processi di ETL: con l'avanzare del tempo è stato necessario studiare un metodo per l'aggregazione e gestione delle varie fonti di dati.
@@ -69,21 +69,32 @@ Un cliente comune molto spesso non ha padronanza del concetto di 'stato di una a
 
 Lo stato di un database di una applicazione è strettamente legato all'insieme degli eventi del dominio applicativo; L'unico modo per modificare o interagire con questo database è tramite i comandi di inserimento, cancellazione o lettura, tutti comandi che vengono eseguiti solamente all'avvenire di un particolare evento.  
 
-Un database mantiene solo lo stato corrente di una applicazione; Non esiste il concetto di cronologia del database a meno dell'utilizzo dei pattern di **Change Data Capture** (CDC), che generalmente sono utilizzati per generare un transactional log contenete tutte le operazioni eseguite sul suddetto database.  
+Un database mantiene solo lo stato corrente di una applicazione; Non esiste il concetto di cronologia del database a meno delle soluzioni basate su **Change Data Capture** (CDC), generalmente utilizzate per generare un transactional log contenente tutte le operazioni eseguite sul suddetto database.  
 In questo modello database-driven, un evento genera un cambiamento su una base di dati; Gli eventi e lo stato di un database sono però concetti diversi e slegati tra loro, l'esecuzione di un evento a volte può portare ad una asincronia tra l'esecuzione di un evento e lo stato di un database, tanto più se questo database è utilizzato da tutti i microservizi di una applicazione.  
 
 Una soluzione al problema di più microservizi che utilizzano lo stesso database è di utilizzare delle views del database locali ad ogni microservizio: ogni servizio lavorerà su una copia locale del database ed un job esterno si occuperà di compattare le views e mantenere il database aggiornato rispetto a tutti i cambiamenti.  
-Questa soluzione ha un enorme problema: supponiamo di notare un errore sul database e di doverlo correggere, come possiamo decidere quale delle views ha "più ragione" delle altre? Per aiutarci nella ricerca dell'errore potremmo utilizzare il transactional log di ogni views, ma su database di grandezze importanti potrebbe essere un problema non indifferente.  
+Questa soluzione ha un enorme problema: supponiamo di notare un errore sul database e di doverlo correggere, come possiamo decidere quale delle views è "più corretta" delle altre? Per aiutarci nella ricerca dell'errore potremmo utilizzare il transactional log di ogni views, ma su database di grandezze importanti potrebbe essere un problema non indifferente.  
 
-Event sourcing propone di risolvere questo genere di problemi allontanandosi da una progettazione database-driven e basata sul pattern di richiesta/risposta elevando gli eventi a elementi chiavi del modello dei dati di una applicazione.
+Event sourcing propone di risolvere questo genere di problemi allontanandosi da una progettazione database-driven e basata sul pattern di richiesta/risposta a risorse elevando gli eventi a elementi chiavi del modello dei dati di una applicazione.
 
 ### 1.3. Event sourcing
 
  > Event Sourcing ensures that all changes to application state are stored as a sequence of events. Not just can we query these events, we can also use the event log to reconstruct past states, and as a foundation to automatically adjust the state to cope with retroactive changes.  
+Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo^ basata su tabelle e schemi di uno o più database.
 
- Event sourcing è un pattern basato su due fondamenti:  
- * Ogni cambiamento di stato del mondo^ è da vedersi come un evento; Ogni evento deve essere salvato  
+Durante l'analisi dei requisiti di una applicazione, spesso ci si trova a confronto con esperti di un dominio applicativo che non hanno particolare conoscenza delle tecnologie necessarie per implementare le loro richieste, è compito del programmatore (o del team di programmatore) analizzare le sue richieste e trasformarle in idee gestibili.  
+In genere questi esperti spiegheranno al programmatore le loro necessità illustrando il funzionamento del dominio utilizzando concetti molto più vicini a degli _eventi_ piuttosto che _sequenze di richieste/risposte a/da un database_.
+
+Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-commerce, avremo tre microservizi:
+* UI / frontend
+* Servizio per la gestione degli ordini
+* Servizio stock
+
+Event sourcing (ES) è un design pattern basato su due fondamenti:  
+ * Ogni cambiamento di stato del mondo è da vedersi come un evento; Ogni evento deve essere salvato  
  * Tutti gli eventi devono essere salvati in sequenza, seguendo l'ordine in cui sono avvenuti
+In eve
+ 
 
 > Esempio di utilizzo di event sourcing => come faccio? è giusto copiare l'esempio che c'è già su un sito in modo da sfruttarne le figure?
 
