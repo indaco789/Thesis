@@ -1,6 +1,24 @@
 # Kafka: streaming data
 
-## Motivazioni
+## Indice
+1. [Motivazioni](#motivazioni)  
+2. [Introduzione](#introduzione)  
+    2.1. [ETL](#etl)  
+    2.2. [L'importanza dei dati e degli eventi](#intro-data)  
+    2.3. [Event sourcing](#event-sourcing)  
+    2.4. [Stream processing]  
+    2.5. [Svantaggi di un processo ETL: confronto ETL ~ ES+Stream processing]
+3. [Apache Kafka e l'ecosistema]  
+    3.1. [Struttura generica di Kafka]  
+    3.2. [Kafka Connect]  
+    3.3. [Kafka Streams]  
+4. [Esempi di utilizzo]  
+5. [Bibliografia]
+
+
+<div id='motivazioni'/>
+
+## 1. Motivazioni
 
 Negli ultimi anni l'avvento delle architetture a microservizi ha portato la necessità di studiare nuove soluzioni al problema della gestione di molteplici fonti di dati.
 
@@ -13,12 +31,14 @@ Lo stream processing tra microservizi propone un nuovo approccio per la gestione
 Apache Kafka è una piattaforma nata in un contesto aziendale importante che mira a rivoluzionare il modo con cui i microservizi di un business comunicano tra loro, favorendo un approccio improntato sulla gestione di eventi legati al comportamento dei dati, più che i dati in se.  
 Kafka nasce per sfruttare a pieno lo stream processing e favorire una gestione intelligente di grosse moli di dati, abbandonando il classico processo "batch" ETL per una soluzione, appunto, basata sullo streaming dei dati tra microservizi.
 
-## 1. Introduzione: [Il ruolo dello streaming nelle architetture moderne] / [Storia] / [Confronto ETL-ES+stream]  
+<div id='introduzione'/>
+
+## 2. Introduzione
 
 Prima di poter discutere della architettura fornita da Apache Kafka, è necessario comprendere le differenze tra ETL e stream processing.  
 Per poter utilizzare pienamente stream processing, è inoltre necessario comprendere come la gestione di dati basata su inserimento, cancellazione e modifica da database, può essere modellata come una serie di eventi e quali sono i vantaggi di un approccio alla gestione di questi dati basato su **event sourcing** (ES).
 
-### 1.1 ETL
+### 2.1 ETL
 
 > Cos'è un processo di etl  
 
@@ -61,7 +81,9 @@ Per generare un buon target è buona norma definire uno schema _preciso e chiaro
 Come detto in precedenza un processo di ETL è utilizzato per aggregare più fonti di informazioni comuni ad un processo aziendale, questo suppone che le informazioni presenti nella data warehouse potrebbero venire usate da più parti di una azienda, le quali potrebbero essere abituate a particolari formati dei dati.  
 Senza definire uno schema dei dati chiaro e preciso, si correrebbe il rischio di generare un insieme di dati inutilizzabile da determinati reparti in quanto non conforme al formato di dati da loro conosciuto.
 
-### 1.2 L'importanza dei dati e degli eventi {piccola introduzione per ES}
+<div id='intro-data'/>
+
+### 2.2 L'importanza dei dati e degli eventi {piccola introduzione per ES}
 Lo status quo delle moderne applicazioni web è basato sul utilizzo di database per rappresentare le specifiche di dominio, spesso espresse da un cliente e/o da un esperto del dominio esterno all'ambiente di sviluppo.  
 
 Durante la fase di analisi dei requisiti (supponendo un modello di sviluppo del software agile) cliente e team di sviluppo si confrontano, cercando di trovare un linguaggio comune per definire la logica e l'utilizzo del software richiesto; Una volta stabiliti i requisti, il team di sviluppo generalmente inizia uno studio interno atto a produrre un **modello dei dati** che verrà usato come base per definire lo schema dei database utilizzati dal sistema.  
@@ -77,9 +99,12 @@ Questa soluzione ha un enorme problema: supponiamo di notare un errore sul datab
 
 Event sourcing propone di risolvere questo genere di problemi allontanandosi da una progettazione database-driven e basata sul pattern di richiesta/risposta a risorse elevando gli eventi a elementi chiavi del modello dei dati di una applicazione.
 
-### 1.3. Event sourcing
+<div id='event-sourcing'/>
+
+### 2.3. Event sourcing
 
  > Event Sourcing ensures that all changes to application state are stored as a sequence of events. Not just can we query these events, we can also use the event log to reconstruct past states, and as a foundation to automatically adjust the state to cope with retroactive changes.  
+ 
 Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo^ basata su tabelle e schemi di uno o più database.
 
 Durante l'analisi dei requisiti di una applicazione, spesso ci si trova a confronto con esperti di un dominio applicativo che non hanno particolare conoscenza delle tecnologie necessarie per implementare le loro richieste, è compito del programmatore (o del team di programmatore) analizzare le sue richieste e trasformarle in idee gestibili.  
@@ -104,22 +129,22 @@ In eve
 > => può essere complicato eseguire query del tipo "voglio tutti gli ordini con valore >50€" in quanto richiede la generazione dello stato corrente del mondo, ovvero la lettura ed esecuzione di tutto il log   
 > -> risolvibile creando views parallele al log
 
-### 1.4 Stream Processing 
+### 2.4 Stream Processing
 
 > Descrivere le caratteristiche principali di un sistema di streaming : distribuito, append only, etc.
 
 > Differenza tra Message Brokers e transactional append only logs: Rabbit MQ vs Kafka
 
 
-### 1.5. Svantaggi di un processo ETL: perchè favorire stream processing ed event sourcing
+### 2.5. Svantaggi di un processo ETL: perchè favorire stream processing ed event sourcing
   > Introdurre il concetto di schema
 
 
 > Perchè la gestione dei dati è importante nelle architetture a microservizi
 
-## 2. Apache Kafka e l'ecosistema
+## 3. Apache Kafka e l'ecosistema
 
-### 2.1 Cos'è - come funziona: Log
+### 3.1 Descrizione generica Kafka
 
 > Struttura di base: log => log compaction
 
@@ -130,7 +155,7 @@ In eve
 
 > Come collegare event sourcing e kafka => perchè kafka è una buona piattaforma per event sourcing
 
-### 2.2 Kafka Connect
+### 3.2 Kafka Connect
 > Schema
 
 > Source connectors
@@ -140,16 +165,16 @@ In eve
 > Community involment
 
 
-### 2.3 Kafka Streams
+### 3.3 Kafka Streams
 
 > cos'è streams
 
 > KSQL/LSQL
 
 
-## 3. Esempi di utilizzo di Kafka
+## 4. Esempi di utilizzo di Kafka
 
-## 4. Bibliografia
+## 5. Bibliografia
 
 https://martinfowler.com/eaaDev/EventSourcing.html  
 https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/  
