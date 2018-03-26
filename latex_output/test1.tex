@@ -144,32 +144,34 @@ inserimento, cancellazione e modifica da uno o più database può essere
 modellata come una sequenza di eventi e quali sono i vantaggi di un
 approccio basato su \textbf{event sourcing} (ES).
 
-\hypertarget{etl}{\subsubsection{2.1 ETL}\label{etl}}
+\newpage
 
-\begin{quote}
-Cos'è un processo di etl
-\end{quote}
+\hypertarget{etl}{\subsubsection{2.1 ETL}\label{etl}}
 
 Un processo di Extract, Transform, Load (ETL) è un processo mirato alla
 trasformazione di dati contenuti su più database per ottenere un nuovo
 insieme di dati, filtrato e traformato secondo una particolare logica,
-destinato ad essere salvato in una data warehouse.\\
+destinato ad essere salvato in una data warehouse.
+
 Verso la fine degli anni '70 molte aziende iniziarono ad utilizzare
 molteplici database per salvare e gestire informazioni, è proprio in
 questo contesto che nascono i processi di ETL: con l'avanzare del tempo
 è stato necessario studiare un metodo per l'aggregazione e gestione
 delle varie fonti di dati.
 
-Un qualsiasi processo di ETL si compone di tre parti:
+\begin{figure}
+\centering
+\includegraphics[width=0.80000\textwidth]{../images/etl.png}
+\caption{etl\_process \label{figure_4}}
+\end{figure}
 
-\begin{quote}
-Extract
-\end{quote}
+Un processo di ETL si compone di tre parti:
 
-E' la prima parte del processo di ETL ed involve l'estrazione dei dati
-da più data sources come database relazionali o non-relazionali, file
-JSON od XML ma anche risorse ``adhoc'' come, ad esempio, dei dati
-generati da programmi di web analytics.
+La prima parte del processo di ETL è la fase di \textbf{Extract} ed
+involve l'estrazione dei dati da più data sources come database
+relazionali o non-relazionali, file JSON od XML ma anche risorse
+``adhoc'' come, ad esempio, dei dati generati da programmi di web
+analytics.
 
 L'obiettivo di questa fase è estrarre tutti i dati necessari dalle
 possibili sorgenti e prepararli alla fase di Transform.
@@ -184,13 +186,11 @@ validazione} per filtrare i dati provenienti dalle varie sorgenti, un
 esempio di regola di validazione è il controllo dei tipi di dati
 presenti nella fonte.
 
-\begin{quote}
-Transform
-\end{quote}
+\newpage
 
-Nella fase di Transform una serie di regole e funzioni vengono applicate
-ai dati generati dalla fase di Extract per prepararli alla fase di Load
-nella data warehouse.
+Nella fase di \textbf{Transform} una serie di regole e funzioni vengono
+applicate ai dati generati dalla fase di Extract per prepararli alla
+fase di Load nella data warehouse.
 
 Il primo compito della fase di Transform è la \textbf{pulizia dei dati}:
 spesso le varie fonti di dati, nonostante siano state validate, possono
@@ -222,13 +222,9 @@ sono:
   Validazione del nuovo formato di dati prodotto
 \end{itemize}
 
-\begin{quote}
-Load
-\end{quote}
-
-Nella fase di Load l'insieme di dati generati dalla fase di Transform
-vengono inseriti in un target, il quale potrebbe essere una data
-warehouse ma anche più semplicemente un file in un formato utile.\\
+Nella fase di \textbf{Load} l'insieme di dati generati dalla fase di
+Transform vengono inseriti in un target, il quale potrebbe essere una
+data warehouse ma anche più semplicemente un file in un formato utile.\\
 Business diversi hanno necessità diverse, per questo l'implementazione
 della fase di load può avere più modalità implementative, il punto
 focale di questa fase è proprio stabilire la frequenza e le modalità di
@@ -458,6 +454,8 @@ questo problema vengono realizzati degli snapshot dello stato
 dell'applicazione da utilizzare per l'esecuzione delle query di ricerca.
 La frequenza di generazione ed aggiornamento di questi snapshot è
 strettamente legata al dominio applicativo dell'applicazione.
+
+\newpage
 
 \subsubsection{2.4 Stream Processing}\label{stream-processing}
 
