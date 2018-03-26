@@ -302,8 +302,9 @@ Questa soluzione ha un enorme problema: supponiamo di notare un errore
 sul database e di doverlo correggere, come possiamo decidere quale delle
 views è ``più corretta'' delle altre? Per aiutarci nella ricerca
 dell'errore potremmo utilizzare il transactional log di ogni views, ma
-su database di grandezze importanti potrebbe essere un problema non
-indifferente.
+su database di grandezze importanti esaminare il log di ogni views che
+lo compone potrebbe essere un problema complesso e dispendioso in
+termini di tempo.
 
 Event sourcing propone di risolvere questo genere di problemi
 allontanandosi da una progettazione database-driven e basata sul pattern
