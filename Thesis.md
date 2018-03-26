@@ -113,28 +113,32 @@ Event sourcing propone di risolvere questo genere di problemi allontanandosi da 
 
  > Event Sourcing ensures that all changes to application state are stored as a sequence of events. Not just can we query these events, we can also use the event log to reconstruct past states, and as a foundation to automatically adjust the state to cope with retroactive changes.  
 
-Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo^ basata su tabelle e schemi di uno o più database.
+Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo^ basata sullo stato di una applicazione e dei suoi database fornendo come alternativa l'uso degli eventi, ovvero delle azioni o accadimenti che l'applicazione è in grado di riconoscere e gestire.
 
 Durante l'analisi dei requisiti di una applicazione, spesso ci si trova a confronto con esperti di un dominio applicativo che non hanno particolare conoscenza delle tecnologie necessarie per implementare le loro richieste, è compito del programmatore (o del team di programmatore) analizzare le sue richieste e trasformarle in idee gestibili.  
-In genere questi esperti spiegheranno al programmatore le loro necessità illustrando il funzionamento del dominio utilizzando concetti molto più vicini a degli _eventi_ piuttosto che _sequenze di richieste/risposte a/da un database_.
+In genere questi esperti spiegheranno al programmatore le loro necessità illustrando il funzionamento del dominio utilizzando concetti molto più vicini a degli _eventi_ piuttosto che _sequenze di richieste/risposte a/da un database_; Supponendo di dover sviluppare una piattaforma di e-commerce, è molto più probabile che l'esperto di dominio richieda di gestire eventi come "aggiungere un oggetto al carrello" oppure "comprare un oggetto" piuttosto che "creare dei database per gestire carrello, stock oggetti rimamenti, oggetti comprati".
+
+La struttura dati fondamentale alla base di ES è l'**event store**, una tipologia di database ottimizzata per la gestione di eventi.  
+
+Event sourcing è basato su due fondamenti:  
+
+
+- Ogni cambiamento di stato del mondo è da vedersi come un evento e deve essere salvato in un log
+- Tutti gli eventi salvati nel log devono essere in sequenza, ovvero devono essere nell'ordine in cui sono avvenuti
+
 
 Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-commerce, avremo tre microservizi:  
 
 
-- UI / frontend
-- Servizio per la gestione degli ordini
-- Servizio stock
+- UserInterface (UI)
+- Servizio per la gestione degli ordini (Orders service)
+- Servizio stock (Stock service)
 
-![Esempio setup \label{my_label}](../images/figure1.png){ width=50% }
+![Esempio_setup \label{figure_1}](../images/figure1.png){ width=50% }
 
 
 [...]
 
-Event sourcing (ES) è un design pattern basato su due fondamenti:  
-
-
-- Ogni cambiamento di stato del mondo è da vedersi come un evento; Ogni evento deve essere salvato
-- Tutti gli eventi devono essere salvati in sequenza, seguendo l'ordine in cui sono avvenuti
 
 [...]
  
@@ -197,6 +201,7 @@ Event sourcing (ES) è un design pattern basato su due fondamenti:
 ## 5. Bibliografia
 
 https://martinfowler.com/eaaDev/EventSourcing.html  
+https://en.wikipedia.org/wiki/Event_store  
 https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/  
 https://www.confluent.io/blog/build-services-backbone-events/  
 https://www.confluent.io/blog/apache-kafka-for-service-architectures/  
