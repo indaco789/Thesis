@@ -324,10 +324,9 @@ automatically adjust the state to cope with retroactive changes.
 \end{quote}
 
 Event sourcing (ES) è un design pattern che si contrappone ad una
-visione del mondo\^{} basata sullo stato di una applicazione e dei suoi
-database fornendo come alternativa l'uso degli eventi, ovvero delle
-azioni o accadimenti che l'applicazione è in grado di riconoscere e
-gestire.
+visione del mondo\^{} basata sullo stato di una applicazione fornendo
+come alternativa l'uso degli eventi, ovvero delle azioni o accadimenti
+che l'applicazione è in grado di riconoscere e gestire.
 
 Durante l'analisi dei requisiti di una applicazione, spesso ci si trova
 a confronto con esperti di un dominio applicativo che non hanno
@@ -346,19 +345,51 @@ database per gestire carrello, stock oggetti rimamenti, oggetti
 comprati''.
 
 La struttura dati fondamentale alla base di ES è l'\textbf{event store},
-una tipologia di database ottimizzata per la gestione di eventi.
+una tipologia di database ottimizzata per la gestione di eventi.\\
+In un event store, gli eventi vengono inseriti in fondo alla struttura
+in ordine di avvenimento e non possono essere modificati o cancellati;
+Nel caso venga pubblicato per errore un evento sbagliato o inesatto per
+annularlo basterà pubblicare un evento contrario. Questo meccanismo
+garantisce che la ripetizione della storia degli eventi \emph{porterà
+sempre allo stesso stato, errore compreso}.
 
-Event sourcing è basato su due fondamenti:
+Un event store è comunemente implementato utilizzando un \textbf{log},
+una sequenza di record append-only e totalmente ordinata in base al
+tempo di scrittura del record.
 
-\begin{itemize}
-\tightlist
-\item
-  Ogni cambiamento di stato del mondo è da vedersi come un evento e deve
-  essere salvato in un log
-\item
-  Tutti gli eventi salvati nel log devono essere in sequenza, ovvero
-  devono essere nell'ordine in cui sono avvenuti
-\end{itemize}
+\begin{figure}
+\centering
+\includegraphics[width=0.50000\textwidth]{../images/log.png}
+\caption{log\_data\_structure \label{figure_1}}
+\end{figure}
+
+I record sono inseriti in fondo al log e il processo di lettura è
+eseguito partendo dall'inizio del log.
+
+Generalmente in un processo di sviluppo basato su ES, si tende a
+nominare gli eventi con il tempo passato per esplicitare il concetto che
+un evento è un avvenimento passato, un esempio nome per un evento
+potrebbe essere \texttt{item\_created} oppure \texttt{item\_bought}.
+
+L'ordine di pubblicazione degli eventi è di estrema importanza in quanto
+è ciò che permette al pattern di rappresentare correttamente lo stato di
+una applicazione.
+
+E' possibile vedere lo stato corrente di una applicazione come una
+sequenza di operazioni di modifica dello stato eseguite partendo da uno
+stato iniziale, questo implica che è possibile vedere un evento come il
+delta tra lo stato iniziale di una applicazione e lo stato di arrivo
+dell'applicazione all'avvenire del evento.\\
+La possibilità di trasformare lo stato corrente di una applicazione in
+una funzione dello stato iniziale dell'applicazione e una sequenza di
+eventi è il meccanismo che permette ad event sourcing di avere una
+validità tecnica per la gestione dei dati di una applicazione.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.50000\textwidth]{../images/streams-table-duality.jpg}
+\caption{event\_log\_database\_duality \label{figure_2}}
+\end{figure}
 
 Supponiamo di dover sviluppare una soluzione software per una
 piattaforma di e-commerce, avremo tre microservizi:
@@ -376,12 +407,8 @@ piattaforma di e-commerce, avremo tre microservizi:
 \begin{figure}
 \centering
 \includegraphics[width=0.50000\textwidth]{../images/figure1.png}
-\caption{Esempio\_setup \label{figure_1}}
+\caption{esempio\_es \label{figure_3}}
 \end{figure}
-
-{[}\ldots{}{]}
-
-{[}\ldots{}{]}
 
 \begin{quote}
 Esempio di utilizzo di event sourcing =\textgreater{} come faccio? è

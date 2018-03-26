@@ -113,35 +113,39 @@ Event sourcing propone di risolvere questo genere di problemi allontanandosi da 
 
  > Event Sourcing ensures that all changes to application state are stored as a sequence of events. Not just can we query these events, we can also use the event log to reconstruct past states, and as a foundation to automatically adjust the state to cope with retroactive changes.  
 
-Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo^ basata sullo stato di una applicazione e dei suoi database fornendo come alternativa l'uso degli eventi, ovvero delle azioni o accadimenti che l'applicazione è in grado di riconoscere e gestire.
+Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo^ basata sullo stato di una applicazione fornendo come alternativa l'uso degli eventi, ovvero delle azioni o accadimenti che l'applicazione è in grado di riconoscere e gestire.
 
 Durante l'analisi dei requisiti di una applicazione, spesso ci si trova a confronto con esperti di un dominio applicativo che non hanno particolare conoscenza delle tecnologie necessarie per implementare le loro richieste, è compito del programmatore (o del team di programmatore) analizzare le sue richieste e trasformarle in idee gestibili.  
 In genere questi esperti spiegheranno al programmatore le loro necessità illustrando il funzionamento del dominio utilizzando concetti molto più vicini a degli _eventi_ piuttosto che _sequenze di richieste/risposte a/da un database_; Supponendo di dover sviluppare una piattaforma di e-commerce, è molto più probabile che l'esperto di dominio richieda di gestire eventi come "aggiungere un oggetto al carrello" oppure "comprare un oggetto" piuttosto che "creare dei database per gestire carrello, stock oggetti rimamenti, oggetti comprati".
 
 La struttura dati fondamentale alla base di ES è l'**event store**, una tipologia di database ottimizzata per la gestione di eventi.  
+In un event store, gli eventi vengono inseriti in fondo alla struttura in ordine di avvenimento e non possono essere modificati o cancellati; Nel caso venga pubblicato per errore un evento sbagliato o inesatto per annularlo basterà pubblicare un evento contrario. Questo meccanismo garantisce che la ripetizione della storia degli eventi _porterà sempre allo stesso stato, errore compreso_.
 
-Event sourcing è basato su due fondamenti:  
+Un event store è comunemente implementato utilizzando un **log**, una sequenza di record append-only e totalmente ordinata in base al tempo di scrittura del record.
+
+![log_data_structure \label{figure_1}](../images/log.png){ width=50% }
+
+I record sono inseriti in fondo al log e il processo di lettura è eseguito partendo dall'inizio del log.
+
+Generalmente in un processo di sviluppo basato su ES, si tende a nominare gli eventi con il tempo passato per esplicitare il concetto che un evento è un avvenimento passato, un esempio nome per un evento potrebbe essere `item_created` oppure `item_bought`.
+
+L'ordine di pubblicazione degli eventi è di estrema importanza in quanto è ciò che permette al pattern di rappresentare correttamente lo stato di una applicazione.
+
+E' possibile vedere lo stato corrente di una applicazione come una sequenza di operazioni di modifica dello stato eseguite partendo da uno stato iniziale, questo implica che è possibile vedere un evento come il delta tra lo stato iniziale di una applicazione e lo stato di arrivo dell'applicazione all'avvenire del evento.  
+La possibilità di trasformare lo stato corrente di una applicazione in una funzione dello stato iniziale dell'applicazione e una sequenza di eventi è il meccanismo che permette ad event sourcing di avere una validità tecnica per la gestione dei dati di una applicazione.
+
+![event_log_database_duality \label{figure_2}](../images/streams-table-duality.jpg){ width=50% }
 
 
-- Ogni cambiamento di stato del mondo è da vedersi come un evento e deve essere salvato in un log
-- Tutti gli eventi salvati nel log devono essere in sequenza, ovvero devono essere nell'ordine in cui sono avvenuti
 
 
 Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-commerce, avremo tre microservizi:  
-
 
 - UserInterface (UI)
 - Servizio per la gestione degli ordini (Orders service)
 - Servizio stock (Stock service)
 
-![Esempio_setup \label{figure_1}](../images/figure1.png){ width=50% }
-
-
-[...]
-
-
-[...]
- 
+![esempio_es \label{figure_3}](../images/figure1.png){ width=50% }
 
 > Esempio di utilizzo di event sourcing => come faccio? è giusto copiare l'esempio che c'è già su un sito in modo da sfruttarne le figure?
 
