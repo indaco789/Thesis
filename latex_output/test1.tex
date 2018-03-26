@@ -6,7 +6,6 @@
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-  \usepackage{eurosym}
 \else % if luatex or xelatex
   \ifxetex
     \usepackage{mathspec}
@@ -14,7 +13,6 @@
     \usepackage{fontspec}
   \fi
   \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
-  \newcommand{\euro}{€}
 \fi
 % use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -137,13 +135,14 @@ streaming dei dati tra microservizi.
 \hypertarget{introduzione}{\subsection{2.
 Introduzione}\label{introduzione}}
 
-Prima di poter discutere della architettura fornita da Apache Kafka, è
-necessario comprendere le differenze tra ETL e stream processing.\\
-Per poter utilizzare pienamente stream processing, è inoltre necessario
-comprendere come la gestione di dati basata su inserimento,
-cancellazione e modifica da database, può essere modellata come una
-serie di eventi e quali sono i vantaggi di un approccio alla gestione di
-questi dati basato su \textbf{event sourcing} (ES).
+Prima di poter discutere della soluzione architetturale fornita da
+Apache Kafka, è necessario comprendere le differenze tra ETL e stream
+processing.\\
+Inoltre per poter utilizare pienamente stream processing, è necessario
+comprendere come la gestione dello stato di una applicazione basata su
+inserimento, cancellazione e modifica da uno o più database può essere
+modellata come una sequenza di eventi e quali sono i vantaggi di un
+approccio basato su \textbf{event sourcing} (ES).
 
 \hypertarget{etl}{\subsubsection{2.1 ETL}\label{etl}}
 
@@ -307,21 +306,15 @@ lo compone potrebbe essere un problema complesso e dispendioso in
 termini di tempo.
 
 Event sourcing propone di risolvere questo genere di problemi
-allontanandosi da una progettazione database-driven e basata sul pattern
-di richiesta/risposta a risorse elevando gli eventi a elementi chiavi
-del modello dei dati di una applicazione.
+allontanandosi da una progettazione state-driven elevando gli eventi a
+elementi chiavi del modello dei dati di una applicazione.
 
 \newpage
 
 \hypertarget{event-sourcing}{\subsubsection{2.3. Event
 sourcing}\label{event-sourcing}}
 
-\begin{quote}
-Event Sourcing ensures that all changes to application state are stored
-as a sequence of events. Not just can we query these events, we can also
-use the event log to reconstruct past states, and as a foundation to
-automatically adjust the state to cope with retroactive changes.
-\end{quote}
+\paragraph{2.3.1 Descrizione}\label{descrizione}
 
 Event sourcing (ES) è un design pattern che si contrappone ad una
 visione del mondo\^{} basata sullo stato di una applicazione fornendo
@@ -359,7 +352,7 @@ tempo di scrittura del record.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.50000\textwidth]{../images/log.png}
+\includegraphics[width=0.68000\textwidth]{../images/log.png}
 \caption{log\_data\_structure \label{figure_1}}
 \end{figure}
 
@@ -375,11 +368,12 @@ L'ordine di pubblicazione degli eventi è di estrema importanza in quanto
 è ciò che permette al pattern di rappresentare correttamente lo stato di
 una applicazione.
 
-E' possibile vedere lo stato corrente di una applicazione come una
-sequenza di operazioni di modifica dello stato eseguite partendo da uno
-stato iniziale, questo implica che è possibile vedere un evento come il
-delta tra lo stato iniziale di una applicazione e lo stato di arrivo
-dell'applicazione all'avvenire del evento.\\
+E' possibile vedere lo \textbf{stato corrente di una applicazione} come
+una \textbf{sequenza di operazioni di modifica dello stato eseguite
+partendo da uno stato iniziale}, questo implica che è possibile vedere
+un \textbf{evento} come il \textbf{delta tra lo stato iniziale di una
+applicazione e lo stato corrente dell'applicazione dopo l'esecuzione
+dell'evento}.\\
 La possibilità di trasformare lo stato corrente di una applicazione in
 una funzione dello stato iniziale dell'applicazione e una sequenza di
 eventi è il meccanismo che permette ad event sourcing di avere una
@@ -387,48 +381,83 @@ validità tecnica per la gestione dei dati di una applicazione.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.50000\textwidth]{../images/streams-table-duality.jpg}
+\includegraphics[width=0.80000\textwidth]{../images/streams-table-duality.jpg}
 \caption{event\_log\_database\_duality \label{figure_2}}
 \end{figure}
 
-Supponiamo di dover sviluppare una soluzione software per una
-piattaforma di e-commerce, avremo tre microservizi:
+\newpage
 
-\begin{itemize}
-\tightlist
-\item
-  UserInterface (UI)
-\item
-  Servizio per la gestione degli ordini (Orders service)
-\item
-  Servizio stock (Stock service)
-\end{itemize}
+\paragraph{2.3.2 Vantaggi}\label{vantaggi}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.50000\textwidth]{../images/figure1.png}
-\caption{esempio\_es \label{figure_3}}
-\end{figure}
+Event sourcing è un pattern estremamente utile per tutti quegli use-case
+dove è assolutamente necessario mantenere una storia dello sviluppo
+dello stato dell'applicazione del tempo. Tipici esempi sono gli
+strumenti di versioning del codice oppure la gestione di un storico
+bancario.
 
-\begin{quote}
-Esempio di utilizzo di event sourcing =\textgreater{} come faccio? è
-giusto copiare l'esempio che c'è già su un sito in modo da sfruttarne le
-figure?
-\end{quote}
+La capacità dell'event store di essere sia una struttura dati
+performante per la scrittura dei dati (è una semplice operazione di
+scrittura in fondo ad una sequenza di complessità O(1)) che una
+cronologia di tutti gli avvenimenti del sistema, permette una gestione
+degli errori estremamente semplice.
 
-\begin{quote}
-Problemi risolti da event sourcing =\textgreater{} ho un log di
-cambiamenti, semplicità nella gestione dei cambiamenti
-\end{quote}
+In un qualsiasi database relazionale se durante il normale utilizzo
+dell'applicazione avviene un errore logico che porta il database ad uno
+stato non corretto, è sempre necessario un rollback dell'intero database
+ad un data antecedente l'errore per poter sperare di correggiare
+l'errore.\\
+Tale processo è dispendioso in termini di tempo e non è di facile
+esecuzione in quanto spesso il processo di backup di un database non
+viene eseguito dopo ogni inserimento o update di un record; Per poter
+correggere l'errore sarà quindi necessario calcolare partire dal backup
+più recente e applicare nuovamente tutte le transformazioni del
+database, meno l'errore.
 
-\begin{quote}
-Problemi creati da event sourcing\\
-=\textgreater{} può essere complicato eseguire query del tipo ``voglio
-tutti gli ordini con valore \textgreater{}50\euro{}'' in quanto richiede
-la generazione dello stato corrente del mondo, ovvero la lettura ed
-esecuzione di tutto il log\\
--\textgreater{} risolvibile creando views parallele al log
-\end{quote}
+L'analisi del motivo dell'errore può inoltre non essere di facile
+realizzazione con un database relazionale a meno che non siano in uso i
+meccanismi di CDC: senza una cronologia delle transazioni può essere
+molto difficile risalire al motivo dell'errore.
+
+Diversamente nel caso dell'utilizzo di Event Sourcing, la gestione e
+l'analisi di un errore è estremamente semplice. Nel caso in cui
+l'errore, che sarà sempre un evento, non ha generato un effetto
+``domino'' sul sistema (ovvero l'errore non ha portato all'esecuzione di
+uan catena di errori), una volta individuato è possibile pubblicare un
+evento ``contrario'' alla causa dell'errore in modo tale da cancellare
+l'apporto dell'errore sul sistema.\\
+Nel caso contrario, ovvero il caso in cui l'errore ha generato una
+sequenza di errori, per ottenere lo stato corretto del sistema basterà
+ripetere l'esecuzione di tutti gli eventi del sistema escludendo quello
+che ha generato l'errore sulla base di dati.
+
+E' bene notare che con ES la gestione degli errori nello stato del
+sistema è strettamente legata all'atomicità e definizione degli eventi
+del sistema: una corretta (semplice) definizione degli eventi del
+sistema porterà ad una cronologia del sistema più chiara e
+comprensibile.
+
+\newpage
+
+\paragraph{2.3.3 Svantaggi}\label{svantaggi}
+
+Event sourcing potrebbe non essere utile per una applicazione che
+richiede frequenti e continue query di richiesta sullo stato del
+sistema.\\
+Come descritto in precedenza, per ottenere lo stato corrente del sistema
+è necessario eseguire tutti gli eventi publiccati sull'event store
+partendo da uno stato iniziale; Se la nostra applicazione richiede di
+eseguire molte query di ricerca sullo stato corrente del database sarà
+quindi necessario calcolare lo stato del sistema \emph{ogni volta che
+viene eseguita una nuova richiesta} (un esempio di richiesta sullo stato
+è la ricerca di tutti i record che presentano una particolare
+caratteristica).
+
+Le modalità per risolvere questo problema sono spesso legate al dominio
+e uso dell'applicazione che utlizza ES, ma generalmente per ovviare a
+questo problema vengono realizzati degli snapshot dello stato
+dell'applicazione da utilizzare per l'esecuzione delle query di ricerca.
+La frequenza di generazione ed aggiornamento di questi snapshot è
+strettamente legata al dominio applicativo dell'applicazione.
 
 \subsubsection{2.4 Stream Processing}\label{stream-processing}
 

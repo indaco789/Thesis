@@ -37,8 +37,8 @@ Kafka nasce per sfruttare a pieno lo stream processing e favorire una gestione i
 
 ## 2. Introduzione
 
-Prima di poter discutere della architettura fornita da Apache Kafka, è necessario comprendere le differenze tra ETL e stream processing.  
-Per poter utilizzare pienamente stream processing, è inoltre necessario comprendere come la gestione di dati basata su inserimento, cancellazione e modifica da database, può essere modellata come una serie di eventi e quali sono i vantaggi di un approccio alla gestione di questi dati basato su **event sourcing** (ES).
+Prima di poter discutere della soluzione architetturale fornita da Apache Kafka, è necessario comprendere le differenze tra ETL e stream processing.  
+Inoltre per poter utilizare pienamente stream processing, è necessario comprendere come la gestione dello stato di una applicazione basata su inserimento, cancellazione e modifica da uno o più database può essere modellata come una sequenza di eventi e quali sono i vantaggi di un approccio basato su **event sourcing** (ES).
 
 ### 2.1 ETL
 
@@ -103,7 +103,7 @@ In questo modello database-driven, un evento genera un cambiamento su una base d
 Una soluzione al problema di più microservizi che utilizzano lo stesso database è di utilizzare delle views del database locali ad ogni microservizio: ogni servizio lavorerà su una copia locale del database ed un job esterno si occuperà di compattare le views e mantenere il database aggiornato rispetto a tutti i cambiamenti.  
 Questa soluzione ha un enorme problema: supponiamo di notare un errore sul database e di doverlo correggere, come possiamo decidere quale delle views è "più corretta" delle altre? Per aiutarci nella ricerca dell'errore potremmo utilizzare il transactional log di ogni views, ma su database di grandezze importanti esaminare il log di ogni views che lo compone potrebbe essere un problema complesso e dispendioso in termini di tempo.
 
-Event sourcing propone di risolvere questo genere di problemi allontanandosi da una progettazione database-driven e basata sul pattern di richiesta/risposta a risorse elevando gli eventi a elementi chiavi del modello dei dati di una applicazione.
+Event sourcing propone di risolvere questo genere di problemi allontanandosi da una progettazione state-driven elevando gli eventi a elementi chiavi del modello dei dati di una applicazione.
 
 \newpage
 
@@ -111,8 +111,10 @@ Event sourcing propone di risolvere questo genere di problemi allontanandosi da 
 
 ### 2.3. Event sourcing
 
+#### 2.3.1 Descrizione 
+<!---
  > Event Sourcing ensures that all changes to application state are stored as a sequence of events. Not just can we query these events, we can also use the event log to reconstruct past states, and as a foundation to automatically adjust the state to cope with retroactive changes.  
-
+-->
 Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo^ basata sullo stato di una applicazione fornendo come alternativa l'uso degli eventi, ovvero delle azioni o accadimenti che l'applicazione è in grado di riconoscere e gestire.
 
 Durante l'analisi dei requisiti di una applicazione, spesso ci si trova a confronto con esperti di un dominio applicativo che non hanno particolare conoscenza delle tecnologie necessarie per implementare le loro richieste, è compito del programmatore (o del team di programmatore) analizzare le sue richieste e trasformarle in idee gestibili.  
@@ -123,7 +125,7 @@ In un event store, gli eventi vengono inseriti in fondo alla struttura in ordine
 
 Un event store è comunemente implementato utilizzando un **log**, una sequenza di record append-only e totalmente ordinata in base al tempo di scrittura del record.
 
-![log_data_structure \label{figure_1}](../images/log.png){ width=50% }
+![log_data_structure \label{figure_1}](../images/log.png){ width=68% }
 
 I record sono inseriti in fondo al log e il processo di lettura è eseguito partendo dall'inizio del log.
 
@@ -131,14 +133,40 @@ Generalmente in un processo di sviluppo basato su ES, si tende a nominare gli ev
 
 L'ordine di pubblicazione degli eventi è di estrema importanza in quanto è ciò che permette al pattern di rappresentare correttamente lo stato di una applicazione.
 
-E' possibile vedere lo stato corrente di una applicazione come una sequenza di operazioni di modifica dello stato eseguite partendo da uno stato iniziale, questo implica che è possibile vedere un evento come il delta tra lo stato iniziale di una applicazione e lo stato di arrivo dell'applicazione all'avvenire del evento.  
+E' possibile vedere lo **stato corrente di una applicazione** come una **sequenza di operazioni di modifica dello stato eseguite partendo da uno stato iniziale**, questo implica che è possibile vedere un **evento** come il **delta tra lo stato iniziale di una applicazione e lo stato corrente dell'applicazione dopo l'esecuzione dell'evento**.  
 La possibilità di trasformare lo stato corrente di una applicazione in una funzione dello stato iniziale dell'applicazione e una sequenza di eventi è il meccanismo che permette ad event sourcing di avere una validità tecnica per la gestione dei dati di una applicazione.
 
-![event_log_database_duality \label{figure_2}](../images/streams-table-duality.jpg){ width=50% }
+![event_log_database_duality \label{figure_2}](../images/streams-table-duality.jpg){ width=80% }
 
+\newpage
 
+#### 2.3.2 Vantaggi 
 
+Event sourcing è un pattern estremamente utile per tutti quegli use-case dove è assolutamente necessario mantenere una storia dello sviluppo dello stato dell'applicazione del tempo. Tipici esempi sono gli strumenti di versioning del codice oppure la gestione di un storico bancario.  
 
+La capacità dell'event store di essere sia una struttura dati performante per la scrittura dei dati (è una semplice operazione di scrittura in fondo ad una sequenza di complessità O(1)) che una cronologia di tutti gli avvenimenti del sistema, permette una gestione degli errori estremamente semplice.  
+
+In un qualsiasi database relazionale se durante il normale utilizzo dell'applicazione avviene un errore logico che porta il database ad uno stato non corretto, è sempre necessario un rollback dell'intero database ad un data antecedente l'errore per poter sperare di correggiare l'errore.  
+Tale processo è dispendioso in termini di tempo e non è di facile esecuzione in quanto spesso il processo di backup di un database non viene eseguito dopo ogni inserimento o update di un record; Per poter correggere l'errore sarà quindi necessario calcolare partire dal backup più recente e applicare nuovamente tutte le transformazioni del database, meno l'errore.  
+
+L'analisi del motivo dell'errore può inoltre non essere di facile realizzazione con un database relazionale a meno che non siano in uso i meccanismi di CDC: senza una cronologia delle transazioni può essere molto difficile risalire al motivo dell'errore.
+
+Diversamente nel caso dell'utilizzo di Event Sourcing, la gestione e l'analisi di un errore è estremamente semplice.
+Nel caso in cui l'errore, che sarà sempre un evento, non ha generato un effetto "domino" sul sistema (ovvero l'errore non ha portato all'esecuzione di uan catena di errori), una volta individuato è possibile pubblicare un evento "contrario" alla causa dell'errore in modo tale da cancellare l'apporto dell'errore sul sistema.  
+Nel caso contrario, ovvero il caso in cui l'errore ha generato una sequenza di errori, per ottenere lo stato corretto del sistema basterà ripetere l'esecuzione di tutti gli eventi del sistema escludendo quello che ha generato l'errore sulla base di dati.  
+
+E' bene notare che con ES la gestione degli errori nello stato del sistema è strettamente legata all'atomicità e definizione degli eventi del sistema: una corretta (semplice) definizione degli eventi del sistema porterà ad una cronologia del sistema più chiara e comprensibile.  
+
+\newpage
+
+#### 2.3.3 Svantaggi
+
+Event sourcing potrebbe non essere utile per una applicazione che richiede frequenti e continue query di richiesta sullo stato del sistema.  
+Come descritto in precedenza, per ottenere lo stato corrente del sistema è necessario eseguire tutti gli eventi publiccati sull'event store partendo da uno stato iniziale; Se la nostra applicazione richiede di eseguire molte query di ricerca sullo stato corrente del database sarà quindi necessario calcolare lo stato del sistema _ogni volta che viene eseguita una nuova richiesta_ (un esempio di richiesta sullo stato è la ricerca di tutti i record che presentano una particolare caratteristica).  
+
+Le modalità per risolvere questo problema sono spesso legate al dominio e uso dell'applicazione che utlizza ES, ma generalmente per ovviare a questo problema vengono realizzati degli snapshot dello stato dell'applicazione da utilizzare per l'esecuzione delle query di ricerca.  La frequenza di generazione ed aggiornamento di questi snapshot è strettamente legata al dominio applicativo dell'applicazione.
+
+<!---
 Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-commerce, avremo tre microservizi:  
 
 - UserInterface (UI)
@@ -148,12 +176,10 @@ Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-c
 ![esempio_es \label{figure_3}](../images/figure1.png){ width=50% }
 
 > Esempio di utilizzo di event sourcing => come faccio? è giusto copiare l'esempio che c'è già su un sito in modo da sfruttarne le figure?
+-->
 
-> Problemi risolti da event sourcing => ho un log di cambiamenti, semplicità nella gestione dei cambiamenti
 
-> Problemi creati da event sourcing   
-> => può essere complicato eseguire query del tipo "voglio tutti gli ordini con valore >50€" in quanto richiede la generazione dello stato corrente del mondo, ovvero la lettura ed esecuzione di tutto il log   
-> -> risolvibile creando views parallele al log
+
 
 ### 2.4 Stream Processing
 
