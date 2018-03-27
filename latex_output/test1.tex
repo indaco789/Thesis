@@ -87,10 +87,13 @@
   4.3. \protect\hyperlink{vantaggi-es}{Vantaggi}\\
   4.4. \protect\hyperlink{svantaggi-es}{Svantaggi}
 \item
-  {[}Apache Kafka e l'ecosistema{]}\\
-  5.1. {[}Struttura generica di Kafka{]}\\
-  5.2. {[}Kafka Connect{]}\\
-  5.3. {[}Kafka Streams{]}
+  {[}Apache Kafka: a streaming platform{]}\\
+  5.1. {[}Descrizione ed uso di una streaming platform{]}\\
+  5.2. {[}L'architettura di Kafka{]}\\
+  5.3. {[}Competitors e soluzioni alternative{]}
+\item
+  {[}L'ecosistema di Kafka{]} 6.1. {[}Kafka Connect{]}\\
+  6.2. {[}Kafka Streams{]}
 \item
   {[}Conclusioni{]}
 \item
@@ -138,8 +141,8 @@ streaming dei dati tra microservizi.
 
 \newpage
 
-\hypertarget{introduzione}{\subsection{2.
-Introduzione}\label{introduzione}}
+\subsection{2. Introduzione {[}da rifare ed
+espandere{]}}\label{introduzione-da-rifare-ed-espandere}
 
 Prima di poter discutere della soluzione architetturale fornita da
 Apache Kafka, è necessario comprendere le differenze tra ETL e stream
@@ -316,9 +319,9 @@ elementi chiavi del modello dei dati di una applicazione.
 \subsubsection{4.2. Descrizione}\label{descrizione}
 
 Event sourcing (ES) è un design pattern che si contrappone ad una
-visione del mondo\^{} basata sullo stato di una applicazione fornendo
-come alternativa l'uso degli eventi, ovvero delle azioni o accadimenti
-che l'applicazione è in grado di riconoscere e gestire.
+visione del mondo basata sullo stato di una applicazione fornendo come
+alternativa l'uso degli eventi, ovvero delle azioni o accadimenti che
+l'applicazione è in grado di riconoscere e gestire.
 
 Durante l'analisi dei requisiti di una applicazione, spesso ci si trova
 a confronto con esperti di un dominio applicativo che non hanno
@@ -514,6 +517,8 @@ Kafka}\label{esempi-di-utilizzo-di-kafka}
 
 \subsection{5. Bibliografia}\label{bibliografia}
 
+https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
+https://www.confluent.io/blog/stream-data-platform-1/
 https://martinfowler.com/eaaDev/EventSourcing.html\\
 https://en.wikipedia.org/wiki/Event\_store\\
 https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/\\

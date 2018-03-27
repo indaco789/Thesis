@@ -9,13 +9,16 @@
     4.2. [Descrizione](#descrizione-es)  
     4.3. [Vantaggi](#vantaggi-es)  
     4.4. [Svantaggi](#svantaggi-es)
-5. [Apache Kafka e l'ecosistema]   
-    5.1. [Struttura generica di Kafka]  
-    5.2. [Kafka Connect]  
-    5.3. [Kafka Streams]
-6. [Conclusioni]
-7. [Esempi di utilizzo]
-8. [Bibliografia]
+5. [Apache Kafka: a streaming platform]   
+    5.1. [Descrizione ed uso di una streaming platform]  
+    5.2. [L'architettura di Kafka]  
+    5.3. [Competitors e soluzioni alternative]
+6. [L'ecosistema di Kafka]
+    6.1. [Kafka Connect]  
+    6.2. [Kafka Streams]
+7. [Conclusioni]
+8. [Esempi di utilizzo]
+9. [Bibliografia]
 
 \newpage
 
@@ -38,7 +41,7 @@ Kafka nasce per sfruttare a pieno lo stream processing e favorire una gestione i
 
 <div id='introduzione'/>
 
-## 2. Introduzione
+## 2. Introduzione [da rifare ed espandere]
 
 Prima di poter discutere della soluzione architetturale fornita da Apache Kafka, è necessario comprendere le differenze tra ETL e stream processing.  
 Inoltre per poter utilizare pienamente stream processing, è necessario comprendere come la gestione dello stato di una applicazione basata su inserimento, cancellazione e modifica da uno o più database può essere modellata come una sequenza di eventi e quali sono i vantaggi di un approccio basato su **event sourcing** (ES).
@@ -116,7 +119,7 @@ Event sourcing propone di risolvere questo genere di problemi allontanandosi da 
 <!---
  > Event Sourcing ensures that all changes to application state are stored as a sequence of events. Not just can we query these events, we can also use the event log to reconstruct past states, and as a foundation to automatically adjust the state to cope with retroactive changes.  
 -->
-Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo^ basata sullo stato di una applicazione fornendo come alternativa l'uso degli eventi, ovvero delle azioni o accadimenti che l'applicazione è in grado di riconoscere e gestire.
+Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo basata sullo stato di una applicazione fornendo come alternativa l'uso degli eventi, ovvero delle azioni o accadimenti che l'applicazione è in grado di riconoscere e gestire.
 
 Durante l'analisi dei requisiti di una applicazione, spesso ci si trova a confronto con esperti di un dominio applicativo che non hanno particolare conoscenza delle tecnologie necessarie per implementare le loro richieste, è compito del programmatore (o del team di programmatore) analizzare le sue richieste e trasformarle in idee gestibili.  
 In genere questi esperti spiegheranno al programmatore le loro necessità illustrando il funzionamento del dominio utilizzando concetti molto più vicini a degli _eventi_ piuttosto che _sequenze di richieste/risposte a/da un database_; Supponendo di dover sviluppare una piattaforma di e-commerce, è molto più probabile che l'esperto di dominio richieda di gestire eventi come "aggiungere un oggetto al carrello" oppure "comprare un oggetto" piuttosto che "creare dei database per gestire carrello, stock oggetti rimamenti, oggetti comprati".
@@ -229,6 +232,8 @@ Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-c
 
 ## 5. Bibliografia
 
+https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
+https://www.confluent.io/blog/stream-data-platform-1/
 https://martinfowler.com/eaaDev/EventSourcing.html  
 https://en.wikipedia.org/wiki/Event_store  
 https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/  
