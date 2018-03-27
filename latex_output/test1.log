@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  26 MAR 2018 16:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  27 MAR 2018 14:00
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -902,102 +902,95 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Underfull \hbox (badness 10000) in paragraph at lines 77--79
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 88--93
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 93--95
-
- []
-
 [1
 
 {/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-[2] [3] <../images/etl.png, id=95, 564.60938pt x 259.26863pt>
+[2] [3] <../images/etl.png, id=108, 564.60938pt x 259.26863pt>
 File: ../images/etl.png Graphic file (type png)
 
 <use ../images/etl.png>
-Package pdftex.def Info: ../images/etl.png used on input line 164.
+Package pdftex.def Info: ../images/etl.png used on input line 170.
 (pdftex.def)             Requested size: 276.00626pt x 126.74207pt.
  [4 <../images/etl.png>]
-LaTeX Font Info:    Try loading font information for TS1+lmr on input line 212.
+LaTeX Font Info:    Try loading font information for TS1+lmr on input line 218.
 
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) [5] [6]
-<../images/log.png, id=111, 397.485pt x 187.70125pt>
+<../images/log.png, id=124, 397.485pt x 187.70125pt>
 File: ../images/log.png Graphic file (type png)
  <use ../images/log.png>
-Package pdftex.def Info: ../images/log.png used on input line 351.
+Package pdftex.def Info: ../images/log.png used on input line 354.
 (pdftex.def)             Requested size: 234.60509pt x 110.78574pt.
-LaTeX Font Info:    Try loading font information for T1+lmtt on input line 361.
+
+[7 <../images/log.png>]
+LaTeX Font Info:    Try loading font information for T1+lmtt on input line 364.
 
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [7 <../images/log.png>] <../images/streams-table-duality.jpg, id=121, 1777.64
-125pt x 1541.76pt>
+)
+<../images/streams-table-duality.jpg, id=133, 1777.64125pt x 1541.76pt>
 File: ../images/streams-table-duality.jpg Graphic file (type jpg)
 
 <use ../images/streams-table-duality.jpg>
 Package pdftex.def Info: ../images/streams-table-duality.jpg used on input line
- 380.
+ 383.
 (pdftex.def)             Requested size: 275.99266pt x 239.37025pt.
  [8 <../images/streams-table-duality.jpg>] [9] [10] [11]
-Underfull \hbox (badness 10000) in paragraph at lines 539--549
+Underfull \hbox (badness 10000) in paragraph at lines 517--527
 \T1/lmr/m/n/10 (+20) https://www.confluent.io/blog/data-dichotomy-rethinking-th
 e-way-we-treat-
  []
 
 
-Overfull \hbox (0.15797pt too wide) in paragraph at lines 539--549
+Overfull \hbox (0.15797pt too wide) in paragraph at lines 517--527
 \T1/lmr/m/n/10 (+10) https://www.confluent.io/blog/building-a-microservices-eco
 system-with-kafka-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 539--549
+Underfull \hbox (badness 10000) in paragraph at lines 517--527
 \T1/lmr/m/n/10 (+20) https://content.pivotal.io/blog/understanding-when-to-use-
 rabbitmq-or-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 539--549
+Underfull \hbox (badness 10000) in paragraph at lines 517--527
 \T1/lmr/m/n/10 (+20) https://qconsf.com/sf2016/system/files/keynotes-slides/etl
 _is_dead_long-
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 550.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 528.
 [12]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 550.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 528.
  (./test1.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 550.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 550.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 528.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 528.
 Package rerunfilecheck Info: File `test1.out' has not changed.
-(rerunfilecheck)             Checksum: 59B6FAF569E086F395ED043E59A60ED5;2960.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 550.
+(rerunfilecheck)             Checksum: 00C0764A14F7D3FD721EE496DBD2D065;2480.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 528.
  ) 
 Here is how much of TeX's memory you used:
- 11825 strings out of 492995
- 170294 string characters out of 6132705
- 266142 words of memory out of 5000000
- 15149 multiletter control sequences out of 15000+600000
+ 11828 strings out of 492995
+ 170206 string characters out of 6132705
+ 265949 words of memory out of 5000000
+ 15148 multiletter control sequences out of 15000+600000
  30759 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 32i,5n,38p,566b,416s stack positions out of 5000i,500n,10000p,200000b,80000s
-pdfTeX warning (dest): name{intro-data} has been referenced but does not exis
-t, replaced by a fixed one
+ 32i,5n,38p,318b,338s stack positions out of 5000i,500n,10000p,200000b,80000s
+pdfTeX warning (dest): name{svantaggi-es} has been referenced but does not ex
+ist, replaced by a fixed one
+
+pdfTeX warning (dest): name{vantaggi-es} has been referenced but does not exist
+, replaced by a fixed one
+
+pdfTeX warning (dest): name{descrizione-es} has been referenced but does not ex
+ist, replaced by a fixed one
+
+pdfTeX warning (dest): name{intro-data} has been referenced but does not exist,
+ replaced by a fixed one
 
 {/usr/local/texlive/2017/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/te
 xlive/2017/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}</usr/local/texlive/2017/te
@@ -1006,10 +999,10 @@ onts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1
 /public/lm/lmr10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/
 lmri10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/lmtt10.pfb
 >
-Output written on test1.pdf (12 pages, 317874 bytes).
+Output written on test1.pdf (12 pages, 315968 bytes).
 PDF statistics:
- 181 PDF objects out of 1000 (max. 8388607)
- 156 compressed objects within 2 object streams
- 44 named destinations out of 1000 (max. 500000)
- 6280 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 191 PDF objects out of 1000 (max. 8388607)
+ 166 compressed objects within 2 object streams
+ 48 named destinations out of 1000 (max. 500000)
+ 6288 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -74,26 +74,32 @@
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \protect\hyperlink{motivazioni}{Motivazioni}\\
+  \protect\hyperlink{motivazioni}{Motivazioni}
 \item
-  \protect\hyperlink{introduzione}{Introduzione}\\
-  2.1. \protect\hyperlink{etl}{ETL}\\
-  2.2. \protect\hyperlink{intro-data}{L'importanza dei dati e degli
+  \protect\hyperlink{introduzione}{Introduzione}
+\item
+  \protect\hyperlink{etl}{ETL}
+\item
+  \protect\hyperlink{event-sourcing}{Event sourcing}\\
+  4.1. \protect\hyperlink{intro-data}{L'importanza dei dati e degli
   eventi}\\
-  2.3. \protect\hyperlink{event-sourcing}{Event sourcing}\\
-  2.4. {[}Stream processing{]}\\
-  2.5. {[}Svantaggi di un processo ETL: confronto ETL \textasciitilde{}
-  ES+Stream processing{]}
+  4.2. \protect\hyperlink{descrizione-es}{Descrizione}\\
+  4.3. \protect\hyperlink{vantaggi-es}{Vantaggi}\\
+  4.4. \protect\hyperlink{svantaggi-es}{Svantaggi}
 \item
   {[}Apache Kafka e l'ecosistema{]}\\
-  3.1. {[}Struttura generica di Kafka{]}\\
-  3.2. {[}Kafka Connect{]}\\
-  3.3. {[}Kafka Streams{]}\\
+  5.1. {[}Struttura generica di Kafka{]}\\
+  5.2. {[}Kafka Connect{]}\\
+  5.3. {[}Kafka Streams{]}
 \item
-  {[}Esempi di utilizzo{]}\\
+  {[}Conclusioni{]}
 \item
-  {[}Bibliografia{]} \newpage
+  {[}Esempi di utilizzo{]}
+\item
+  {[}Bibliografia{]}
 \end{enumerate}
+
+\newpage
 
 \hypertarget{motivazioni}{\subsection{1.
 Motivazioni}\label{motivazioni}}
@@ -146,7 +152,7 @@ approccio basato su \textbf{event sourcing} (ES).
 
 \newpage
 
-\hypertarget{etl}{\subsubsection{2.1 ETL}\label{etl}}
+\hypertarget{etl}{\subsection{3. ETL}\label{etl}}
 
 Un processo di Extract, Transform, Load (ETL) è un processo mirato alla
 trasformazione di dati contenuti su più database per ottenere un nuovo
@@ -247,9 +253,11 @@ reparti in quanto non conforme al formato di dati da loro conosciuto.
 
 \newpage
 
-\subsubsection{2.2 L'importanza dei dati e degli eventi \{piccola
-introduzione per
-ES\}}\label{limportanza-dei-dati-e-degli-eventi-piccola-introduzione-per-es}
+\hypertarget{event-sourcing}{\subsection{4. Event
+sourcing}\label{event-sourcing}}
+
+\subsubsection{4.1. L'importanza dei dati e degli
+eventi}\label{limportanza-dei-dati-e-degli-eventi}
 
 Lo status quo delle moderne applicazioni web è basato sul utilizzo di
 database per rappresentare le specifiche di dominio, spesso espresse da
@@ -305,12 +313,7 @@ Event sourcing propone di risolvere questo genere di problemi
 allontanandosi da una progettazione state-driven elevando gli eventi a
 elementi chiavi del modello dei dati di una applicazione.
 
-\newpage
-
-\hypertarget{event-sourcing}{\subsubsection{2.3. Event
-sourcing}\label{event-sourcing}}
-
-\paragraph{2.3.1 Descrizione}\label{descrizione}
+\subsubsection{4.2. Descrizione}\label{descrizione}
 
 Event sourcing (ES) è un design pattern che si contrappone ad una
 visione del mondo\^{} basata sullo stato di una applicazione fornendo
@@ -383,7 +386,7 @@ validità tecnica per la gestione dei dati di una applicazione.
 
 \newpage
 
-\paragraph{2.3.2 Vantaggi}\label{vantaggi}
+\subsubsection{4.3. Vantaggi}\label{vantaggi}
 
 Event sourcing è un pattern estremamente utile per tutti quegli use-case
 dove è assolutamente necessario mantenere una storia dello sviluppo
@@ -434,7 +437,7 @@ comprensibile.
 
 \newpage
 
-\paragraph{2.3.3 Svantaggi}\label{svantaggi}
+\subsubsection{4.4. Svantaggi}\label{svantaggi}
 
 Event sourcing potrebbe non essere utile per una applicazione che
 richiede frequenti e continue query di richiesta sullo stato del
@@ -457,32 +460,7 @@ strettamente legata al dominio applicativo dell'applicazione.
 
 \newpage
 
-\subsubsection{2.4 Stream Processing}\label{stream-processing}
-
-\begin{quote}
-Descrivere le caratteristiche principali di un sistema di streaming :
-distribuito, append only, etc.
-\end{quote}
-
-\begin{quote}
-Differenza tra Message Brokers e transactional append only logs: Rabbit
-MQ vs Kafka
-\end{quote}
-
-\subsubsection{2.5. Svantaggi di un processo ETL: perchè favorire stream
-processing ed event
-sourcing}\label{svantaggi-di-un-processo-etl-perchuxe8-favorire-stream-processing-ed-event-sourcing}
-
-\begin{quote}
-Introdurre il concetto di schema
-\end{quote}
-
-\begin{quote}
-Perchè la gestione dei dati è importante nelle architetture a
-microservizi
-\end{quote}
-
-\subsection{3. Apache Kafka e
+\subsection{5. Apache Kafka e
 l'ecosistema}\label{apache-kafka-e-lecosistema}
 
 \subsubsection{3.1 Descrizione generica

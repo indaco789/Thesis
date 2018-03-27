@@ -1,19 +1,22 @@
 # Kafka: streaming data
 
 ## Indice
-1. [Motivazioni](#motivazioni)  
-2. [Introduzione](#introduzione)  
-    2.1. [ETL](#etl)  
-    2.2. [L'importanza dei dati e degli eventi](#intro-data)  
-    2.3. [Event sourcing](#event-sourcing)  
-    2.4. [Stream processing]  
-    2.5. [Svantaggi di un processo ETL: confronto ETL ~ ES+Stream processing]
-3. [Apache Kafka e l'ecosistema]  
-    3.1. [Struttura generica di Kafka]  
-    3.2. [Kafka Connect]  
-    3.3. [Kafka Streams]  
-4. [Esempi di utilizzo]  
-5. [Bibliografia]
+1. [Motivazioni](#motivazioni)
+2. [Introduzione](#introduzione)
+3. [ETL](#etl)
+4. [Event sourcing](#event-sourcing)  
+    4.1. [L'importanza dei dati e degli eventi](#intro-data)  
+    4.2. [Descrizione](#descrizione-es)  
+    4.3. [Vantaggi](#vantaggi-es)  
+    4.4. [Svantaggi](#svantaggi-es)
+5. [Apache Kafka e l'ecosistema]   
+    5.1. [Struttura generica di Kafka]  
+    5.2. [Kafka Connect]  
+    5.3. [Kafka Streams]
+6. [Conclusioni]
+7. [Esempi di utilizzo]
+8. [Bibliografia]
+
 \newpage
 
 <div id='motivazioni'/>
@@ -42,7 +45,7 @@ Inoltre per poter utilizare pienamente stream processing, è necessario comprend
 
 \newpage
 
-### 2.1 ETL
+## 3. ETL
 
 Un processo di Extract, Transform, Load (ETL) è un processo mirato alla trasformazione di dati contenuti su più database per ottenere un nuovo insieme di dati, filtrato e traformato secondo una particolare logica, destinato ad essere salvato in una data warehouse.
 
@@ -87,9 +90,13 @@ Senza definire uno schema dei dati chiaro e preciso, si correrebbe il rischio di
 
 \newpage
 
+<div id='event-sourcing'/>
+
+## 4. Event sourcing
+
 <div id='intro-data'/>
 
-### 2.2 L'importanza dei dati e degli eventi {piccola introduzione per ES}
+### 4.1. L'importanza dei dati e degli eventi
 Lo status quo delle moderne applicazioni web è basato sul utilizzo di database per rappresentare le specifiche di dominio, spesso espresse da un cliente e/o da un esperto del dominio esterno all'ambiente di sviluppo.  
 
 Durante la fase di analisi dei requisiti (supponendo un modello di sviluppo del software agile) cliente e team di sviluppo si confrontano, cercando di trovare un linguaggio comune per definire la logica e l'utilizzo del software richiesto; Una volta stabiliti i requisti, il team di sviluppo generalmente inizia uno studio interno atto a produrre un **modello dei dati** che verrà usato come base per definire lo schema dei database utilizzati dal sistema.  
@@ -105,13 +112,7 @@ Questa soluzione ha un enorme problema: supponiamo di notare un errore sul datab
 
 Event sourcing propone di risolvere questo genere di problemi allontanandosi da una progettazione state-driven elevando gli eventi a elementi chiavi del modello dei dati di una applicazione.
 
-\newpage
-
-<div id='event-sourcing'/>
-
-### 2.3. Event sourcing
-
-#### 2.3.1 Descrizione 
+### 4.2. Descrizione 
 <!---
  > Event Sourcing ensures that all changes to application state are stored as a sequence of events. Not just can we query these events, we can also use the event log to reconstruct past states, and as a foundation to automatically adjust the state to cope with retroactive changes.  
 -->
@@ -140,7 +141,7 @@ La possibilità di trasformare lo stato corrente di una applicazione in una funz
 
 \newpage
 
-#### 2.3.2 Vantaggi 
+### 4.3. Vantaggi 
 
 Event sourcing è un pattern estremamente utile per tutti quegli use-case dove è assolutamente necessario mantenere una storia dello sviluppo dello stato dell'applicazione del tempo. Tipici esempi sono gli strumenti di versioning del codice oppure la gestione di un storico bancario.  
 
@@ -159,7 +160,7 @@ E' bene notare che con ES la gestione degli errori nello stato del sistema è st
 
 \newpage
 
-#### 2.3.3 Svantaggi
+### 4.4. Svantaggi
 
 Event sourcing potrebbe non essere utile per una applicazione che richiede frequenti e continue query di richiesta sullo stato del sistema.  
 Come descritto in precedenza, per ottenere lo stato corrente del sistema è necessario eseguire tutti gli eventi publiccati sull'event store partendo da uno stato iniziale; Se la nostra applicazione richiede di eseguire molte query di ricerca sullo stato corrente del database sarà quindi necessario calcolare lo stato del sistema _ogni volta che viene eseguita una nuova richiesta_ (un esempio di richiesta sullo stato è la ricerca di tutti i record che presentano una particolare caratteristica).  
@@ -179,9 +180,7 @@ Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-c
 -->
 
 \newpage
-
-### 2.4 Stream Processing
-
+<!---
 > Descrivere le caratteristiche principali di un sistema di streaming : distribuito, append only, etc.
 
 > Differenza tra Message Brokers e transactional append only logs: Rabbit MQ vs Kafka
@@ -192,8 +191,9 @@ Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-c
 
 
 > Perchè la gestione dei dati è importante nelle architetture a microservizi
+-->
 
-## 3. Apache Kafka e l'ecosistema
+## 5. Apache Kafka e l'ecosistema
 
 ### 3.1 Descrizione generica Kafka
 
