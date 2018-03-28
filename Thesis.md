@@ -34,17 +34,24 @@ La necessità di filtrare, standardizzare e gestire molte fonti di dati aveva po
 
 Lo stream processing tra microservizi propone un nuovo approccio per la gestione di questi problemi, fornendo una soluzione adatta alla gestione di dati in real-time altamente scalabile e ad alto throughput.
 
-Apache Kafka è una piattaforma nata in un contesto aziendale importante che mira a rivoluzionare il modo con cui i microservizi di un business comunicano tra loro, favorendo un approccio improntato sulla gestione di eventi legati al comportamento dei dati, più che i dati in se.  
+Apache Kafka è una piattaforma di streaming dati nata in un contesto aziendale importante che mira a rivoluzionare il modo con cui i microservizi di un business comunicano tra loro, favorendo un approccio improntato sulla gestione di eventi legati al comportamento dei dati, più che i dati in se.  
 Kafka nasce per sfruttare a pieno lo stream processing e favorire una gestione intelligente di grosse moli di dati, abbandonando il classico processo "batch" ETL per una soluzione, appunto, basata sullo streaming dei dati tra microservizi.
 
 \newpage
 
 <div id='introduzione'/>
 
-## 2. Introduzione [da rifare ed espandere]
+## 2. Introduzione
 
-Prima di poter discutere della soluzione architetturale fornita da Apache Kafka, è necessario comprendere le differenze tra ETL e stream processing.  
-Inoltre per poter utilizare pienamente stream processing, è necessario comprendere come la gestione dello stato di una applicazione basata su inserimento, cancellazione e modifica da uno o più database può essere modellata come una sequenza di eventi e quali sono i vantaggi di un approccio basato su **event sourcing** (ES).
+Prima di poter discutere della soluzione architetturale fornita da Apache Kafka e quali vantaggi propone rispetto alle soluzioni di batch ETL è necessario approfondire alcuni temi, tra cui il più importante è sicurante event sourcing (ES).  
+
+Il primo capitolo presenta una veloce descrizione di un processo ETL in modo da dare visione del oggetto di cui si vuole dibattere l'effetiva praticità.  
+
+Il secondo capitolo è utilizzato per illustrare uno dei concetti chiave della tesi: l'importanza di gestire e vedere le basi di dati come eventi, perchè utilizzare il concetto di eventi per modelizzare i dati ed infine, quale strumento è possibile utilizzarlo per farlo.  
+
+Il terzo capitolo è dedicato ad esaminare la piattaforma Apache Kafka, sia da un punto di vista tecnico-architetturale, esaminando le singole parti che compongono la piattaforma, sia l'ecosistema che si è venuto a creare intorno alla piattaforma, principalmente l'utilizzio delle librerie Kafka Connect, Kafka Streams e il recente sviluppo di KSQL, un linguaggio SQL-like per ricerche su stream di dati in tempo reale; Viene inoltre presentato come event sourcing si collega perfettamente a Kafka. 
+
+Infine vengono presentati degli esempi di utilizzo di Kafka e, nelle conclusioni, vengono messi a confronto i processi ETL e Kafka.
 
 \newpage
 
@@ -166,7 +173,7 @@ E' bene notare che con ES la gestione degli errori nello stato del sistema è st
 ### 4.4. Svantaggi
 
 Event sourcing potrebbe non essere utile per una applicazione che richiede frequenti e continue query di richiesta sullo stato del sistema.  
-Come descritto in precedenza, per ottenere lo stato corrente del sistema è necessario eseguire tutti gli eventi publiccati sull'event store partendo da uno stato iniziale; Se la nostra applicazione richiede di eseguire molte query di ricerca sullo stato corrente del database sarà quindi necessario calcolare lo stato del sistema _ogni volta che viene eseguita una nuova richiesta_ (un esempio di richiesta sullo stato è la ricerca di tutti i record che presentano una particolare caratteristica).  
+Come descritto in precedenza, per ottenere lo stato corrente del sistema è necessario eseguire tutti gli eventi pubblicati sull'event store partendo da uno stato iniziale; Se la nostra applicazione richiede di eseguire molte query di ricerca sullo stato corrente del database sarà quindi necessario calcolare lo stato del sistema _ogni volta che viene eseguita una nuova richiesta_ (un esempio di richiesta sullo stato è la ricerca di tutti i record che presentano una particolare caratteristica).  
 
 Le modalità per risolvere questo problema sono spesso legate al dominio e uso dell'applicazione che utlizza ES, ma generalmente per ovviare a questo problema vengono realizzati degli snapshot dello stato dell'applicazione da utilizzare per l'esecuzione delle query di ricerca.  La frequenza di generazione ed aggiornamento di questi snapshot è strettamente legata al dominio applicativo dell'applicazione.
 
@@ -226,11 +233,11 @@ Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-c
 > KSQL/LSQL
 
 
-## 4. Esempi di utilizzo di Kafka
+## 8. Esempi di utilizzo di Kafka
 
 \newpage
 
-## 5. Bibliografia
+## 9. Bibliografia
 
 https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
 https://www.confluent.io/blog/stream-data-platform-1/
