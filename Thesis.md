@@ -13,7 +13,7 @@
     5.1. [Descrizione ed uso di una streaming platform]  
     5.2. [L'architettura di Kafka]  
     5.3. [Competitors e soluzioni alternative]
-6. [L'ecosistema di Kafka]
+6. [L'ecosistema di Kafka]  
     6.1. [Kafka Connect]  
     6.2. [Kafka Streams]
 7. [Conclusioni]
