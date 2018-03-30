@@ -204,10 +204,22 @@ Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-c
 -->
 
 ## 5. Apache Kafka e l'ecosistema
-_Publish/Subscribe_ è un pattern architetturale utilizzato per la comunicazione asincrona tra diversi processi od oggetti.  
-In questo schema mittenti e destinatari dialogano tra loro per mezzo di un _broker_, un processo incaricato, da una parte, di ricevere messaggi da dei mittenti e dall'altra di consegnare gli stessi messaggi a dei destinatari.  
+_Publish/Subscribe_ è un pattern architetturale utilizzato per la comunicazione asincrona tra diversi processi od oggetti.
+
+In questo schema mittenti e destinatari dialogano tra loro per mezzo di un _broker_, un processo incaricato, da una parte, di ricevere messaggi da dei mittenti e dall'altra di consegnare gli stessi messaggi a dei destinatari. 
+
 I destinatari non conoscono i mittenti, ed i mittenti non si interessano di chi sono i destinatari: l'unico compito del mittente è quello di pubblicare dei messaggi sul broker, starà poi al destinario il compito di abbonarsi (dall'inglese _subscribe_) al broker in modo da ricevere tutti i nuovi messaggi.
+
 Questo pattern viene spesso utilizzato quando ci si trova ad avere più processi o servizi che generano delle metriche o dei dati, i quali sono di vitale importanza per altrettanti servizi; Una soluzione alternativa sarebbe creare dei canali dedicati tra produttori e consumatori ma questo non permetterebbe alla struttura di supportare un numero sempre più elevato di servizi od oggetti, ed in un mondo dove è sempre più frequente l'utilizzo di microservizi e il logging di eventi e dati (Big Data) porterebbe ad un debito tecnologico elevato e difficile da correggere.
+
+E' in questo contesto che nasce Apache Kafka, una _streaming platform_ basata su un append-only log utilizzato da dei _producer_ per pubblicare dei messaggi utilizzati da dei _consumer_.  
+I messaggi pubblicati vengono persistiti nel tempo, sono leggibili deterministicamente da qualsiasi consumer ed distributi all'interno del sistema secondo particolari logiche in modo da garantire protezione da crash e scalabità del sistema.
+
+\newpage
+
+### Messaggi 
+L'unità dati fondamentali in Kafka è chiamata _messaggio_ o _record_.  
+Ogni messaggio è suddiviso in _key_ (opzionale) e _value_ e possono essere di qualsiasi formato; Kafka non impone particolari standard riguardo i formati dei dati utilizzabili all'interno del sistema ma con lo scorrere del tempo _Avro_ è diventato lo standard de facto.
 
 ### 3.1 Descrizione generica Kafka
 

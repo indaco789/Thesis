@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  28 MAR 2018 22:08
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  30 MAR 2018 17:51
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -905,85 +905,89 @@ e
 [1
 
 {/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-[2] [3] <../images/etl.png, id=109, 564.60938pt x 259.26863pt>
+[2] [3] <../images/etl.png, id=113, 564.60938pt x 259.26863pt>
 File: ../images/etl.png Graphic file (type png)
 
 <use ../images/etl.png>
-Package pdftex.def Info: ../images/etl.png used on input line 191.
+Package pdftex.def Info: ../images/etl.png used on input line 193.
 (pdftex.def)             Requested size: 276.00626pt x 126.74207pt.
  [4 <../images/etl.png>]
-LaTeX Font Info:    Try loading font information for TS1+lmr on input line 239.
+LaTeX Font Info:    Try loading font information for TS1+lmr on input line 241.
 
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) [5] [6]
-<../images/log.png, id=125, 397.485pt x 187.70125pt>
+<../images/log.png, id=129, 397.485pt x 187.70125pt>
 File: ../images/log.png Graphic file (type png)
  <use ../images/log.png>
-Package pdftex.def Info: ../images/log.png used on input line 375.
+Package pdftex.def Info: ../images/log.png used on input line 377.
 (pdftex.def)             Requested size: 234.60509pt x 110.78574pt.
 
 [7 <../images/log.png>]
-LaTeX Font Info:    Try loading font information for T1+lmtt on input line 385.
+LaTeX Font Info:    Try loading font information for T1+lmtt on input line 387.
 
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-<../images/streams-table-duality.jpg, id=134, 1777.64125pt x 1541.76pt>
+<../images/streams-table-duality.jpg, id=138, 1777.64125pt x 1541.76pt>
 File: ../images/streams-table-duality.jpg Graphic file (type jpg)
 
 <use ../images/streams-table-duality.jpg>
 Package pdftex.def Info: ../images/streams-table-duality.jpg used on input line
- 404.
+ 406.
 (pdftex.def)             Requested size: 275.99266pt x 239.37025pt.
- [8 <../images/streams-table-duality.jpg>] [9] [10] [11]
-Overfull \hbox (49.20042pt too wide) in paragraph at lines 538--550
+ [8 <../images/streams-table-duality.jpg>] [9] [10] [11] [12]
+Overfull \hbox (49.20042pt too wide) in paragraph at lines 584--596
 \T1/lmr/m/n/10 (-20) engineer-should-know-about-real-time-datas-unifying https:
 //www.confluent.io/blog/stream-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 538--550
+Underfull \hbox (badness 10000) in paragraph at lines 584--596
 \T1/lmr/m/n/10 (+20) https://www.confluent.io/blog/data-dichotomy-rethinking-th
 e-way-we-treat-
  []
 
 
-Overfull \hbox (0.15797pt too wide) in paragraph at lines 538--550
+Overfull \hbox (0.15797pt too wide) in paragraph at lines 584--596
 \T1/lmr/m/n/10 (+10) https://www.confluent.io/blog/building-a-microservices-eco
 system-with-kafka-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 538--550
+Underfull \hbox (badness 10000) in paragraph at lines 584--596
 \T1/lmr/m/n/10 (+20) https://content.pivotal.io/blog/understanding-when-to-use-
 rabbitmq-or-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 538--550
+Underfull \hbox (badness 10000) in paragraph at lines 584--596
 \T1/lmr/m/n/10 (+20) https://qconsf.com/sf2016/system/files/keynotes-slides/etl
 _is_dead_long-
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 551.
-[12]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 551.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 597.
+[13]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 597.
  (./test1.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 551.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 551.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 597.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 597.
 Package rerunfilecheck Info: File `test1.out' has not changed.
-(rerunfilecheck)             Checksum: 976CB8B1E3B76F520E27ED4309EE3E38;2480.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 551.
+(rerunfilecheck)             Checksum: 1106DBD66CB828D577E0B192E2C9164E;2577.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 597.
  ) 
 Here is how much of TeX's memory you used:
- 11828 strings out of 492995
- 170199 string characters out of 6132705
- 265949 words of memory out of 5000000
- 15147 multiletter control sequences out of 15000+600000
- 30759 words of font info for 64 fonts, out of 8000000 for 9000
+ 11840 strings out of 492995
+ 170330 string characters out of 6132705
+ 265982 words of memory out of 5000000
+ 15149 multiletter control sequences out of 15000+600000
+ 31232 words of font info for 68 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  32i,5n,38p,318b,338s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{svantaggi-es} has been referenced but does not ex
@@ -1005,10 +1009,10 @@ onts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1
 /public/lm/lmr10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/
 lmri10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/lmtt10.pfb
 >
-Output written on test1.pdf (12 pages, 317311 bytes).
+Output written on test1.pdf (13 pages, 321272 bytes).
 PDF statistics:
- 193 PDF objects out of 1000 (max. 8388607)
- 168 compressed objects within 2 object streams
- 49 named destinations out of 1000 (max. 500000)
- 6288 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 202 PDF objects out of 1000 (max. 8388607)
+ 176 compressed objects within 2 object streams
+ 51 named destinations out of 1000 (max. 500000)
+ 6296 words of extra memory for PDF output out of 10000 (max. 10000000)
 
