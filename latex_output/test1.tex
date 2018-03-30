@@ -523,12 +523,64 @@ crash e scalabità del sistema.
 \subsubsection{Messaggi}\label{messaggi}
 
 L'unità dati fondamentali in Kafka è chiamata \emph{messaggio} o
-\emph{record}.\\
+\emph{record}.
+
 Ogni messaggio è suddiviso in \emph{key} (opzionale) e \emph{value} e
 possono essere di qualsiasi formato; Kafka non impone particolari
 standard riguardo i formati dei dati utilizzabili all'interno del
 sistema ma con lo scorrere del tempo \emph{Avro} è diventato lo standard
-de facto.
+de facto.\\
+Il campo \texttt{key}, quando definito, è un byte array utilizzato come
+metadata per garantire un particolare ordinamento all'interno di un
+\emph{topic}, un altro elemento fondamentale dell'architettura.
+
+Nonostante Kafka sia una streaming platform, la scrittura e propagazione
+dei messaggi all'interno della rete non avviene necessariamente per
+messaggio, invece, piccoli gruppi di messaggi diretti verso la stesso
+topic vengono raggruppati in \emph{batches}.\\
+La gestione dei messaggi in batch nasce per motivi di efficienza per
+bilanciare throughput e latenza: a fronte di una latenza più alta per la
+consegna di un batch, vengono sprecate meno le risorse del sistema che
+altrimenti si ritroverebbe costretto a gestire l'overhead di conoscegna
+di un batch per ogni singolo messaggio.
+
+\subsubsection{Topic e partizioni}\label{topic-e-partizioni}
+
+Un \emph{topic} è un elemento utilizzato in Kafka per categorizzare una
+collezione di messaggi, e consiste in un unico stream di dati.
+
+Un topic è suddiviso in \emph{partizioni}, append-only logs sui quali
+vengono persisti i messaggi generati dai \emph{producers}.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.90000\textwidth]{../images/topic-and-partitions.png}
+\caption{Un topic suddiviso in più partizioni \label{figure_3}}
+\end{figure}
+
+I messaggi sono inseriti in una partizione da un producer nell'ordine in
+cui sono stati inviati posizionandoli in fondo al log, inoltre non sono
+modificabili o cancellabili.\\
+Un consumer legge i messaggi di un topic partendo dalla testa del log
+proseguendo fino alla coda.
+
+L'ordine di scrittura è garantito solo per ogni singola partizione: non
+è detto che messaggi appartenenti al medesimo topic siano in ordine
+cronologico se inseriti su partizioni diverse.
+
+Per dare un esempio pratico di topic, supponiamo di utilizzare Kafka per
+creare uno storage di eventi ricevuti dal front-end di una applicazione:
+tipici eventi che vengono spesso loggati da un front-end possono essere
+la \emph{i link cliccati in una pagina}, \emph{quali pagine sono state
+visualizzate in una sessione} oppure \emph{se è stato visualizzato un
+particolare video embdeed}.\\
+Per ogniuno di questi eventi verrà creato un singolo \texttt{topic} per
+raggruppare tutte le notifiche e dati generati da uno di quei
+particolari eventi a front-end: ad esempio avremo il topic
+\texttt{views-video-embdeed} sul quale verranno registrati dei semplici
+\texttt{yes} o \texttt{no} con magari l'aggiunta di un
+\texttt{timestamp} (l'ora di visualizzazione), in questo modo il topic
+ci permetterà di calcolare la frequenza di visualizzazione del video.
 
 \subsubsection{3.1 Descrizione generica
 Kafka}\label{descrizione-generica-kafka}
