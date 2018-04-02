@@ -6,10 +6,10 @@
 3. [ETL](#etl)
 4. [Event sourcing](#event-sourcing)  
     4.1. [L'importanza dei dati e degli eventi](#intro-data)  
-    4.2. [Descrizione](#descrizione-es)  
-    4.3. [Vantaggi](#vantaggi-es)  
-    4.4. [Svantaggi](#svantaggi-es)
-5. [Apache Kafka: a streaming platform]   
+    4.2. [Descrizione](#es-desc)  
+    4.3. [Vantaggi](#es-vantaggi)  
+    4.4. [Svantaggi](#es-svantaggi)
+5. [Apache Kafka: a streaming platform](#kafka-desc)  
     5.1. [Descrizione ed uso di una streaming platform]  
     5.2. [L'architettura di Kafka]  
     5.3. [Competitors e soluzioni alternative]
@@ -204,6 +204,9 @@ Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-c
 -->
 
 ## 5. Apache Kafka e l'ecosistema
+
+<div id='kafka-desc'/>
+
 _Publish/Subscribe_ è un pattern architetturale utilizzato per la comunicazione asincrona tra diversi processi od oggetti.
 
 In questo schema mittenti e destinatari dialogano tra loro per mezzo di un _broker_, un processo incaricato, da una parte, di ricevere messaggi da dei mittenti e dall'altra di consegnare gli stessi messaggi a dei destinatari. 
@@ -226,6 +229,8 @@ Il campo `key`, quando definito, è un byte array utilizzato come metadata per g
 Nonostante Kafka sia una streaming platform, la scrittura e propagazione dei messaggi all'interno della rete non avviene necessariamente per messaggio, invece, piccoli gruppi di messaggi diretti verso la stesso topic vengono raggruppati in _batches_.  
 La gestione dei messaggi in batch nasce per motivi di efficienza per bilanciare throughput e latenza: a fronte di una latenza più alta per la consegna di un batch, vengono sprecate meno le risorse del sistema che altrimenti si ritroverebbe costretto a gestire l'overhead di conoscegna di un batch per ogni singolo messaggio.
 
+\newpage
+
 ### Topic e partizioni  
 Un _topic_ è un elemento utilizzato in Kafka per categorizzare una collezione di messaggi, e consiste in un unico stream di dati.
 
@@ -233,13 +238,38 @@ Un topic è suddiviso in _partizioni_, append-only logs sui quali vengono persis
 
 ![Un topic suddiviso in più partizioni \label{figure_3}](../images/topic-and-partitions.png){ width=90% }
 
-I messaggi sono inseriti in una partizione da un producer nell'ordine in cui sono stati inviati posizionandoli in fondo al log, inoltre non sono modificabili o cancellabili.  
-Un consumer legge i messaggi di un topic partendo dalla testa del log proseguendo fino alla coda.  
+I messaggi sono inseriti in una partizione da un producer nell'ordine in cui sono stati inviati posizionandoli in fondo al log, non sono modificabili o cancellabili e sono contradistinti da un _offset_, un indice numerico che funziona da timestamp del messaggio.
+Un consumer legge i messaggi di un topic partendo dalla testa (o da uno specifico offset) del log proseguendo fino alla coda.  
 
 L'ordine di scrittura è garantito solo per ogni singola partizione: non è detto che messaggi appartenenti al medesimo topic siano in ordine cronologico se inseriti su partizioni diverse.
 
-Per dare un esempio pratico di topic, supponiamo di utilizzare Kafka per creare uno storage di eventi ricevuti dal front-end di una applicazione: tipici eventi che vengono spesso loggati da un front-end possono essere la _i link cliccati in una pagina_, _quali pagine sono state visualizzate in una sessione_ oppure _se è stato visualizzato un particolare video embdeed_.  
+Per dare un esempio pratico di topic, supponiamo di utilizzare Kafka per creare uno storage di eventi ricevuti dal front-end di una applicazione: tipici eventi che vengono spesso loggati da un front-end possono essere _i link cliccati in una pagina_, _quali pagine sono state visualizzate in una sessione_ oppure _se è stato visualizzato un particolare video embdeed_.  
 Per ogniuno di questi eventi verrà creato un singolo `topic` per raggruppare tutte le notifiche e dati generati da uno di quei particolari eventi a front-end: ad esempio avremo il topic `views-video-embdeed` sul quale verranno registrati dei semplici `yes` o `no` con magari l'aggiunta di un `timestamp` (l'ora di visualizzazione), in questo modo il topic ci permetterà di calcolare la frequenza di visualizzazione del video.
+
+\newpage
+
+### Producers e consumers
+L'architettura offerta da Kafka è utilizzata da due genere di client: _producers_ oppure _consumers_.  
+
+I _producers_ hanno il compito di creare messaggi indirizzati a specifici topic indipendentemente dal numero di partizioni che formano il topic.  
+Come illustrato in precedenza, un topic è formato da un numero variabile di partizioni utilizzate come meccanismo di replica e gestione dei messaggi; Alla creazione di un messaggio è possibile indicare al producer su quale partizione andare a scrivere il record specificando l'identificativo di una partizione specifica.  
+
+Nella maggior parte dei casi d'uso di Kafka, il producer non si pone mai il problema di decidere su quale partizione andare a scrivere un particolare messaggio ma piuttosto vengono utilizzati dei meccanismi di load-balancing per spartire correttamente i messaggi su tutte le partizioni disponibili presenti nel topic.  
+Tipici esempi di algoritmi di load-balancing sono il calcolo della partizione in base ad una hash key derivata dall'offset del messaggio oppure utilizzando un algoritmo round robin, se necessario è presente la possibilità di specificare un _partioneer_ creato su misura al caso d'uso.
+
+I _consumers_ leggono i messaggi pubblicati sui topic ai quali si sono iscritti.  
+I messaggi possono essere letti partendo dalla testa (o inizio) del topic oppure uno specifico _offset_ fino ad arrivare alla coda (o fine).  
+Un _offset_ è un identicativo numerico corrispondente ad una chiave per uno specifico messaggio del topic ed è compito del consumer di tener traccia degli offset di tutti i messaggi che lui stesso ha già letto.  
+L'offset di un messaggio è _specifico ad una specifica **partizione**_.  
+La capacità di mantenere in memoria gli offset dei messaggi già letti garantisce al consumer la capacità di fermare, ed in un secondo momento reiniziare, il processo di lettura di un topic.  
+
+I consumers lavorano in _gruppi di consumers_: uno o più consumer lavorano per leggere un intero topic, con la proprietà che _consumers diversi non possono leggere dalla stessa partizione_.
+
+![Esempio di un topic letto da un gruppo di consumers \label{figure_3}](../images/topic-and-consumers.png){ width=90% }
+
+Questa struttura porta ad un alto throughput in lettura di un topic permettendo uno sviluppo orizzontale del numero di consumers necessari per leggere un numero elevato di messaggi per partizione. Nel caso di un crash di uno dei consumer un consumer group è dotato di un meccanismo di load balancing che permetterà ad un altro consumer del gruppo di continuare a leggere i messaggi della partizione che stava venendo consumata.
+
+\newpage
 
 ### 3.1 Descrizione generica Kafka
 

@@ -83,11 +83,11 @@
   \protect\hyperlink{event-sourcing}{Event sourcing}\\
   4.1. \protect\hyperlink{intro-data}{L'importanza dei dati e degli
   eventi}\\
-  4.2. \protect\hyperlink{descrizione-es}{Descrizione}\\
-  4.3. \protect\hyperlink{vantaggi-es}{Vantaggi}\\
-  4.4. \protect\hyperlink{svantaggi-es}{Svantaggi}
+  4.2. \protect\hyperlink{es-desc}{Descrizione}\\
+  4.3. \protect\hyperlink{es-vantaggi}{Vantaggi}\\
+  4.4. \protect\hyperlink{es-svantaggi}{Svantaggi}
 \item
-  {[}Apache Kafka: a streaming platform{]}\\
+  \protect\hyperlink{kafka-desc}{Apache Kafka: a streaming platform}\\
   5.1. {[}Descrizione ed uso di una streaming platform{]}\\
   5.2. {[}L'architettura di Kafka{]}\\
   5.3. {[}Competitors e soluzioni alternative{]}
@@ -544,6 +544,8 @@ consegna di un batch, vengono sprecate meno le risorse del sistema che
 altrimenti si ritroverebbe costretto a gestire l'overhead di conoscegna
 di un batch per ogni singolo messaggio.
 
+\newpage
+
 \subsubsection{Topic e partizioni}\label{topic-e-partizioni}
 
 Un \emph{topic} è un elemento utilizzato in Kafka per categorizzare una
@@ -559,10 +561,11 @@ vengono persisti i messaggi generati dai \emph{producers}.
 \end{figure}
 
 I messaggi sono inseriti in una partizione da un producer nell'ordine in
-cui sono stati inviati posizionandoli in fondo al log, inoltre non sono
-modificabili o cancellabili.\\
-Un consumer legge i messaggi di un topic partendo dalla testa del log
-proseguendo fino alla coda.
+cui sono stati inviati posizionandoli in fondo al log, non sono
+modificabili o cancellabili e sono contradistinti da un \emph{offset},
+un indice numerico che funziona da timestamp del messaggio. Un consumer
+legge i messaggi di un topic partendo dalla testa (o da uno specifico
+offset) del log proseguendo fino alla coda.
 
 L'ordine di scrittura è garantito solo per ogni singola partizione: non
 è detto che messaggi appartenenti al medesimo topic siano in ordine
@@ -571,7 +574,7 @@ cronologico se inseriti su partizioni diverse.
 Per dare un esempio pratico di topic, supponiamo di utilizzare Kafka per
 creare uno storage di eventi ricevuti dal front-end di una applicazione:
 tipici eventi che vengono spesso loggati da un front-end possono essere
-la \emph{i link cliccati in una pagina}, \emph{quali pagine sono state
+\emph{i link cliccati in una pagina}, \emph{quali pagine sono state
 visualizzate in una sessione} oppure \emph{se è stato visualizzato un
 particolare video embdeed}.\\
 Per ogniuno di questi eventi verrà creato un singolo \texttt{topic} per
@@ -581,6 +584,68 @@ particolari eventi a front-end: ad esempio avremo il topic
 \texttt{yes} o \texttt{no} con magari l'aggiunta di un
 \texttt{timestamp} (l'ora di visualizzazione), in questo modo il topic
 ci permetterà di calcolare la frequenza di visualizzazione del video.
+
+\newpage
+
+\subsubsection{Producers e consumers}\label{producers-e-consumers}
+
+L'architettura offerta da Kafka è utilizzata da due genere di client:
+\emph{producers} oppure \emph{consumers}.
+
+I \emph{producers} hanno il compito di creare messaggi indirizzati a
+specifici topic indipendentemente dal numero di partizioni che formano
+il topic.\\
+Come illustrato in precedenza, un topic è formato da un numero variabile
+di partizioni utilizzate come meccanismo di replica e gestione dei
+messaggi; Alla creazione di un messaggio è possibile indicare al
+producer su quale partizione andare a scrivere il record specificando
+l'identificativo di una partizione specifica.
+
+Nella maggior parte dei casi d'uso di Kafka, il producer non si pone mai
+il problema di decidere su quale partizione andare a scrivere un
+particolare messaggio ma piuttosto vengono utilizzati dei meccanismi di
+load-balancing per spartire correttamente i messaggi su tutte le
+partizioni disponibili presenti nel topic.\\
+Tipici esempi di algoritmi di load-balancing sono il calcolo della
+partizione in base ad una hash key derivata dall'offset del messaggio
+oppure utilizzando un algoritmo round robin, se necessario è presente la
+possibilità di specificare un \emph{partioneer} creato su misura al caso
+d'uso.
+
+I \emph{consumers} leggono i messaggi pubblicati sui topic ai quali si
+sono iscritti.\\
+I messaggi possono essere letti partendo dalla testa (o inizio) del
+topic oppure uno specifico \emph{offset} fino ad arrivare alla coda (o
+fine).\\
+Un \emph{offset} è un identicativo numerico corrispondente ad una chiave
+per uno specifico messaggio del topic ed è compito del consumer di tener
+traccia degli offset di tutti i messaggi che lui stesso ha già letto.\\
+L'offset di un messaggio è \emph{specifico ad una specifica
+\textbf{partizione}}.\\
+La capacità di mantenere in memoria gli offset dei messaggi già letti
+garantisce al consumer la capacità di fermare, ed in un secondo momento
+reiniziare, il processo di lettura di un topic.
+
+I consumers lavorano in \emph{gruppi di consumers}: uno o più consumer
+lavorano per leggere un intero topic, con la proprietà che
+\emph{consumers diversi non possono leggere dalla stessa partizione}.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.90000\textwidth]{../images/topic-and-consumers.png}
+\caption{Esempio di un topic letto da un gruppo di consumers
+\label{figure_3}}
+\end{figure}
+
+Questa struttura porta ad un alto throughput in lettura di un topic
+permettendo uno sviluppo orizzontale del numero di consumers necessari
+per leggere un numero elevato di messaggi per partizione. Nel caso di un
+crash di uno dei consumer un consumer group è dotato di un meccanismo di
+load balancing che permetterà ad un altro consumer del gruppo di
+continuare a leggere i messaggi della partizione che stava venendo
+consumata.
+
+\newpage
 
 \subsubsection{3.1 Descrizione generica
 Kafka}\label{descrizione-generica-kafka}
