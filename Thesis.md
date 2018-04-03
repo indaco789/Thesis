@@ -278,22 +278,12 @@ I broker sono stati creati per lavorare in _clusters_ ovvero gruppi di brokers o
 A capo di un cluster troviamo un broker _leader_ al quale tutti gli altri broker del cluster devono far riferimento per permette ai meccanismi di replicazioni dei messaggi di funzionare correttamente: una partizione può essere assegnata a più broker, questo permette al cluster di avere un meccanismo per la gestione dei fallimenti dei brokers.
 In ogni cluster un particolare broker viene eletto a _controller_, ovvero un broker con l'incarico di gestire la suddivisione di partizioni sull'intero cluster e di monitorare il cluster.  
 
-![Gestione delle repliche di alcune partizioni \label{figure_3}](../images/partition-replica.png){ width=90% }
+![Gestione delle repliche \label{figure_4}](../images/partition-replica.png){ width=90% }
 
 \newpage
 
-
 Una funzionalità importante di Kafka è la possibilità di utilizzare i topic come database di messaggi persistenti.  
 I messaggi vengono tenuti in memoria per un particolare periodo di tempo oppure in base allo spazio di memoria di occupato, entrambe le opzioni sono configurabili alla creazione di un broker, vi è poi la possibilità di abilitare la _log compaction_ ovvero un meccanismo che permette a Kafka di mantenere in memoria _solo gli ultimi messaggi indicizzati su un indicativo specifico_.
-
-### 3.1 Descrizione generica Kafka
-
-> Struttura di base: log => log compaction
-
-> Struttura architetturale:
-> * brokers
-> * clusters
-> * topic
 
 > Come collegare event sourcing e kafka => perchè kafka è una buona piattaforma per event sourcing
 
