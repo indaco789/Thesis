@@ -626,16 +626,18 @@ La capacità di mantenere in memoria gli offset dei messaggi già letti
 garantisce al consumer la capacità di fermare, ed in un secondo momento
 reiniziare, il processo di lettura di un topic.
 
-I consumers lavorano in \emph{gruppi di consumers}: uno o più consumer
-lavorano per leggere un intero topic, con la proprietà che
-\emph{consumers diversi non possono leggere dalla stessa partizione}.
-
 \begin{figure}
 \centering
 \includegraphics[width=0.90000\textwidth]{../images/topic-and-consumers.png}
 \caption{Esempio di un topic letto da un gruppo di consumers
 \label{figure_3}}
 \end{figure}
+
+\newpage
+
+I consumers lavorano in \emph{gruppi di consumers}: uno o più consumer
+lavorano per leggere un intero topic, con la proprietà che
+\emph{consumers diversi non possono leggere dalla stessa partizione}.
 
 Questa struttura porta ad un alto throughput in lettura di un topic
 permettendo uno sviluppo orizzontale del numero di consumers necessari
@@ -645,7 +647,40 @@ load balancing che permetterà ad un altro consumer del gruppo di
 continuare a leggere i messaggi della partizione che stava venendo
 consumata.
 
+\subsubsection{Brokers e clusters}\label{brokers-e-clusters}
+
+Un \emph{broker} è un server Kafka con svariati compiti quali ricevere,
+indicizzare e salvare i messaggi inviati dai producers ed inviare i
+messaggi richiesti dai consumers; Un singolo broker è capace di gestire
+miglialia di partizioni e millioni di messaggi al secondo.
+
+I broker sono stati creati per lavorare in \emph{clusters} ovvero gruppi
+di brokers ordinanti secondo una particolare gerarchia.\\
+A capo di un cluster troviamo un broker \emph{leader} al quale tutti gli
+altri broker del cluster devono far riferimento per permette ai
+meccanismi di replicazioni dei messaggi di funzionare correttamente: una
+partizione può essere assegnata a più broker, questo permette al cluster
+di avere un meccanismo per la gestione dei fallimenti dei brokers. In
+ogni cluster un particolare broker viene eletto a \emph{controller},
+ovvero un broker con l'incarico di gestire la suddivisione di partizioni
+sull'intero cluster e di monitorare il cluster.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.90000\textwidth]{../images/partition-replica.png}
+\caption{Gestione delle repliche di alcune partizioni \label{figure_3}}
+\end{figure}
+
 \newpage
+
+Una funzionalità importante di Kafka è la possibilità di utilizzare i
+topic come database di messaggi persistenti.\\
+I messaggi vengono tenuti in memoria per un particolare periodo di tempo
+oppure in base allo spazio di memoria di occupato, entrambe le opzioni
+sono configurabili alla creazione di un broker, vi è poi la possibilità
+di abilitare la \emph{log compaction} ovvero un meccanismo che permette
+a Kafka di mantenere in memoria \emph{solo gli ultimi messaggi
+indicizzati su un indicativo specifico}.
 
 \subsubsection{3.1 Descrizione generica
 Kafka}\label{descrizione-generica-kafka}

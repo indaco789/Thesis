@@ -263,13 +263,28 @@ Un _offset_ è un identicativo numerico corrispondente ad una chiave per uno spe
 L'offset di un messaggio è _specifico ad una specifica **partizione**_.  
 La capacità di mantenere in memoria gli offset dei messaggi già letti garantisce al consumer la capacità di fermare, ed in un secondo momento reiniziare, il processo di lettura di un topic.  
 
-I consumers lavorano in _gruppi di consumers_: uno o più consumer lavorano per leggere un intero topic, con la proprietà che _consumers diversi non possono leggere dalla stessa partizione_.
-
 ![Esempio di un topic letto da un gruppo di consumers \label{figure_3}](../images/topic-and-consumers.png){ width=90% }
+
+\newpage
+
+I consumers lavorano in _gruppi di consumers_: uno o più consumer lavorano per leggere un intero topic, con la proprietà che _consumers diversi non possono leggere dalla stessa partizione_.
 
 Questa struttura porta ad un alto throughput in lettura di un topic permettendo uno sviluppo orizzontale del numero di consumers necessari per leggere un numero elevato di messaggi per partizione. Nel caso di un crash di uno dei consumer un consumer group è dotato di un meccanismo di load balancing che permetterà ad un altro consumer del gruppo di continuare a leggere i messaggi della partizione che stava venendo consumata.
 
+### Brokers e clusters
+Un _broker_ è un server Kafka con svariati compiti quali ricevere, indicizzare e salvare i messaggi inviati dai producers ed inviare i messaggi richiesti dai consumers; Un singolo broker è capace di gestire miglialia di partizioni e millioni di messaggi al secondo.
+
+I broker sono stati creati per lavorare in _clusters_ ovvero gruppi di brokers ordinanti secondo una particolare gerarchia.  
+A capo di un cluster troviamo un broker _leader_ al quale tutti gli altri broker del cluster devono far riferimento per permette ai meccanismi di replicazioni dei messaggi di funzionare correttamente: una partizione può essere assegnata a più broker, questo permette al cluster di avere un meccanismo per la gestione dei fallimenti dei brokers.
+In ogni cluster un particolare broker viene eletto a _controller_, ovvero un broker con l'incarico di gestire la suddivisione di partizioni sull'intero cluster e di monitorare il cluster.  
+
+![Gestione delle repliche di alcune partizioni \label{figure_3}](../images/partition-replica.png){ width=90% }
+
 \newpage
+
+
+Una funzionalità importante di Kafka è la possibilità di utilizzare i topic come database di messaggi persistenti.  
+I messaggi vengono tenuti in memoria per un particolare periodo di tempo oppure in base allo spazio di memoria di occupato, entrambe le opzioni sono configurabili alla creazione di un broker, vi è poi la possibilità di abilitare la _log compaction_ ovvero un meccanismo che permette a Kafka di mantenere in memoria _solo gli ultimi messaggi indicizzati su un indicativo specifico_.
 
 ### 3.1 Descrizione generica Kafka
 
