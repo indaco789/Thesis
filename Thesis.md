@@ -275,10 +275,13 @@ Questa struttura porta ad un alto throughput in lettura di un topic permettendo 
 Un _broker_ è un server Kafka con svariati compiti quali ricevere, indicizzare e salvare i messaggi inviati dai producers ed inviare i messaggi richiesti dai consumers; Un singolo broker è capace di gestire miglialia di partizioni e millioni di messaggi al secondo.
 
 I broker sono stati creati per lavorare in _clusters_ ovvero gruppi di brokers ordinanti secondo una particolare gerarchia.  
+
+![Esempio di cluster \label{figure_5}](../images/kafka-cluster.png){ width=90% }
+
 A capo di un cluster troviamo un broker _leader_ al quale tutti gli altri broker del cluster devono far riferimento per permette ai meccanismi di replicazioni dei messaggi di funzionare correttamente: una partizione può essere assegnata a più broker, questo permette al cluster di avere un meccanismo per la gestione dei fallimenti dei brokers.
 In ogni cluster un particolare broker viene eletto a _controller_, ovvero un broker con l'incarico di gestire la suddivisione di partizioni sull'intero cluster e di monitorare il cluster.  
 
-![Gestione delle repliche \label{figure_4}](../images/partition-replica.png){ width=90% }
+![Gestione delle repliche \label{figure_5}](../images/partition-replica.png){ width=90% }
 
 \newpage
 

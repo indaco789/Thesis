@@ -655,7 +655,14 @@ messaggi richiesti dai consumers; Un singolo broker è capace di gestire
 miglialia di partizioni e millioni di messaggi al secondo.
 
 I broker sono stati creati per lavorare in \emph{clusters} ovvero gruppi
-di brokers ordinanti secondo una particolare gerarchia.\\
+di brokers ordinanti secondo una particolare gerarchia.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.90000\textwidth]{../images/kafka-cluster.png}
+\caption{Esempio di cluster \label{figure_5}}
+\end{figure}
+
 A capo di un cluster troviamo un broker \emph{leader} al quale tutti gli
 altri broker del cluster devono far riferimento per permette ai
 meccanismi di replicazioni dei messaggi di funzionare correttamente: una
@@ -668,7 +675,7 @@ sull'intero cluster e di monitorare il cluster.
 \begin{figure}
 \centering
 \includegraphics[width=0.90000\textwidth]{../images/partition-replica.png}
-\caption{Gestione delle repliche \label{figure_4}}
+\caption{Gestione delle repliche \label{figure_5}}
 \end{figure}
 
 \newpage
