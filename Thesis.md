@@ -288,6 +288,122 @@ In ogni cluster un particolare broker viene eletto a _controller_, ovvero un bro
 Una funzionalità importante di Kafka è la possibilità di utilizzare i topic come database di messaggi persistenti.  
 I messaggi vengono tenuti in memoria per un particolare periodo di tempo oppure in base allo spazio di memoria di occupato, entrambe le opzioni sono configurabili alla creazione di un broker, vi è poi la possibilità di abilitare la _log compaction_ ovvero un meccanismo che permette a Kafka di mantenere in memoria _solo gli ultimi messaggi indicizzati su un indicativo specifico_.
 
+\newpage
+
+### Schema
+Nonostante i messaggi in Kafka non siano altro che degli array di byte è fortemente consigliato l'uso di _schema_ per la gestione e l'uso della struttura dei record.
+
+Lo _schema_ è la struttura o organizzazione logicati dei dati contenuti in un topic e nel caso specifico di Kafka, la scelta dei formati disponibili ricade spesso su di un singolo formato: Apache Avro. Esistono altre scelte possibili come Javascript Object Notation (JSON) oppure Extensible Markup Language (XML), ma Avro offre una serie di vantaggi rispetto a questo genere di schemi oltre ad avere alcune implementazioni ad-hoc in Kafka.
+Avro è diventato nel tempo lo standard per gli schema nelle applicazioni basate su Kafka, gli stessi sviluppatori di Kafka ne promuovono l'uso citando una serie di motivi:
+
+
+- Avro è mappabile su JSON
+- Al contrario di JSON, è possibile scindere lo schema dei dati dalla definizione dell'oggetto/record 
+- E' un linguaggio maturo con un importante supporto dalla community; Esistono molte librerie che permettono di creare automaticamente oggetti Java o case classes in Scala partendo da uno schema Avro
+
+Apache Avro è un formato per la serializzazione di dati che si divide in due parti: i _dati_ e lo _schema dei dati_. 
+
+Un esempio di **schema dei dati** di un record con cinque campi:
+\small
+
+```{ .json }
+{
+  "type": "record",
+  "doc":"This event records the sale of a product",
+  "name": "ProductSaleEvent",
+  "fields" : [
+    {"name":"time", "type":"long", "doc":"The time of the purchase"},
+    {"name":"customer_id", "type":"long", "doc":"The customer"},
+    {"name":"product_id", "type":"long", "doc":"The product"},
+    {"name":"quantity", "type":"int"},
+    {"name":"payment",
+     "type":{"type":"enum",
+	     "name":"payment_types",
+             "symbols":["cash","mastercard","visa"]},
+     "doc":"The method of payment"}
+  ]
+}
+```
+\normalsize
+\newpage
+Ed un generico record di **dati** definito in base allo schema:
+
+\small
+
+```
+{  
+  "time": 1424849130111,     
+  "customer_id": 1234,  
+  "product_id": 5678,  
+  "quantity":3,  
+  "payment_type": "mastercard"  
+}
+```
+
+\normalsize
+
+In Kafka ogni topic posside un particolare schema Avro im modo da :
+
+
+- definire la struttura dei messaggi pubblicabili nel topic
+- permettere a producers e consumers di conoscere quali sono i campi dei messaggi del topic e qual'è il loro tipo
+- documentare la tipologia dei messaggi pubblicati nel topic
+- evitare la presenza di dati corrotti nel topic
+
+
+Questo genere di meccanismo per la gestione dei dati diventa di assoluta importanza all'aumentare delle applicazioni che dipendono dall'utilizzo dei dati prodotti e gestiti da una piattaforma Kafka, evitando problemi "effetto Domino" dove un singolo errore in un messaggio potrebbe portare a corrompere un consumer o applicazioni terze che utilizzano i dati forniti dal consumer.
+
+Un formato dei dati consistente come Avro permette di _disacoppiare i formati utilizzati per la lettura e la scrittura dei messaggi_, ovvero viene data la possibilità alle applicazioni che si iscrivono ad un particolare topic di poter utilizzare un nuovo schema di dati compatibile con un vecchio formato, senza dover aggiornare tutte le applicazioni che utilizzano ancora il vecchio formato.
+
+Supponiamo ad esempio di utilizzare un formato del tipo seguente per gestire le informazioni riguardando agli acquirenti di un particolare servizio/piattaforma:
+
+\small 
+
+```
+{
+    "namespace": "customerManagement.avro",
+    "type": "record",
+    "name": "Customer",
+    "fields": [
+         {"name": "id", "type": "int"},
+         {"name": "name",  "type": "string"},
+         {"name": "faxNumber", "type": ["null", "string"], "default": "null"}
+    ] 
+}
+```
+
+\normalsize
+
+Una applicazione che vuole utilizzare lo stream di dati di questo topic avrà probabilmente dei metodi come `getId()`, `getName()` e `getFaxNumber()` per leggere i dati del topic; Di nota è il tipo del campo `faxNumber` il quale è esplicitamente possibile che sia `null`, ovvero è lecito aspettarsi che l'applicazione che utilizza questi dati non si romperà nel caso in cui il fax non sia presente nel messaggio.
+
+Supponiamo di aver utilizzato lo schema precedente per genere una importante mole di dati in un topic ma di voler migrare il nostro schema ad un nuovo formato che permetta agli utenti di specificare la loro `email` piuttosto che il loro fax.
+
+\small
+
+```
+{
+    "namespace": "customerManagement.avro",
+    "type": "record",
+    "name": "Customer",
+    "fields": [
+         {"name": "id", "type": "int"},
+         {"name": "name",  "type": "string"},
+         {"name": "email", "type": ["null", "string"], "default": "null"}
+    ] 
+}
+```
+\normalsize
+
+Ancora una volta l'applicazione che utilizza questo schema avrà dei metodi `getId()`, `getName()` ma invece di `getFaxNumber()` avrà `getEmail()`; Dopo l'aggiornamento dello schema, i vecchi messaggi presenti nel topic conterranno il campo `faxNumber` mentre i nuovi messaggi avranno il campo `email`.  
+
+Dato che il tipo dei campi `faxNumber` e `email` può essere sia `string` che `null`, nessuna delle tue tipologie di applicazioni potrà fallire: la vecchia tipologia di applicazioni semplicemente registrerà i nuovi messaggi come utenti senza un numero di fax, mentre le nuove applicazioni vedranno i vecchi messaggi del topic come utenti senza una email.
+
+Questo genere di _evoluzione_ dello schema dei dati di un topic è il motivo centrale dietro all'uso della tecnologia: garantire la robustezza dei dati senza compromettere la leggibilità dello schema o il funzionamento di applicazioni che utilizzano lo stesso topic.  
+L'evoluzione dello schema è permessa solo secondo determinate regole di compatibilità la cui definizione esula dal contesto di questo tesi ma che possono essere visionate nella documentazione di Apache Avro: https://avro.apache.org/docs/1.7.7/spec.html#Schema+Resolution
+
+![Serializzazione e deserializzazione con schema registry \label{figure_5}](../images/schema-registry.png){ width=90% }
+
+\newpage
 > Come collegare event sourcing e kafka => perchè kafka è una buona piattaforma per event sourcing
 
 ### 3.2 Kafka Connect
