@@ -301,12 +301,12 @@ Avro è diventato nel tempo lo standard per gli schema nelle applicazioni basate
 - Al contrario di JSON, è possibile scindere lo schema dei dati dalla definizione dell'oggetto/record 
 - E' un linguaggio maturo con un importante supporto dalla community; Esistono molte librerie che permettono di creare automaticamente oggetti Java o case classes in Scala partendo da uno schema Avro
 
-Apache Avro è un formato per la serializzazione di dati che si divide in due parti: i _dati_ e lo _schema dei dati_. 
+Apache Avro è un formato per la serializzazione di dati, ogni messaggio Avro si divide in due parti: i _dati_ e lo _schema dei dati_. 
 
 Un esempio di **schema dei dati** di un record con cinque campi:
 \small
 
-```{ .json }
+```
 {
   "type": "record",
   "doc":"This event records the sale of a product",
@@ -399,9 +399,24 @@ Ancora una volta l'applicazione che utilizza questo schema avrà dei metodi `get
 Dato che il tipo dei campi `faxNumber` e `email` può essere sia `string` che `null`, nessuna delle tue tipologie di applicazioni potrà fallire: la vecchia tipologia di applicazioni semplicemente registrerà i nuovi messaggi come utenti senza un numero di fax, mentre le nuove applicazioni vedranno i vecchi messaggi del topic come utenti senza una email.
 
 Questo genere di _evoluzione_ dello schema dei dati di un topic è il motivo centrale dietro all'uso della tecnologia: garantire la robustezza dei dati senza compromettere la leggibilità dello schema o il funzionamento di applicazioni che utilizzano lo stesso topic.  
-L'evoluzione dello schema è permessa solo secondo determinate regole di compatibilità la cui definizione esula dal contesto di questo tesi ma che possono essere visionate nella documentazione di Apache Avro: https://avro.apache.org/docs/1.7.7/spec.html#Schema+Resolution
+L'evoluzione dello schema è permessa solo secondo determinate regole di compatibilità la cui definizione esula dal contesto di questo tesi ma che possono essere visionate nella [documentazione di Apache Avro](https://avro.apache.org/docs/1.7.7/spec.html#Schema+Resolution  "Schema Resolution").
+
+\newpage
+
+### Schema Registry
+
+Uno dei vantaggi di Avro rispetto a JSON è la possibilità di non dover inserire lo schema dei dati "completo" in ogni record permettendo di pubblicare su un topic dei messaggi meno pesanti rispetto a JSON ed è proprio per sfruttare questo vantaggio che nasce lo _Schema Registry_.  
+Uno _schema registry_ è un servizio di gestione degli schema Avro utilizzato da Kafka per servire ed evolvere i metadati di un topic; E' utilizzato dai producers nella fase di scrittura (serializzazione di un messaggio). dai consumer nella fase di lettura (deserializzazione di un messaggio) ed impone delle regole di forma a tutti i client che intendono utilizzare un topic specificato con formato dati Avro.  
 
 ![Serializzazione e deserializzazione con schema registry \label{figure_5}](../images/schema-registry.png){ width=90% }
+
+Supponiamo di avere uno schema registry e di voler produrre dei messaggi su di un topic:
+
+1. Il producer interrogherà il registry per sapere se esiste già uno schema dei dati per un particolare topic inviando la propria copia dello schema, in caso contrario sarà lui stesso a pubblicarlo nel registry.
+2. Lo schema registry verifica se lo schema ricevuto dal producer è uguale o una evoluzione compatibile dello schema già presente, in caso negativo verrà alzata un eccezzione e vietata la scrittura al producer.
+3. Se lo schema proposto dal producer è valido, nel record Avro verrà inserito un riferimento allo schema del topic.
+
+L'utilizzo dello schema registry da parte di un consumer è speculare a quello di un producer.
 
 \newpage
 > Come collegare event sourcing e kafka => perchè kafka è una buona piattaforma per event sourcing
