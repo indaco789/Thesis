@@ -593,14 +593,25 @@ L'architettura offerta da Kafka è utilizzata da due genere di client:
 \emph{producers} oppure \emph{consumers}.
 
 I \emph{producers} hanno il compito di creare messaggi indirizzati a
-specifici topic indipendentemente dal numero di partizioni che formano
-il topic.\\
+specifici topic (indipendentemente dal numero di partizioni da cui sono
+formati).\\
 Come illustrato in precedenza, un topic è formato da un numero variabile
 di partizioni utilizzate come meccanismo di replica e gestione dei
 messaggi; Alla creazione di un messaggio è possibile indicare al
 producer su quale partizione andare a scrivere il record specificando
 l'identificativo di una partizione specifica.
 
+\begin{figure}
+\centering
+\includegraphics[width=0.90000\textwidth]{../images/producer-process.png}
+\caption{Processo di pubblicazione di un messaggio \label{figure_3}}
+\end{figure}
+
+Il processo di pubblicazione di un messaggio inizia con la produzione di
+un \texttt{ProducerRecord} il quale deve contenere il topic sul quale
+vuole pubblicare il messaggio ad una value, ovvero il contenuto del
+messaggio; Opzionalmente è possibile specificare una chiave o una
+partizione specifica.\\
 Nella maggior parte dei casi d'uso di Kafka, il producer non si pone mai
 il problema di decidere su quale partizione andare a scrivere un
 particolare messaggio ma piuttosto vengono utilizzati dei meccanismi di
@@ -611,6 +622,24 @@ partizione in base ad una hash key derivata dall'offset del messaggio
 oppure utilizzando un algoritmo round robin, se necessario è presente la
 possibilità di specificare un \emph{partioneer} creato su misura al caso
 d'uso.
+
+Una volta creato il \texttt{ProducerRecord} il producer serializza
+chiave e value del messaggio in \texttt{ByteArray} in modo da
+effettivamente trasmetterli sulla rete. I dati sono quindi recapitati ad
+un partitioner che andrà a deciderà su quale partizione pubblicare il
+messaggio (solo nel caso in cui la partizione non era già stata
+specificata nel record). Il record viene quindi aggiunto ad un batch di
+record e il producer resta in attesa di avere abbastanza record (o
+alternativamente, in attesa della scadenza di un timeout) prima di
+inviare il batch di messaggi ad un broker.
+
+Una volta che il broker riceve il batch di messaggi verranno effettuati
+una serie di controlli per garantire la validità dei messaggi del batch
+rispetto al topic su cui si sta cercando di pubblicare questi messaggi;
+In caso positivo il broker invia al producer un \texttt{RecordMedatada}
+con topic, partizione e offset dei messaggi dei pubblicati, altrimenti
+ritornerà un errore. In caso di errore, il producer può provare a
+rinviare il batch di messaggi.
 
 I \emph{consumers} leggono i messaggi pubblicati sui topic ai quali si
 sono iscritti.\\

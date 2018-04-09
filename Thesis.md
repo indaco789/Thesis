@@ -251,11 +251,21 @@ Per ogniuno di questi eventi verrà creato un singolo `topic` per raggruppare tu
 ### Producers e consumers
 L'architettura offerta da Kafka è utilizzata da due genere di client: _producers_ oppure _consumers_.  
 
-I _producers_ hanno il compito di creare messaggi indirizzati a specifici topic indipendentemente dal numero di partizioni che formano il topic.  
+I _producers_ hanno il compito di creare messaggi indirizzati a specifici topic (indipendentemente dal numero di partizioni da cui sono formati).  
 Come illustrato in precedenza, un topic è formato da un numero variabile di partizioni utilizzate come meccanismo di replica e gestione dei messaggi; Alla creazione di un messaggio è possibile indicare al producer su quale partizione andare a scrivere il record specificando l'identificativo di una partizione specifica.  
 
+![Processo di pubblicazione di un messaggio \label{figure_3}](../images/producer-process.png){ width=90% }
+
+Il processo di pubblicazione di un messaggio inizia con la produzione di un `ProducerRecord` il quale deve contenere il topic sul quale vuole pubblicare il messaggio ad una value, ovvero il contenuto del messaggio; Opzionalmente è possibile specificare una chiave o una partizione specifica.  
 Nella maggior parte dei casi d'uso di Kafka, il producer non si pone mai il problema di decidere su quale partizione andare a scrivere un particolare messaggio ma piuttosto vengono utilizzati dei meccanismi di load-balancing per spartire correttamente i messaggi su tutte le partizioni disponibili presenti nel topic.  
 Tipici esempi di algoritmi di load-balancing sono il calcolo della partizione in base ad una hash key derivata dall'offset del messaggio oppure utilizzando un algoritmo round robin, se necessario è presente la possibilità di specificare un _partioneer_ creato su misura al caso d'uso.
+
+Una volta creato il `ProducerRecord` il producer serializza chiave e value del messaggio in `ByteArray` in modo da effettivamente trasmetterli sulla rete.
+I dati sono quindi recapitati ad un partitioner che andrà a deciderà su quale partizione pubblicare il messaggio (solo nel caso in cui la partizione non era già stata specificata nel record).
+Il record viene quindi aggiunto ad un batch di record e il producer resta in attesa di avere abbastanza record (o alternativamente, in attesa della scadenza di un timeout) prima di inviare il batch di messaggi ad un broker.
+
+Una volta che il broker riceve il batch di messaggi verranno effettuati una serie di controlli per garantire la validità dei messaggi del batch rispetto al topic su cui si sta cercando di pubblicare questi messaggi; In caso positivo il broker invia al producer un `RecordMedatada` con topic, partizione e offset dei messaggi dei pubblicati, altrimenti ritornerà un errore. In caso di errore, il producer può provare a rinviare il batch di messaggi.
+
 
 I _consumers_ leggono i messaggi pubblicati sui topic ai quali si sono iscritti.  
 I messaggi possono essere letti partendo dalla testa (o inizio) del topic oppure uno specifico _offset_ fino ad arrivare alla coda (o fine).  
