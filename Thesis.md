@@ -249,7 +249,7 @@ Per ogniuno di questi eventi verrà creato un singolo `topic` per raggruppare tu
 \newpage
 
 ### Producers e consumers
-L'architettura offerta da Kafka è utilizzata da due genere di client: _producers_ oppure _consumers_.  
+Kafka è utilizzata da due tipologie di client: _producers_ e _consumers_.  
 
 I _producers_ hanno il compito di creare messaggi indirizzati a specifici topic (indipendentemente dal numero di partizioni da cui sono formati).  
 Come illustrato in precedenza, un topic è formato da un numero variabile di partizioni utilizzate come meccanismo di replica e gestione dei messaggi; Alla creazione di un messaggio è possibile indicare al producer su quale partizione andare a scrivere il record specificando l'identificativo di una partizione specifica.  
@@ -266,6 +266,31 @@ Il record viene quindi aggiunto ad un batch di record e il producer resta in att
 
 Una volta che il broker riceve il batch di messaggi verranno effettuati una serie di controlli per garantire la validità dei messaggi del batch rispetto al topic su cui si sta cercando di pubblicare questi messaggi; In caso positivo il broker invia al producer un `RecordMedatada` con topic, partizione e offset dei messaggi dei pubblicati, altrimenti ritornerà un errore. In caso di errore, il producer può provare a rinviare il batch di messaggi.
 
+\small
+
+```{ .scala }
+case class KafkaProducer(topic: String){
+    val props = new Properties()
+    props.put("bootstrap.servers", )
+    props.put("key.serializer", 
+        "org.apache.kafka.common.serialization.StringSerializer")
+    props.put("value.serializer", 
+        "org.apache.kafka.common.serialization.StringSerializer")
+    
+    private val producer = new KafkaProducer[String, String](kafkaProps)    
+    
+    def send(value: String) = {
+      val record = new ProducerRecord[String, String](topic, value)
+
+      try {
+        producer.send(record).get()
+      } catch {
+        case e: Exception => e.printStackTrace
+      }
+    }   
+}
+```
+\normalsize
 
 I _consumers_ leggono i messaggi pubblicati sui topic ai quali si sono iscritti.  
 I messaggi possono essere letti partendo dalla testa (o inizio) del topic oppure uno specifico _offset_ fino ad arrivare alla coda (o fine).  
@@ -308,15 +333,15 @@ Avro è diventato nel tempo lo standard per gli schema nelle applicazioni basate
 
 
 - Avro è mappabile su JSON
-- Al contrario di JSON, è possibile scindere lo schema dei dati dalla definizione dell'oggetto/record 
-- E' un linguaggio maturo con un importante supporto dalla community; Esistono molte librerie che permettono di creare automaticamente oggetti Java o case classes in Scala partendo da uno schema Avro
+- Al contrario di JSON, è possibile scomporre lo schema dei dati dalla definizione dell'oggetto
+- E' un linguaggio maturo ben supportato dalla community; Esistono molte librerie che permettono di creare automaticamente oggetti Java o case classes in Scala partendo da uno schema Avro
 
 Apache Avro è un formato per la serializzazione di dati, ogni messaggio Avro si divide in due parti: i _dati_ e lo _schema dei dati_. 
 
 Un esempio di **schema dei dati** di un record con cinque campi:
 \small
 
-```
+```{ .json }
 {
   "type": "record",
   "doc":"This event records the sale of a product",
@@ -340,7 +365,7 @@ Ed un generico record di **dati** definito in base allo schema:
 
 \small
 
-```
+```{ .json }
 {  
   "time": 1424849130111,     
   "customer_id": 1234,  
@@ -369,7 +394,7 @@ Supponiamo ad esempio di utilizzare un formato del tipo seguente per gestire le 
 
 \small 
 
-```
+```{ .json }
 {
     "namespace": "customerManagement.avro",
     "type": "record",
@@ -390,7 +415,7 @@ Supponiamo di aver utilizzato lo schema precedente per genere una importante mol
 
 \small
 
-```
+```{ .json }
 {
     "namespace": "customerManagement.avro",
     "type": "record",

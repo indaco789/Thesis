@@ -27,6 +27,44 @@
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -589,8 +627,8 @@ ci permetterà di calcolare la frequenza di visualizzazione del video.
 
 \subsubsection{Producers e consumers}\label{producers-e-consumers}
 
-L'architettura offerta da Kafka è utilizzata da due genere di client:
-\emph{producers} oppure \emph{consumers}.
+Kafka è utilizzata da due tipologie di client: \emph{producers} e
+\emph{consumers}.
 
 I \emph{producers} hanno il compito di creare messaggi indirizzati a
 specifici topic (indipendentemente dal numero di partizioni da cui sono
@@ -640,6 +678,35 @@ In caso positivo il broker invia al producer un \texttt{RecordMedatada}
 con topic, partizione e offset dei messaggi dei pubblicati, altrimenti
 ritornerà un errore. In caso di errore, il producer può provare a
 rinviare il batch di messaggi.
+
+\small
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{case} \KeywordTok{class} \FunctionTok{KafkaProducer}\NormalTok{(topic: String)\{}
+    \KeywordTok{val}\NormalTok{ props = }\KeywordTok{new}\NormalTok{ Properties()}
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"bootstrap.servers"}\NormalTok{, )}
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"key.serializer"}\NormalTok{, }
+        \StringTok{"org.apache.kafka.common.serialization.StringSerializer"}\NormalTok{)}
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"value.serializer"}\NormalTok{, }
+        \StringTok{"org.apache.kafka.common.serialization.StringSerializer"}\NormalTok{)}
+    
+    \KeywordTok{private} \KeywordTok{val}\NormalTok{ producer = }\KeywordTok{new}\NormalTok{ KafkaProducer[String, String](kafkaProps)    }
+    
+    \KeywordTok{def} \FunctionTok{send}\NormalTok{(value: String) = \{}
+      \KeywordTok{val}\NormalTok{ record = }\KeywordTok{new}\NormalTok{ ProducerRecord[String, String](topic, value)}
+
+      \KeywordTok{try}\NormalTok{ \{}
+\NormalTok{        producer.}\FunctionTok{send}\NormalTok{(record).}\FunctionTok{get}\NormalTok{()}
+\NormalTok{      \} }\KeywordTok{catch}\NormalTok{ \{}
+        \KeywordTok{case}\NormalTok{ e: Exception => e.}\FunctionTok{printStackTrace}
+\NormalTok{      \}}
+\NormalTok{    \}   }
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\normalsize
 
 I \emph{consumers} leggono i messaggi pubblicati sui topic ai quali si
 sono iscritti.\\
@@ -741,12 +808,12 @@ sviluppatori di Kafka ne promuovono l'uso citando una serie di motivi:
 \item
   Avro è mappabile su JSON
 \item
-  Al contrario di JSON, è possibile scindere lo schema dei dati dalla
-  definizione dell'oggetto/record
+  Al contrario di JSON, è possibile scomporre lo schema dei dati dalla
+  definizione dell'oggetto
 \item
-  E' un linguaggio maturo con un importante supporto dalla community;
-  Esistono molte librerie che permettono di creare automaticamente
-  oggetti Java o case classes in Scala partendo da uno schema Avro
+  E' un linguaggio maturo ben supportato dalla community; Esistono molte
+  librerie che permettono di creare automaticamente oggetti Java o case
+  classes in Scala partendo da uno schema Avro
 \end{itemize}
 
 Apache Avro è un formato per la serializzazione di dati, ogni messaggio
@@ -755,24 +822,26 @@ Avro si divide in due parti: i \emph{dati} e lo \emph{schema dei dati}.
 Un esempio di \textbf{schema dei dati} di un record con cinque campi:
 \small
 
-\begin{verbatim}
-{
-  "type": "record",
-  "doc":"This event records the sale of a product",
-  "name": "ProductSaleEvent",
-  "fields" : [
-    {"name":"time", "type":"long", "doc":"The time of the purchase"},
-    {"name":"customer_id", "type":"long", "doc":"The customer"},
-    {"name":"product_id", "type":"long", "doc":"The product"},
-    {"name":"quantity", "type":"int"},
-    {"name":"payment",
-     "type":{"type":"enum",
-         "name":"payment_types",
-             "symbols":["cash","mastercard","visa"]},
-     "doc":"The method of payment"}
-  ]
-}
-\end{verbatim}
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{\{}
+  \DataTypeTok{"type"}\FunctionTok{:} \StringTok{"record"}\FunctionTok{,}
+  \DataTypeTok{"doc"}\FunctionTok{:}\StringTok{"This event records the sale of a product"}\FunctionTok{,}
+  \DataTypeTok{"name"}\FunctionTok{:} \StringTok{"ProductSaleEvent"}\FunctionTok{,}
+  \DataTypeTok{"fields"} \FunctionTok{:} \OtherTok{[}
+    \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:}\StringTok{"time"}\FunctionTok{,} \DataTypeTok{"type"}\FunctionTok{:}\StringTok{"long"}\FunctionTok{,} \DataTypeTok{"doc"}\FunctionTok{:}\StringTok{"The time of the purchase"}\FunctionTok{\}}\OtherTok{,}
+    \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:}\StringTok{"customer_id"}\FunctionTok{,} \DataTypeTok{"type"}\FunctionTok{:}\StringTok{"long"}\FunctionTok{,} \DataTypeTok{"doc"}\FunctionTok{:}\StringTok{"The customer"}\FunctionTok{\}}\OtherTok{,}
+    \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:}\StringTok{"product_id"}\FunctionTok{,} \DataTypeTok{"type"}\FunctionTok{:}\StringTok{"long"}\FunctionTok{,} \DataTypeTok{"doc"}\FunctionTok{:}\StringTok{"The product"}\FunctionTok{\}}\OtherTok{,}
+    \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:}\StringTok{"quantity"}\FunctionTok{,} \DataTypeTok{"type"}\FunctionTok{:}\StringTok{"int"}\FunctionTok{\}}\OtherTok{,}
+    \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:}\StringTok{"payment"}\FunctionTok{,}
+     \DataTypeTok{"type"}\FunctionTok{:\{}\DataTypeTok{"type"}\FunctionTok{:}\StringTok{"enum"}\FunctionTok{,}
+         \DataTypeTok{"name"}\FunctionTok{:}\StringTok{"payment_types"}\FunctionTok{,}
+             \DataTypeTok{"symbols"}\FunctionTok{:}\OtherTok{[}\StringTok{"cash"}\OtherTok{,}\StringTok{"mastercard"}\OtherTok{,}\StringTok{"visa"}\OtherTok{]}\FunctionTok{\},}
+     \DataTypeTok{"doc"}\FunctionTok{:}\StringTok{"The method of payment"}\FunctionTok{\}}
+  \OtherTok{]}
+\FunctionTok{\}}
+\end{Highlighting}
+\end{Shaded}
 
 \normalsize
 \newpage
@@ -780,15 +849,17 @@ Ed un generico record di \textbf{dati} definito in base allo schema:
 
 \small
 
-\begin{verbatim}
-{  
-  "time": 1424849130111,     
-  "customer_id": 1234,  
-  "product_id": 5678,  
-  "quantity":3,  
-  "payment_type": "mastercard"  
-}
-\end{verbatim}
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{\{}  
+  \DataTypeTok{"time"}\FunctionTok{:} \DecValTok{1424849130111}\FunctionTok{,}     
+  \DataTypeTok{"customer_id"}\FunctionTok{:} \DecValTok{1234}\FunctionTok{,}  
+  \DataTypeTok{"product_id"}\FunctionTok{:} \DecValTok{5678}\FunctionTok{,}  
+  \DataTypeTok{"quantity"}\FunctionTok{:}\DecValTok{3}\FunctionTok{,}  
+  \DataTypeTok{"payment_type"}\FunctionTok{:} \StringTok{"mastercard"}  
+\FunctionTok{\}}
+\end{Highlighting}
+\end{Shaded}
 
 \normalsize
 
@@ -827,18 +898,20 @@ servizio/piattaforma:
 
 \small 
 
-\begin{verbatim}
-{
-    "namespace": "customerManagement.avro",
-    "type": "record",
-    "name": "Customer",
-    "fields": [
-         {"name": "id", "type": "int"},
-         {"name": "name",  "type": "string"},
-         {"name": "faxNumber", "type": ["null", "string"], "default": "null"}
-    ] 
-}
-\end{verbatim}
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{\{}
+    \DataTypeTok{"namespace"}\FunctionTok{:} \StringTok{"customerManagement.avro"}\FunctionTok{,}
+    \DataTypeTok{"type"}\FunctionTok{:} \StringTok{"record"}\FunctionTok{,}
+    \DataTypeTok{"name"}\FunctionTok{:} \StringTok{"Customer"}\FunctionTok{,}
+    \DataTypeTok{"fields"}\FunctionTok{:} \OtherTok{[}
+         \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:} \StringTok{"id"}\FunctionTok{,} \DataTypeTok{"type"}\FunctionTok{:} \StringTok{"int"}\FunctionTok{\}}\OtherTok{,}
+         \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:} \StringTok{"name"}\FunctionTok{,}  \DataTypeTok{"type"}\FunctionTok{:} \StringTok{"string"}\FunctionTok{\}}\OtherTok{,}
+         \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:} \StringTok{"faxNumber"}\FunctionTok{,} \DataTypeTok{"type"}\FunctionTok{:} \OtherTok{[}\StringTok{"null"}\OtherTok{,} \StringTok{"string"}\OtherTok{]}\FunctionTok{,} \DataTypeTok{"default"}\FunctionTok{:} \StringTok{"null"}\FunctionTok{\}}
+    \OtherTok{]} 
+\FunctionTok{\}}
+\end{Highlighting}
+\end{Shaded}
 
 \normalsize
 
@@ -857,18 +930,20 @@ ad un nuovo formato che permetta agli utenti di specificare la loro
 
 \small
 
-\begin{verbatim}
-{
-    "namespace": "customerManagement.avro",
-    "type": "record",
-    "name": "Customer",
-    "fields": [
-         {"name": "id", "type": "int"},
-         {"name": "name",  "type": "string"},
-         {"name": "email", "type": ["null", "string"], "default": "null"}
-    ] 
-}
-\end{verbatim}
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{\{}
+    \DataTypeTok{"namespace"}\FunctionTok{:} \StringTok{"customerManagement.avro"}\FunctionTok{,}
+    \DataTypeTok{"type"}\FunctionTok{:} \StringTok{"record"}\FunctionTok{,}
+    \DataTypeTok{"name"}\FunctionTok{:} \StringTok{"Customer"}\FunctionTok{,}
+    \DataTypeTok{"fields"}\FunctionTok{:} \OtherTok{[}
+         \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:} \StringTok{"id"}\FunctionTok{,} \DataTypeTok{"type"}\FunctionTok{:} \StringTok{"int"}\FunctionTok{\}}\OtherTok{,}
+         \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:} \StringTok{"name"}\FunctionTok{,}  \DataTypeTok{"type"}\FunctionTok{:} \StringTok{"string"}\FunctionTok{\}}\OtherTok{,}
+         \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:} \StringTok{"email"}\FunctionTok{,} \DataTypeTok{"type"}\FunctionTok{:} \OtherTok{[}\StringTok{"null"}\OtherTok{,} \StringTok{"string"}\OtherTok{]}\FunctionTok{,} \DataTypeTok{"default"}\FunctionTok{:} \StringTok{"null"}\FunctionTok{\}}
+    \OtherTok{]} 
+\FunctionTok{\}}
+\end{Highlighting}
+\end{Shaded}
 
 \normalsize
 
