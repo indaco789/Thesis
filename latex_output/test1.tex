@@ -679,19 +679,57 @@ con topic, partizione e offset dei messaggi dei pubblicati, altrimenti
 ritornerà un errore. In caso di errore, il producer può provare a
 rinviare il batch di messaggi.
 
-\small
+Ogni partizione in un cluster ha un \emph{leader} ed un insieme di sue
+\emph{repliche} distribuite sui vari brokers.\\
+Tutte le pubblicazioni dirette ad una particolare partizione devono
+prima essere pubblicate sul leader, ed in un secondo momento devo
+essereno replicate sulle repliche (o followers), questo meccanismo è
+utilizzato per garantire la durabilità dei dati in un cluster: se uno
+dei leader muore, viene eletta una delle repliche a nuovo leader della
+partizione e viene creata una nuova replica.\\
+E' possibile garantire diversi livelli di durabilità a seconda di come
+viene configurato il producer, favorendo od evitando problemi di
+scrittura e lettura dei messaggi a scapito del throughput.
+
+\newpage
+
+Per poter creare un producer sono necessari tre parametri:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{bootstrap.servers}: lista degli indirizzi (\texttt{host:port})
+  dei brokers del cluster Kafka che vogliamo utilizzare.
+\item
+  \texttt{key.serializer}: nome della classe che verrà utilizzata per
+  serializzare in byte array le chiavi dei record che vogliamo
+  pubblicare con kafka. E' possibile crearne di nuovi implementando
+  \texttt{org.apache.kafka.common.serialization.Serializer}.
+\item
+  \texttt{value.serializer}: nome della classe che verrà utilizzata per
+  serializzare in byte array il record da pubblicare.
+\end{itemize}
+
+Un esempio di producer è dato dal seguente codice scala:
+
+\small  
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{case} \KeywordTok{class} \FunctionTok{KafkaProducer}\NormalTok{(topic: String)\{}
+\KeywordTok{import}\NormalTok{ java.}\FunctionTok{util}\NormalTok{.}\FunctionTok{Properties}
+\KeywordTok{import}\NormalTok{ org.}\FunctionTok{apache}\NormalTok{.}\FunctionTok{kafka}\NormalTok{.}\FunctionTok{clients}\NormalTok{.}\FunctionTok{producer}\NormalTok{.\{Callback, RecordMetadata\}}
+\KeywordTok{import}\NormalTok{ org.}\FunctionTok{apache}\NormalTok{.}\FunctionTok{kafka}\NormalTok{.}\FunctionTok{clients}\NormalTok{.}\FunctionTok{producer}\NormalTok{.\{ProducerRecord, KafkaProducer\}}
+\KeywordTok{import}\NormalTok{ scala.}\FunctionTok{concurrent}\NormalTok{.}\FunctionTok{Promise}
+
+\KeywordTok{case} \KeywordTok{class} \FunctionTok{Producer}\NormalTok{(topic: String)\{}
     \KeywordTok{val}\NormalTok{ props = }\KeywordTok{new}\NormalTok{ Properties()}
-\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"bootstrap.servers"}\NormalTok{, )}
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"bootstrap.servers"}\NormalTok{, localhost:}\DecValTok{9092}\NormalTok{)}
 \NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"key.serializer"}\NormalTok{, }
         \StringTok{"org.apache.kafka.common.serialization.StringSerializer"}\NormalTok{)}
 \NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"value.serializer"}\NormalTok{, }
         \StringTok{"org.apache.kafka.common.serialization.StringSerializer"}\NormalTok{)}
     
-    \KeywordTok{private} \KeywordTok{val}\NormalTok{ producer = }\KeywordTok{new}\NormalTok{ KafkaProducer[String, String](kafkaProps)    }
+    \KeywordTok{private} \KeywordTok{val}\NormalTok{ producer = }\KeywordTok{new}\NormalTok{ KafkaProducer[String, String](props)    }
     
     \KeywordTok{def} \FunctionTok{send}\NormalTok{(value: String) = \{}
       \KeywordTok{val}\NormalTok{ record = }\KeywordTok{new}\NormalTok{ ProducerRecord[String, String](topic, value)}
@@ -702,11 +740,82 @@ rinviare il batch di messaggi.
         \KeywordTok{case}\NormalTok{ e: Exception => e.}\FunctionTok{printStackTrace}
 \NormalTok{      \}}
 \NormalTok{    \}   }
+
+    \KeywordTok{def} \FunctionTok{sendAsync}\NormalTok{(value: String) = \{}
+        \KeywordTok{val}\NormalTok{ record = }\KeywordTok{new}\NormalTok{ ProducerRecord[String, String](topic, value)}
+        \KeywordTok{val}\NormalTok{ promise = Promise[(RecordMetadata, Exception)]()}
+
+\NormalTok{        producer.}\FunctionTok{send}\NormalTok{(record, }\KeywordTok{new}\NormalTok{ Callback \{}
+            \KeywordTok{override} \KeywordTok{def} \FunctionTok{onCompletion}\NormalTok{(metadata: RecordMetadata, }
+\NormalTok{                                      exception: Exception) = \{}
+\NormalTok{                promise.}\FunctionTok{success}\NormalTok{((metadata, exception))}
+\NormalTok{            \}}
+\NormalTok{        \})}
+\NormalTok{    \}}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
 \normalsize
+\newpage
+
+Creato un oggetto \texttt{Properties} con le configurazioni di base,
+viene creato un nuovo producer capace di pubblicare dei record (di tipo
+\texttt{String}) ad un topic (passato come parametro alla case class)
+con il metodo \texttt{send(value:\ String)}.
+
+Un producer può inviare record con tre diverse modalità:
+
+\begin{itemize}
+\tightlist
+\item
+  Fire-and-forget: il messaggio viene mandato al server e viene ignorata
+  la possibilità che questo messaggio non venga ricevuto.
+\item
+  Sincrona: il messaggio viene mandato con un metodo \texttt{send()} il
+  quale restituisce un \texttt{Future}, viene quindi utilizzato il
+  metodo \texttt{.get()} per attendere una risposta dal server per
+  capire se il messaggio è effettivamente stato ricevuto.
+\item
+  Asincrona: il metodo \texttt{send()} restituisce una \texttt{callback}
+  che verrà eseguita quando (e se) riceverà una risposta dal broker
+  Kafka.
+\end{itemize}
+
+E' possibile configurare un producer
+\href{https://kafka.apache.org/documentation.html\#producerconfigs}{secondo
+una moltitudine di campi di configurazione}, ma sicuramente uno dei più
+importanti è il valore attribuito al campo \texttt{acks} il quale è
+direttamente collegato alla durabilità dei messaggi e definisce quante
+repliche devono ricevere il messaggio pubblicato sul leader prima di
+poter garantire al producer la corretta pubblicazione del messaggio.
+
+Esistono tre possibili valori per \texttt{acks}:
+
+\begin{itemize}
+\tightlist
+\item
+  con \texttt{acks=0}, il producer non si aspetterà di ricevere un
+  messaggio di conferma da parte del broker. Questo implica che nel caso
+  di un malfunzionamento, il producer non sarà a conoscenza del
+  fallimento ed il messaggio verrà perso. E' l'opzione che garantisce il
+  più alto valore di throughput.
+\item
+  con \texttt{acks=1}, il producer riceverà un messaggio di conferma di
+  pubblicazione del messaggio appena \emph{almeno} una replica
+  confermerà di aver ricevuto il messaggio pubblicato sul leader. Con
+  questa opzione è comunque possibile perdere il messaggio se, a seguito
+  della morte del leader, viene eletto come nuovo leader non la replica
+  che aveva confermato la ricezione del messaggio ma piuttosto una delle
+  repliche che non lo avevano ancora ricevuto.
+\item
+  con \texttt{acks=all}, il producer riceverà conferma della
+  pubblicazione del messaggio solo dopo che tutte le repliche hanno
+  ricevuto il messaggio pubblicato sul leader. Questa opzione garantisce
+  la pubblicazione di un messaggio a scapito di un minor throughput.
+\end{itemize}
+
+\newpage
 
 I \emph{consumers} leggono i messaggi pubblicati sui topic ai quali si
 sono iscritti.\\
@@ -729,8 +838,6 @@ reiniziare, il processo di lettura di un topic.
 \label{figure_3}}
 \end{figure}
 
-\newpage
-
 I consumers lavorano in \emph{gruppi di consumers}: uno o più consumer
 lavorano per leggere un intero topic, con la proprietà che
 \emph{consumers diversi non possono leggere dalla stessa partizione}.
@@ -743,12 +850,42 @@ load balancing che permetterà ad un altro consumer del gruppo di
 continuare a leggere i messaggi della partizione che stava venendo
 consumata.
 
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\KeywordTok{import}\NormalTok{ java.}\FunctionTok{util}\NormalTok{.}\FunctionTok{Properties}
+\KeywordTok{import}\NormalTok{ org.}\FunctionTok{apache}\NormalTok{.}\FunctionTok{kafka}\NormalTok{.}\FunctionTok{clients}\NormalTok{.}\FunctionTok{consumer}\NormalTok{.}\FunctionTok{KafkaConsumer}
+
+\KeywordTok{case} \KeywordTok{class} \FunctionTok{Consumer}\NormalTok{(topic: String)\{}
+    \KeywordTok{val}\NormalTok{ props = }\KeywordTok{new}\NormalTok{ Properties()}
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"bootstrap.servers"}\NormalTok{, localhost:}\DecValTok{9092}\NormalTok{)}
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"key.deserializer"}\NormalTok{, }
+        \StringTok{"org.apache.kafka.common.serialization.StringSerializer"}\NormalTok{)}
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"value.deserializer"}\NormalTok{, }
+        \StringTok{"org.apache.kafka.common.serialization.StringSerializer"}\NormalTok{)}
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"group.id"}\NormalTok{, }\StringTok{"example"}\NormalTok{)    }
+    
+    \KeywordTok{private} \KeywordTok{val}\NormalTok{ consumer = }\KeywordTok{new}\NormalTok{ KafkaConsumer[String, String](props)    }
+\NormalTok{    consumer.}\FunctionTok{subscribe}\NormalTok{(util.}\FunctionTok{Collections}\NormalTok{.}\FunctionTok{singletonList}\NormalTok{(topic))}
+
+    \KeywordTok{def} \FunctionTok{readTopic}\NormalTok{()\{}
+        \KeywordTok{while}\NormalTok{(}\KeywordTok{true}\NormalTok{)\{}
+            \KeywordTok{val}\NormalTok{ records = consumer.}\FunctionTok{poll}\NormalTok{(}\DecValTok{100}\NormalTok{)}
+            \KeywordTok{for}\NormalTok{ (r <- records.}\FunctionTok{asScala}\NormalTok{)\{}
+                \FunctionTok{println}\NormalTok{(s}\StringTok{"$\{r.offset\} $\{r.key\} $\{r.value\}"}\NormalTok{) }
+\NormalTok{            \}}
+\NormalTok{        \}}
+\NormalTok{    \}}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
 \subsubsection{Brokers e clusters}\label{brokers-e-clusters}
 
 Un \emph{broker} è un server Kafka con svariati compiti quali ricevere,
 indicizzare e salvare i messaggi inviati dai producers ed inviare i
 messaggi richiesti dai consumers; Un singolo broker è capace di gestire
-miglialia di partizioni e millioni di messaggi al secondo.
+migliaia di partizioni e millioni di messaggi al secondo.
 
 I broker sono stati creati per lavorare in \emph{clusters} ovvero gruppi
 di brokers ordinanti secondo una particolare gerarchia.
@@ -763,10 +900,10 @@ A capo di un cluster troviamo un broker \emph{leader} al quale tutti gli
 altri broker del cluster devono far riferimento per permette ai
 meccanismi di replicazioni dei messaggi di funzionare correttamente: una
 partizione può essere assegnata a più broker, questo permette al cluster
-di avere un meccanismo per la gestione dei fallimenti dei brokers. In
-ogni cluster un particolare broker viene eletto a \emph{controller},
-ovvero un broker con l'incarico di gestire la suddivisione di partizioni
-sull'intero cluster e di monitorare il cluster.
+di poter gestire fallimenti dei brokers. In ogni cluster un particolare
+broker viene eletto a \emph{controller}, ovvero un broker con l'incarico
+di gestire la suddivisione delle partizioni sull'intero cluster e di
+monitorare l'andamento del cluster.
 
 \begin{figure}
 \centering
@@ -855,7 +992,7 @@ Ed un generico record di \textbf{dati} definito in base allo schema:
   \DataTypeTok{"time"}\FunctionTok{:} \DecValTok{1424849130111}\FunctionTok{,}     
   \DataTypeTok{"customer_id"}\FunctionTok{:} \DecValTok{1234}\FunctionTok{,}  
   \DataTypeTok{"product_id"}\FunctionTok{:} \DecValTok{5678}\FunctionTok{,}  
-  \DataTypeTok{"quantity"}\FunctionTok{:}\DecValTok{3}\FunctionTok{,}  
+  \DataTypeTok{"quantity"}\FunctionTok{:} \DecValTok{3}\FunctionTok{,}  
   \DataTypeTok{"payment_type"}\FunctionTok{:} \StringTok{"mastercard"}  
 \FunctionTok{\}}
 \end{Highlighting}
@@ -1060,6 +1197,7 @@ Kafka}\label{esempi-di-utilizzo-di-kafka}
 
 \subsection{9. Bibliografia}\label{bibliografia}
 
+https://docs.confluent.io/current/clients/producer.html\\
 https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
 https://www.confluent.io/blog/stream-data-platform-1/
 https://martinfowler.com/eaaDev/EventSourcing.html\\

@@ -266,18 +266,37 @@ Il record viene quindi aggiunto ad un batch di record e il producer resta in att
 
 Una volta che il broker riceve il batch di messaggi verranno effettuati una serie di controlli per garantire la validità dei messaggi del batch rispetto al topic su cui si sta cercando di pubblicare questi messaggi; In caso positivo il broker invia al producer un `RecordMedatada` con topic, partizione e offset dei messaggi dei pubblicati, altrimenti ritornerà un errore. In caso di errore, il producer può provare a rinviare il batch di messaggi.
 
-\small
+Ogni partizione in un cluster ha un _leader_ ed un insieme di sue _repliche_ distribuite sui vari brokers.  
+Tutte le pubblicazioni dirette ad una particolare partizione devono prima essere pubblicate sul leader, ed in un secondo momento devo essereno replicate sulle repliche (o followers), questo meccanismo è utilizzato per garantire la durabilità dei dati in un cluster: se uno dei leader muore, viene eletta una delle repliche a nuovo leader della partizione e viene creata una nuova replica.  
+E' possibile garantire diversi livelli di durabilità a seconda di come viene configurato il producer, favorendo od evitando problemi di scrittura e lettura dei messaggi a scapito del throughput.
+
+\newpage
+Per poter creare un producer sono necessari tre parametri:
+
+
+- `bootstrap.servers`: lista degli indirizzi (`host:port`) dei brokers del cluster Kafka che vogliamo utilizzare.
+- `key.serializer`: nome della classe che verrà utilizzata per serializzare in byte array le chiavi dei record che vogliamo pubblicare con kafka. E' possibile crearne di nuovi implementando `org.apache.kafka.common.serialization.Serializer`.
+- `value.serializer`: nome della classe che verrà utilizzata per serializzare in byte array il record da pubblicare.
+
+Un esempio di producer è dato dal seguente codice scala:  
+
+\small  
 
 ```{ .scala }
-case class KafkaProducer(topic: String){
+import java.util.Properties
+import org.apache.kafka.clients.producer.{Callback, RecordMetadata}
+import org.apache.kafka.clients.producer.{ProducerRecord, KafkaProducer}
+import scala.concurrent.Promise
+
+case class Producer(topic: String){
     val props = new Properties()
-    props.put("bootstrap.servers", )
+    props.put("bootstrap.servers", localhost:9092)
     props.put("key.serializer", 
         "org.apache.kafka.common.serialization.StringSerializer")
     props.put("value.serializer", 
         "org.apache.kafka.common.serialization.StringSerializer")
     
-    private val producer = new KafkaProducer[String, String](kafkaProps)    
+    private val producer = new KafkaProducer[String, String](props)    
     
     def send(value: String) = {
       val record = new ProducerRecord[String, String](topic, value)
@@ -288,9 +307,41 @@ case class KafkaProducer(topic: String){
         case e: Exception => e.printStackTrace
       }
     }   
+
+    def sendAsync(value: String) = {
+        val record = new ProducerRecord[String, String](topic, value)
+        val promise = Promise[(RecordMetadata, Exception)]()
+
+        producer.send(record, new Callback {
+            override def onCompletion(metadata: RecordMetadata, 
+                                      exception: Exception) = {
+                promise.success((metadata, exception))
+            }
+        })
+    }
 }
 ```
 \normalsize
+\newpage
+
+Creato un oggetto `Properties` con le configurazioni di base, viene creato un nuovo producer capace di pubblicare dei record (di tipo `String`) ad un topic (passato come parametro alla case class) con il metodo `send(value: String)`.
+
+Un producer può inviare record con tre diverse modalità:  
+
+- Fire-and-forget: il messaggio viene mandato al server e viene ignorata la possibilità che questo messaggio non venga ricevuto.
+- Sincrona: il messaggio viene mandato con un metodo `send()` il quale restituisce un `Future`, viene quindi utilizzato il metodo `.get()` per attendere una risposta dal server per capire se il messaggio è effettivamente stato ricevuto. 
+- Asincrona: il metodo `send()` restituisce una `callback` che verrà eseguita quando (e se) riceverà una risposta dal broker Kafka.
+
+E' possibile configurare un producer [secondo una moltitudine di campi di configurazione](https://kafka.apache.org/documentation.html#producerconfigs), ma sicuramente uno dei più importanti è il valore attribuito al campo `acks` il quale è direttamente collegato alla durabilità dei messaggi e definisce quante repliche devono ricevere il messaggio pubblicato sul leader prima di poter garantire al producer la corretta pubblicazione del messaggio.
+
+Esistono tre possibili valori per `acks`:
+
+
+- con `acks=0`, il producer non si aspetterà di ricevere un messaggio di conferma da parte del broker. Questo implica che nel caso di un malfunzionamento, il producer non sarà a conoscenza del fallimento ed il messaggio verrà perso. E' l'opzione che garantisce il più alto valore di throughput.
+- con `acks=1`, il producer riceverà un messaggio di conferma di pubblicazione del messaggio appena _almeno_ una replica confermerà di aver ricevuto il messaggio pubblicato sul leader. Con questa opzione è comunque possibile perdere il messaggio se, a seguito della morte del leader, viene eletto come nuovo leader non la replica che aveva confermato la ricezione del messaggio ma piuttosto una delle repliche che non lo avevano ancora ricevuto.
+- con `acks=all`, il producer riceverà conferma della pubblicazione del messaggio solo dopo che tutte le repliche hanno ricevuto il messaggio pubblicato sul leader. Questa opzione garantisce la pubblicazione di un messaggio a scapito di un minor throughput.
+
+\newpage
 
 I _consumers_ leggono i messaggi pubblicati sui topic ai quali si sono iscritti.  
 I messaggi possono essere letti partendo dalla testa (o inizio) del topic oppure uno specifico _offset_ fino ad arrivare alla coda (o fine).  
@@ -300,21 +351,47 @@ La capacità di mantenere in memoria gli offset dei messaggi già letti garantis
 
 ![Esempio di un topic letto da un gruppo di consumers \label{figure_3}](../images/topic-and-consumers.png){ width=90% }
 
-\newpage
-
 I consumers lavorano in _gruppi di consumers_: uno o più consumer lavorano per leggere un intero topic, con la proprietà che _consumers diversi non possono leggere dalla stessa partizione_.
 
 Questa struttura porta ad un alto throughput in lettura di un topic permettendo uno sviluppo orizzontale del numero di consumers necessari per leggere un numero elevato di messaggi per partizione. Nel caso di un crash di uno dei consumer un consumer group è dotato di un meccanismo di load balancing che permetterà ad un altro consumer del gruppo di continuare a leggere i messaggi della partizione che stava venendo consumata.
 
+```{ .scala }
+
+import java.util.Properties
+import org.apache.kafka.clients.consumer.KafkaConsumer
+
+case class Consumer(topic: String){
+    val props = new Properties()
+    props.put("bootstrap.servers", localhost:9092)
+    props.put("key.deserializer", 
+        "org.apache.kafka.common.serialization.StringSerializer")
+    props.put("value.deserializer", 
+        "org.apache.kafka.common.serialization.StringSerializer")
+    props.put("group.id", "example")    
+    
+    private val consumer = new KafkaConsumer[String, String](props)    
+    consumer.subscribe(util.Collections.singletonList(topic))
+
+    def readTopic(){
+        while(true){
+            val records = consumer.poll(100)
+            for (r <- records.asScala){
+                println(s"${r.offset} ${r.key} ${r.value}") 
+            }
+        }
+    }
+}
+```
+
 ### Brokers e clusters
-Un _broker_ è un server Kafka con svariati compiti quali ricevere, indicizzare e salvare i messaggi inviati dai producers ed inviare i messaggi richiesti dai consumers; Un singolo broker è capace di gestire miglialia di partizioni e millioni di messaggi al secondo.
+Un _broker_ è un server Kafka con svariati compiti quali ricevere, indicizzare e salvare i messaggi inviati dai producers ed inviare i messaggi richiesti dai consumers; Un singolo broker è capace di gestire migliaia di partizioni e millioni di messaggi al secondo.
 
 I broker sono stati creati per lavorare in _clusters_ ovvero gruppi di brokers ordinanti secondo una particolare gerarchia.  
 
 ![Esempio di cluster \label{figure_5}](../images/kafka-cluster.png){ width=90% }
 
-A capo di un cluster troviamo un broker _leader_ al quale tutti gli altri broker del cluster devono far riferimento per permette ai meccanismi di replicazioni dei messaggi di funzionare correttamente: una partizione può essere assegnata a più broker, questo permette al cluster di avere un meccanismo per la gestione dei fallimenti dei brokers.
-In ogni cluster un particolare broker viene eletto a _controller_, ovvero un broker con l'incarico di gestire la suddivisione di partizioni sull'intero cluster e di monitorare il cluster.  
+A capo di un cluster troviamo un broker _leader_ al quale tutti gli altri broker del cluster devono far riferimento per permette ai meccanismi di replicazioni dei messaggi di funzionare correttamente: una partizione può essere assegnata a più broker, questo permette al cluster di poter gestire fallimenti dei brokers.
+In ogni cluster un particolare broker viene eletto a _controller_, ovvero un broker con l'incarico di gestire la suddivisione delle partizioni sull'intero cluster e di monitorare l'andamento del cluster.  
 
 ![Gestione delle repliche \label{figure_5}](../images/partition-replica.png){ width=90% }
 
@@ -370,7 +447,7 @@ Ed un generico record di **dati** definito in base allo schema:
   "time": 1424849130111,     
   "customer_id": 1234,  
   "product_id": 5678,  
-  "quantity":3,  
+  "quantity": 3,  
   "payment_type": "mastercard"  
 }
 ```
@@ -479,6 +556,7 @@ L'utilizzo dello schema registry da parte di un consumer è speculare a quello d
 
 ## 9. Bibliografia
 
+https://docs.confluent.io/current/clients/producer.html  
 https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
 https://www.confluent.io/blog/stream-data-platform-1/
 https://martinfowler.com/eaaDev/EventSourcing.html  

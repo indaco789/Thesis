@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  10 APR 2018 14:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  12 APR 2018 15:28
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -989,76 +989,96 @@ Package pdftex.def Info: ../images/producer-process.png used on input line 644.
 
 (pdftex.def)             Requested size: 310.49074pt x 268.19798pt.
  [14 <../images/producer-process.png>]
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <9> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 686.
+[15]
+Underfull \hbox (badness 2310) in paragraph at lines 704--709
+[]\T1/lmtt/m/n/10 key.serializer\T1/lmr/m/n/10 (+20) : nome della classe che ve
+rrà uti-liz-zata per se-
+ []
 
-<../images/topic-and-consumers.png, id=195, 839.135pt x 370.38374pt>
+
+Underfull \hbox (badness 2452) in paragraph at lines 704--709
+\T1/lmr/m/n/10 (+20) ri-al-iz-zare in byte ar-ray le chi-avi dei record che vog
+liamo pub-
+ []
+
+
+Underfull \hbox (badness 1348) in paragraph at lines 704--709
+\T1/lmr/m/n/10 (+20) bli-care con kafka. E' pos-si-bile crearne di nuovi im-ple
+-men-tando
+ []
+
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <9> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 719.
+[16] [17] <../images/topic-and-consumers.png, id=211, 839.135pt x 370.38374pt>
 File: ../images/topic-and-consumers.png Graphic file (type png)
 
 <use ../images/topic-and-consumers.png>
-Package pdftex.def Info: ../images/topic-and-consumers.png used on input line 7
-27.
+Package pdftex.def Info: ../images/topic-and-consumers.png used on input line 8
+36.
 (pdftex.def)             Requested size: 310.50069pt x 137.05113pt.
- [15] [16 <../images/topic-and-consumers.png>] <../images/kafka-cluster.png, id
-=209, 834.11626pt x 472.76625pt>
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 856.
+ [18 <../images/topic-and-consumers.png>] <../images/kafka-cluster.png, id=219,
+ 834.11626pt x 472.76625pt>
 File: ../images/kafka-cluster.png Graphic file (type png)
 
 <use ../images/kafka-cluster.png>
-Package pdftex.def Info: ../images/kafka-cluster.png used on input line 758.
+Package pdftex.def Info: ../images/kafka-cluster.png used on input line 895.
 (pdftex.def)             Requested size: 310.50186pt x 175.98842pt.
-
-<../images/partition-replica.png, id=210, 831.105pt x 451.6875pt>
+ [19 <../images/kafka-cluster.png>]
+<../images/partition-replica.png, id=227, 831.105pt x 451.6875pt>
 File: ../images/partition-replica.png Graphic file (type png)
 
 <use ../images/partition-replica.png>
-Package pdftex.def Info: ../images/partition-replica.png used on input line 773
+Package pdftex.def Info: ../images/partition-replica.png used on input line 910
 .
 (pdftex.def)             Requested size: 310.4969pt x 168.7483pt.
- [17 <../images/kafka-cluster.png>]
-[18 <../images/partition-replica.png>] [19] [20] [21]
-<../images/schema-registry.png, id=237, 948.54375pt x 338.26375pt>
+ [20 <../images/partition-replica.png>]
+[21] [22] [23] [24]
+<../images/schema-registry.png, id=251, 948.54375pt x 338.26375pt>
 File: ../images/schema-registry.png Graphic file (type png)
 
 <use ../images/schema-registry.png>
-Package pdftex.def Info: ../images/schema-registry.png used on input line 992.
+Package pdftex.def Info: ../images/schema-registry.png used on input line 1129.
+
 (pdftex.def)             Requested size: 310.48752pt x 110.7241pt.
- [22 <../images/schema-registry.png>]
-[23]
-Overfull \hbox (49.20042pt too wide) in paragraph at lines 1063--1075
+ [25 <../images/schema-registry.png>]
+[26]
+Overfull \hbox (49.20042pt too wide) in paragraph at lines 1200--1213
 \T1/lmr/m/n/10 (-20) engineer-should-know-about-real-time-datas-unifying https:
 //www.confluent.io/blog/stream-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1063--1075
+Underfull \hbox (badness 10000) in paragraph at lines 1200--1213
 \T1/lmr/m/n/10 (+20) https://www.confluent.io/blog/data-dichotomy-rethinking-th
 e-way-we-treat-
  []
 
 
-Overfull \hbox (0.15797pt too wide) in paragraph at lines 1063--1075
+Overfull \hbox (0.15797pt too wide) in paragraph at lines 1200--1213
 \T1/lmr/m/n/10 (+10) https://www.confluent.io/blog/building-a-microservices-eco
 system-with-kafka-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1063--1075
+Underfull \hbox (badness 10000) in paragraph at lines 1200--1213
 \T1/lmr/m/n/10 (+20) https://content.pivotal.io/blog/understanding-when-to-use-
 rabbitmq-or-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1063--1075
+Underfull \hbox (badness 10000) in paragraph at lines 1200--1213
 \T1/lmr/m/n/10 (+20) https://qconsf.com/sf2016/system/files/keynotes-slides/etl
 _is_dead_long-
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1076.
-[24]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1076.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1214.
+[27]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1214.
  (./test1.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1076.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1076.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1214.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1214.
 
 Package rerunfilecheck Info: File `test1.out' has not changed.
 (rerunfilecheck)             Checksum: 17135D508E26B704CFC5F9D52A83085B;3057.
@@ -1066,16 +1086,16 @@ Package rerunfilecheck Info: File `test1.out' has not changed.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1076.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1214.
  ) 
 Here is how much of TeX's memory you used:
- 12382 strings out of 492995
- 178858 string characters out of 6132705
+ 12390 strings out of 492995
+ 178952 string characters out of 6132705
  276618 words of memory out of 5000000
- 15630 multiletter control sequences out of 15000+600000
- 40521 words of font info for 84 fonts, out of 8000000 for 9000
+ 15633 multiletter control sequences out of 15000+600000
+ 40922 words of font info for 86 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 32i,6n,38p,330b,362s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 32i,6n,38p,330b,476s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{kafka-desc} has been referenced but does not exis
 t, replaced by a fixed one
 
@@ -1100,10 +1120,10 @@ m/lmr10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/lmri10.pf
 b></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></usr/lo
 cal/texlive/2017/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></usr/local/texliv
 e/2017/texmf-dist/fonts/type1/public/lm/lmtt9.pfb>
-Output written on test1.pdf (24 pages, 932329 bytes).
+Output written on test1.pdf (27 pages, 942192 bytes).
 PDF statistics:
- 305 PDF objects out of 1000 (max. 8388607)
- 252 compressed objects within 3 object streams
- 76 named destinations out of 1000 (max. 500000)
+ 321 PDF objects out of 1000 (max. 8388607)
+ 265 compressed objects within 3 object streams
+ 79 named destinations out of 1000 (max. 500000)
  8406 words of extra memory for PDF output out of 10000 (max. 10000000)
 
