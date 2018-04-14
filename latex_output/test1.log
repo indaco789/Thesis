@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  14 APR 2018 11:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  14 APR 2018 11:23
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1058,27 +1058,26 @@ Package pdftex.def Info: ../images/five-consumers.png used on input line 864.
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
 (Font)              Font shape `T1/lmtt/b/n' tried instead on input line 907.
  [20]
-<../images/topic-and-consumers.png, id=240, 839.135pt x 370.38374pt>
-File: ../images/topic-and-consumers.png Graphic file (type png)
+<../images/consumer-groups.png, id=240, 940.51375pt x 548.0475pt>
+File: ../images/consumer-groups.png Graphic file (type png)
 
-<use ../images/topic-and-consumers.png>
-Package pdftex.def Info: ../images/topic-and-consumers.png used on input line 9
-69.
-(pdftex.def)             Requested size: 310.50069pt x 137.05113pt.
- [21 <../images/topic-and-consumers.png>] <../images/early-offset.png, id=247, 
-940.51375pt x 548.0475pt>
+<use ../images/consumer-groups.png>
+Package pdftex.def Info: ../images/consumer-groups.png used on input line 969.
+(pdftex.def)             Requested size: 344.99962pt x 201.03499pt.
+ [21 <../images/consumer-groups.png>]
+<../images/early-offset.png, id=247, 896.34875pt x 286.06876pt>
 File: ../images/early-offset.png Graphic file (type png)
 
 <use ../images/early-offset.png>
 Package pdftex.def Info: ../images/early-offset.png used on input line 1001.
-(pdftex.def)             Requested size: 310.49965pt x 180.93149pt.
+(pdftex.def)             Requested size: 344.99275pt x 110.10406pt.
 
 <../images/late-offset.png, id=248, 894.34125pt x 322.20375pt>
 File: ../images/late-offset.png Graphic file (type png)
 
 <use ../images/late-offset.png>
 Package pdftex.def Info: ../images/late-offset.png used on input line 1012.
-(pdftex.def)             Requested size: 310.49951pt x 111.86345pt.
+(pdftex.def)             Requested size: 344.99794pt x 124.29218pt.
  [22 <../images/early-offset.png> <../images/late-offset.png>]
 <../images/kafka-cluster.png, id=257, 834.11626pt x 472.76625pt>
 File: ../images/kafka-cluster.png Graphic file (type png)
@@ -1151,7 +1150,7 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1371.
  ) 
 Here is how much of TeX's memory you used:
  12423 strings out of 492995
- 179791 string characters out of 6132705
+ 179775 string characters out of 6132705
  276631 words of memory out of 5000000
  15657 multiletter control sequences out of 15000+600000
  36651 words of font info for 85 fonts, out of 8000000 for 9000
@@ -1180,7 +1179,7 @@ onts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1
 lmri10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/lmtk10.pfb
 ></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></usr/loc
 al/texlive/2017/texmf-dist/fonts/type1/public/lm/lmtt9.pfb>
-Output written on test1.pdf (30 pages, 1334913 bytes).
+Output written on test1.pdf (30 pages, 1294360 bytes).
 PDF statistics:
  352 PDF objects out of 1000 (max. 8388607)
  282 compressed objects within 3 object streams

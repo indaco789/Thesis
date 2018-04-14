@@ -417,7 +417,7 @@ Ogni volta che un consumer decide di leggere da un topic è lui stesso a tenere 
 
 Dato che sono gli stessi consumer a tenere traccia dell'offset dei messaggi letti e che sono sempre loro a richiedere i dati al broker consumer group diversi possono leggere lo stesso topic senza perdita di messaggi dal topic: i record presenti in un topic sono immutabili.
 
-![Un topic con più gruppi di consumer \label{figure_3}](../images/topic-and-consumers.png){ width=90% }  
+![Un topic con più gruppi di consumer \label{figure_3}](../images/consumer-groups.png){ width=100% }  
 
 La lettura di una partizione può partire o dal primo messaggio esistente oppure specificando un particolare offset.
 
@@ -429,11 +429,11 @@ A seguito di un ribilanciamento un o più consumer del gruppo possono ricevere u
 
 Se l'offset pubblicato su `__consumer_offset` è _minore_ dell'offset dell'ultimo messaggio che il consumer client ha in memoria, tutti i messaggi compresi tra i due offset verranno riprocessati.
 
-![Replay dei messaggi in base all'offset \label{figure_3}](../images/early-offset.png){ width=90% }
+![Replay dei messaggi in base all'offset \label{figure_3}](../images/early-offset.png){ width=100% }
 
 Se l'offset pubblicato su `__consumer_offset` è _maggiore_ dell'offset dell'ultimo messaggio che il consumer client ha in memoria, tutti i messaggi compresi tra i due offset verranno _persi_.
 
-![Perdita di messaggi in base all'offset \label{figure_3}](../images/late-offset.png){ width=90% } 
+![Perdita di messaggi in base all'offset \label{figure_3}](../images/late-offset.png){ width=100% } 
 
 Per una corretta gestione dei messaggi è quindi di assoluta importanza la capacità di gestire gli offset in modo adeguato alle necessità di ogni progetto, per questo motivo esistono varie possibile configurazione del processo di commit:
 
