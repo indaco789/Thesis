@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  12 APR 2018 15:28
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  14 APR 2018 11:16
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -835,6 +835,24 @@ LaTeX Warning: Label `figure_3' multiply defined.
 LaTeX Warning: Label `figure_3' multiply defined.
 
 
+LaTeX Warning: Label `figure_3' multiply defined.
+
+
+LaTeX Warning: Label `figure_3' multiply defined.
+
+
+LaTeX Warning: Label `figure_3' multiply defined.
+
+
+LaTeX Warning: Label `figure_3' multiply defined.
+
+
+LaTeX Warning: Label `figure_3' multiply defined.
+
+
+LaTeX Warning: Label `figure_3' multiply defined.
+
+
 LaTeX Warning: Label `figure_5' multiply defined.
 
 
@@ -939,7 +957,7 @@ e
 [1
 
 {/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-[2] [3] <../images/etl.png, id=131, 564.60938pt x 259.26863pt>
+[2] [3] <../images/etl.png, id=135, 564.60938pt x 259.26863pt>
 File: ../images/etl.png Graphic file (type png)
 
 <use ../images/etl.png>
@@ -952,7 +970,7 @@ LaTeX Font Info:    Try loading font information for TS1+lmr on input line 279.
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) [5] [6]
-<../images/log.png, id=147, 397.485pt x 187.70125pt>
+<../images/log.png, id=151, 397.485pt x 187.70125pt>
 File: ../images/log.png Graphic file (type png)
  <use ../images/log.png>
 Package pdftex.def Info: ../images/log.png used on input line 415.
@@ -965,7 +983,7 @@ LaTeX Font Info:    Try loading font information for T1+lmtt on input line 425.
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-<../images/streams-table-duality.jpg, id=156, 1777.64125pt x 1541.76pt>
+<../images/streams-table-duality.jpg, id=160, 1777.64125pt x 1541.76pt>
 File: ../images/streams-table-duality.jpg Graphic file (type jpg)
 
 <use ../images/streams-table-duality.jpg>
@@ -973,7 +991,7 @@ Package pdftex.def Info: ../images/streams-table-duality.jpg used on input line
  444.
 (pdftex.def)             Requested size: 275.99266pt x 239.37025pt.
  [8 <../images/streams-table-duality.jpg>] [9] [10] [11] [12]
-<../images/topic-and-partitions.png, id=180, 505.89pt x 184.69pt>
+<../images/topic-and-partitions.png, id=184, 505.89pt x 184.69pt>
 File: ../images/topic-and-partitions.png Graphic file (type png)
 
 <use ../images/topic-and-partitions.png>
@@ -981,7 +999,7 @@ Package pdftex.def Info: ../images/topic-and-partitions.png used on input line
 597.
 (pdftex.def)             Requested size: 310.4991pt x 113.3568pt.
  [13 <../images/topic-and-partitions.png>] <../images/producer-process.png, id=
-188, 906.38625pt x 782.925pt>
+192, 906.38625pt x 782.925pt>
 File: ../images/producer-process.png Graphic file (type png)
 
 <use ../images/producer-process.png>
@@ -1009,93 +1027,136 @@ Underfull \hbox (badness 1348) in paragraph at lines 704--709
 
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <9> not available
 (Font)              Font shape `T1/lmtt/b/n' tried instead on input line 719.
-[16] [17] <../images/topic-and-consumers.png, id=211, 839.135pt x 370.38374pt>
+[16] [17] <../images/single-consumer.png, id=215, 940.51375pt x 350.30875pt>
+File: ../images/single-consumer.png Graphic file (type png)
+
+<use ../images/single-consumer.png>
+Package pdftex.def Info: ../images/single-consumer.png used on input line 834.
+(pdftex.def)             Requested size: 344.99962pt x 128.50038pt.
+
+<../images/two-consumers.png, id=216, 936.49875pt x 348.30125pt>
+File: ../images/two-consumers.png Graphic file (type png)
+
+<use ../images/two-consumers.png>
+Package pdftex.def Info: ../images/two-consumers.png used on input line 843.
+(pdftex.def)             Requested size: 344.99869pt x 128.3114pt.
+ [18 <../images/single-consumer.png> <../images/two-consumers.png>]
+<../images/four-consumers.png, id=225, 940.51375pt x 350.30875pt>
+File: ../images/four-consumers.png Graphic file (type png)
+
+<use ../images/four-consumers.png>
+Package pdftex.def Info: ../images/four-consumers.png used on input line 853.
+(pdftex.def)             Requested size: 344.99962pt x 128.50038pt.
+
+<../images/five-consumers.png, id=226, 940.51375pt x 406.51875pt>
+File: ../images/five-consumers.png Graphic file (type png)
+
+<use ../images/five-consumers.png>
+Package pdftex.def Info: ../images/five-consumers.png used on input line 864.
+(pdftex.def)             Requested size: 344.99962pt x 149.11935pt.
+ [19 <../images/four-consumers.png> <../images/five-consumers.png>]
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 907.
+ [20]
+<../images/topic-and-consumers.png, id=240, 839.135pt x 370.38374pt>
 File: ../images/topic-and-consumers.png Graphic file (type png)
 
 <use ../images/topic-and-consumers.png>
-Package pdftex.def Info: ../images/topic-and-consumers.png used on input line 8
-36.
+Package pdftex.def Info: ../images/topic-and-consumers.png used on input line 9
+69.
 (pdftex.def)             Requested size: 310.50069pt x 137.05113pt.
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 856.
- [18 <../images/topic-and-consumers.png>] <../images/kafka-cluster.png, id=219,
- 834.11626pt x 472.76625pt>
+ [21 <../images/topic-and-consumers.png>] <../images/early-offset.png, id=247, 
+940.51375pt x 548.0475pt>
+File: ../images/early-offset.png Graphic file (type png)
+
+<use ../images/early-offset.png>
+Package pdftex.def Info: ../images/early-offset.png used on input line 1001.
+(pdftex.def)             Requested size: 310.49965pt x 180.93149pt.
+
+<../images/late-offset.png, id=248, 894.34125pt x 322.20375pt>
+File: ../images/late-offset.png Graphic file (type png)
+
+<use ../images/late-offset.png>
+Package pdftex.def Info: ../images/late-offset.png used on input line 1012.
+(pdftex.def)             Requested size: 310.49951pt x 111.86345pt.
+ [22 <../images/early-offset.png> <../images/late-offset.png>]
+<../images/kafka-cluster.png, id=257, 834.11626pt x 472.76625pt>
 File: ../images/kafka-cluster.png Graphic file (type png)
 
 <use ../images/kafka-cluster.png>
-Package pdftex.def Info: ../images/kafka-cluster.png used on input line 895.
+Package pdftex.def Info: ../images/kafka-cluster.png used on input line 1054.
 (pdftex.def)             Requested size: 310.50186pt x 175.98842pt.
- [19 <../images/kafka-cluster.png>]
-<../images/partition-replica.png, id=227, 831.105pt x 451.6875pt>
+ [23 <../images/kafka-cluster.png>]
+<../images/partition-replica.png, id=264, 831.105pt x 451.6875pt>
 File: ../images/partition-replica.png Graphic file (type png)
 
 <use ../images/partition-replica.png>
-Package pdftex.def Info: ../images/partition-replica.png used on input line 910
-.
+Package pdftex.def Info: ../images/partition-replica.png used on input line 106
+9.
 (pdftex.def)             Requested size: 310.4969pt x 168.7483pt.
- [20 <../images/partition-replica.png>]
-[21] [22] [23] [24]
-<../images/schema-registry.png, id=251, 948.54375pt x 338.26375pt>
+ [24 <../images/partition-replica.png>]
+[25] [26] [27]
+<../images/schema-registry.png, id=285, 948.54375pt x 338.26375pt>
 File: ../images/schema-registry.png Graphic file (type png)
 
 <use ../images/schema-registry.png>
-Package pdftex.def Info: ../images/schema-registry.png used on input line 1129.
+Package pdftex.def Info: ../images/schema-registry.png used on input line 1286.
 
 (pdftex.def)             Requested size: 310.48752pt x 110.7241pt.
- [25 <../images/schema-registry.png>]
-[26]
-Overfull \hbox (49.20042pt too wide) in paragraph at lines 1200--1213
+ [28 <../images/schema-registry.png>]
+[29]
+Overfull \hbox (49.20042pt too wide) in paragraph at lines 1357--1370
 \T1/lmr/m/n/10 (-20) engineer-should-know-about-real-time-datas-unifying https:
 //www.confluent.io/blog/stream-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1200--1213
+Underfull \hbox (badness 10000) in paragraph at lines 1357--1370
 \T1/lmr/m/n/10 (+20) https://www.confluent.io/blog/data-dichotomy-rethinking-th
 e-way-we-treat-
  []
 
 
-Overfull \hbox (0.15797pt too wide) in paragraph at lines 1200--1213
+Overfull \hbox (0.15797pt too wide) in paragraph at lines 1357--1370
 \T1/lmr/m/n/10 (+10) https://www.confluent.io/blog/building-a-microservices-eco
 system-with-kafka-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1200--1213
+Underfull \hbox (badness 10000) in paragraph at lines 1357--1370
 \T1/lmr/m/n/10 (+20) https://content.pivotal.io/blog/understanding-when-to-use-
 rabbitmq-or-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1200--1213
+Underfull \hbox (badness 10000) in paragraph at lines 1357--1370
 \T1/lmr/m/n/10 (+20) https://qconsf.com/sf2016/system/files/keynotes-slides/etl
 _is_dead_long-
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1214.
-[27]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1214.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1371.
+[30]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1371.
  (./test1.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1214.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1214.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1371.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1371.
 
 Package rerunfilecheck Info: File `test1.out' has not changed.
-(rerunfilecheck)             Checksum: 17135D508E26B704CFC5F9D52A83085B;3057.
+(rerunfilecheck)             Checksum: 45826D32D679E157E13A6FF975ACADFE;3093.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1214.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1371.
  ) 
 Here is how much of TeX's memory you used:
- 12390 strings out of 492995
- 178952 string characters out of 6132705
- 276618 words of memory out of 5000000
- 15633 multiletter control sequences out of 15000+600000
- 40922 words of font info for 86 fonts, out of 8000000 for 9000
+ 12423 strings out of 492995
+ 179791 string characters out of 6132705
+ 276631 words of memory out of 5000000
+ 15657 multiletter control sequences out of 15000+600000
+ 36651 words of font info for 85 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 32i,6n,38p,330b,476s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 32i,6n,38p,330b,339s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{kafka-desc} has been referenced but does not exis
 t, replaced by a fixed one
 
@@ -1115,15 +1176,14 @@ pdfTeX warning (dest): name{intro-data} has been referenced but does not exist,
 xlive/2017/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}</usr/local/texlive/2017/te
 xmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2017/texmf-dist/f
 onts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1
-/public/lm/lmbxi10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/l
-m/lmr10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/lmri10.pf
-b></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></usr/lo
-cal/texlive/2017/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></usr/local/texliv
-e/2017/texmf-dist/fonts/type1/public/lm/lmtt9.pfb>
-Output written on test1.pdf (27 pages, 942192 bytes).
+/public/lm/lmr10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/
+lmri10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/lmtk10.pfb
+></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></usr/loc
+al/texlive/2017/texmf-dist/fonts/type1/public/lm/lmtt9.pfb>
+Output written on test1.pdf (30 pages, 1334919 bytes).
 PDF statistics:
- 321 PDF objects out of 1000 (max. 8388607)
- 265 compressed objects within 3 object streams
- 79 named destinations out of 1000 (max. 500000)
- 8406 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 352 PDF objects out of 1000 (max. 8388607)
+ 282 compressed objects within 3 object streams
+ 89 named destinations out of 1000 (max. 500000)
+ 8444 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -248,7 +248,7 @@ Per ogniuno di questi eventi verrà creato un singolo `topic` per raggruppare tu
 
 \newpage
 
-### Producers e consumers
+### Producers
 Kafka è utilizzata da due tipologie di client: _producers_ e _consumers_.  
 
 I _producers_ hanno il compito di creare messaggi indirizzati a specifici topic (indipendentemente dal numero di partizioni da cui sono formati).  
@@ -278,7 +278,7 @@ Per poter creare un producer sono necessari tre parametri:
 - `key.serializer`: nome della classe che verrà utilizzata per serializzare in byte array le chiavi dei record che vogliamo pubblicare con kafka. E' possibile crearne di nuovi implementando `org.apache.kafka.common.serialization.Serializer`.
 - `value.serializer`: nome della classe che verrà utilizzata per serializzare in byte array il record da pubblicare.
 
-Un esempio di producer è dato dal seguente codice scala:  
+Un esempio di producer è dato dal seguente codice Scala:  
 
 \small  
 
@@ -343,17 +343,38 @@ Esistono tre possibili valori per `acks`:
 
 \newpage
 
-I _consumers_ leggono i messaggi pubblicati sui topic ai quali si sono iscritti.  
-I messaggi possono essere letti partendo dalla testa (o inizio) del topic oppure uno specifico _offset_ fino ad arrivare alla coda (o fine).  
-Un _offset_ è un identicativo numerico corrispondente ad una chiave per uno specifico messaggio del topic ed è compito del consumer di tener traccia degli offset di tutti i messaggi che lui stesso ha già letto.  
-L'offset di un messaggio è _specifico ad una specifica **partizione**_.  
-La capacità di mantenere in memoria gli offset dei messaggi già letti garantisce al consumer la capacità di fermare, ed in un secondo momento reiniziare, il processo di lettura di un topic.  
+### Consumers
 
-![Esempio di un topic letto da un gruppo di consumers \label{figure_3}](../images/topic-and-consumers.png){ width=90% }
+Un _consumer_ è un client Kafka utilizzato per leggere dati da un topic e tipicamente è parte di un _consumer group_.  
+Un consumer group è definito da uno specifico `group.id` ed un topic che tutti i membri del gruppo hanno in comune; Ogni partizione del topic è letta da un solo consumer del gruppo e più consumer del gruppo non possono leggere dalla stessa partizione.  
+Supponiamo di avere un topic T1 con quattro partizioni, nel caso in cui il nostro gruppo è formato da un solo consumer C1 sarà solo lui a consumare l'intero topic.
 
-I consumers lavorano in _gruppi di consumers_: uno o più consumer lavorano per leggere un intero topic, con la proprietà che _consumers diversi non possono leggere dalla stessa partizione_.
+![Un consumer con quattro partizioni \label{figure_3}](../images/single-consumer.png){ width=100% }
 
-Questa struttura porta ad un alto throughput in lettura di un topic permettendo uno sviluppo orizzontale del numero di consumers necessari per leggere un numero elevato di messaggi per partizione. Nel caso di un crash di uno dei consumer un consumer group è dotato di un meccanismo di load balancing che permetterà ad un altro consumer del gruppo di continuare a leggere i messaggi della partizione che stava venendo consumata.
+Se aggiungiamo un nuovo consumer C2 al gruppo, ogni consumer riceverà dati da solo due partizioni disponibili.  
+
+![Due consumer consumano le quattro partizioni \label{figure_3}](../images/two-consumers.png){ width=100% }
+
+\newpage
+
+Con quattro consumer, ogni consumer leggerà da una sola partizione.
+
+![Quattro consumer consumano l'intero topic individualmente \label{figure_3}](../images/four-consumers.png){ width=100% }
+
+Ed infine, nel caso in cui il gruppo contenga più consumer del numero di partizioni del topic vi saranno sicuramente dei consumer che non leggeranno dal topic.
+
+![Un numero troppo elevato di consumer rispetto alle partizioni di un topic \label{figure_3}](../images/five-consumers.png){ width=100% }
+
+Questo meccanismo di bilanciamento dei consumer rispetto alle partizioni di un topic permette di scalare l'architettura orizzontalmente nel caso di topic con grossi moli di dati sensibili che necessitano di essere consumati da applicazioni con operazioni ad alta latenza come la scrittura su un database o l'esecuzione di calcoli: con Kafka, per evitare situazioni a "collo di bottiglia", basta aumentare il numero di partizioni di un topic ed il numero di consumer di quel particolare topic.
+
+Un altro importante vantaggio dell'utilizzo dei consumer group è dato dalla possibilità di ribilanciare il gruppo nel caso di crash, morte o aggiunta di un consumer.  
+Per _ribilanciare il consumer group_ si intende il processo di cambio di proprietà di una partizione da un consumer A ad un consumer B; Questo procedimento, insieme alla possibilità di aggiungere e rimuovere consumer per ogni partizione, è ciò permette a Kafka di scalare la propria architettura su grossi numeri di record e topic. E' importante notare che questa funzionalità non è comunque desiderabile: durante un rebalance il consumer group non può consumare i dati di un topic, comportando quindi un rallentamento nella lettura dei dati.
+
+Un consumer per non risultare morto deve inviare degli _heartbeats_ al broker eletto a _cordinator_ del consumer group. Questi "segni di vita" sono inviati al broker ogni volta che il consumer tenta di leggere dal topic.
+
+Nel caso in cui il broker non riceva un heartbeat da un consumer entro un particolare lasso di tempo, verrà subito scatenato un ribilanciamento del gruppo a cui appartiene il consumer. Allo stesso modo, nel caso in cui un consumer venga rimosso dal gruppo, sarà lo stesso consumer ad inviare un messaggio di "uscita" dal gruppo al broker che anche in questo caso forzerà un ribilanciamento del consumer group.
+
+Un esempio di consumer sviluppato in Scala è dato dal seguente codice:
 
 ```{ .scala }
 
@@ -382,6 +403,43 @@ case class Consumer(topic: String){
     }
 }
 ```
+\newpage
+
+Come in precedenza con l'implementazione del producer, prima di poter creare un producer è necessario definire alcune configurazioni minime:
+
+- `bootstrap.servers`: l'indirizzo del broker
+- `key.deserializer`: il tipo di classe da utilizzare per deserializzare la chiave dei dati pubblicati su un topic
+- `value.deserializer`: il tipo di classe da utilizzare per deserializzare i dati pubblicati su un topic
+- `group.id`: l'identificativo del consumer group di cui il consumer fa parte
+
+I consumer leggono i dati di un topic attraverso un meccanismo di "pull", ovvero sono loro stessi a richiedere al broker i dati.   
+Ogni volta che un consumer decide di leggere da un topic è lui stesso a tenere traccia dell'ultimo messaggio che è stato letto e per tenerne traccia utilizzerà un _offset_: un identificativo corrispondente alla posizione del messaggio nella partizione (il primo messaggio avrà offset pari a 0, l'n-esimo messaggio offset n, etc.).
+
+Dato che sono gli stessi consumer a tenere traccia dell'offset dei messaggi letti e che sono sempre loro a richiedere i dati al broker consumer group diversi possono leggere lo stesso topic senza perdita di messaggi dal topic: i record presenti in un topic sono immutabili.
+
+![Un topic con più gruppi di consumer \label{figure_3}](../images/topic-and-consumers.png){ width=90% }  
+
+La lettura di una partizione può partire o dal primo messaggio esistente oppure specificando un particolare offset.
+
+Come si può vedere dalla funziona `readTopic()` definita nell'esempio, un consumer utilizza un loop infinito di chiamate a `.poll()` definito su un intervallo di tempo variabile (ovvero il metodo messo a disposizione dall'interfaccia di Kafka) per richiedere al broker tutti i messaggi che quel consumer non ha ancora letto.  
+Per sapere quali messaggi inviare il broker deve riceve dal consumer l'offset dell'ultimo messaggio letto attraverso una operazione di _commit;  Gli offset vengono pubblicati dai consumer su di uno speciale topic Kafka chiamato `__consumer_offset` al quale tutti i broker hanno accesso e a cui fanno riferimento per calcolare quali messaggi inviare.  
+
+Il topic `__consumer_offset` è inoltre utilizzato nel caso di ribilanciamento di un gruppo.  
+A seguito di un ribilanciamento un o più consumer del gruppo possono ricevere un nuovo insieme di partizioni, e per capire da dove iniziare il nuovo processo di lettura, devono interrogare il topic `__consumer_offset`.  
+
+Se l'offset pubblicato su `__consumer_offset` è _minore_ dell'offset dell'ultimo messaggio che il consumer client ha in memoria, tutti i messaggi compresi tra i due offset verranno riprocessati.
+
+![Replay dei messaggi in base all'offset \label{figure_3}](../images/early-offset.png){ width=90% }
+
+Se l'offset pubblicato su `__consumer_offset` è _maggiore_ dell'offset dell'ultimo messaggio che il consumer client ha in memoria, tutti i messaggi compresi tra i due offset verranno _persi_.
+
+![Perdita di messaggi in base all'offset \label{figure_3}](../images/late-offset.png){ width=90% } 
+
+Per una corretta gestione dei messaggi è quindi di assoluta importanza la capacità di gestire gli offset in modo adeguato alle necessità di ogni progetto, per questo motivo esistono varie possibile configurazione del processo di commit:
+
+- automatic commit: ogni cinque secondi il consumer genera un commit dell'ultimo offset letto con `.poll()`, è la configurazione di default di ogni consumer.
+- commit current offset: è lo stesso consumer a decidere quando inviare l'ultimo offset letto attraverso l'uso della funzione `commitSync()`: alla chiamata della funzione viene inviato al broker l'ultimo offset letto da `.poll()` ed il consumer rimane in attesa di un segnale di `acknowledgment` da parte del broker, in caso positivo il consumer continuerà nel processo di lettura, altrimenti verrà lanciata un'eccezione. E' prevista la possibilità di riprovare un numero di volte il processo di commit.
+- commit current offset in modalità asincrona: come la modalità precedente ma non bloccante per il consumer, l'offset viene inviato chiamando .commitAsync().
 
 ### Brokers e clusters
 Un _broker_ è un server Kafka con svariati compiti quali ricevere, indicizzare e salvare i messaggi inviati dai producers ed inviare i messaggi richiesti dai consumers; Un singolo broker è capace di gestire migliaia di partizioni e millioni di messaggi al secondo.
@@ -394,8 +452,6 @@ A capo di un cluster troviamo un broker _leader_ al quale tutti gli altri broker
 In ogni cluster un particolare broker viene eletto a _controller_, ovvero un broker con l'incarico di gestire la suddivisione delle partizioni sull'intero cluster e di monitorare l'andamento del cluster.  
 
 ![Gestione delle repliche \label{figure_5}](../images/partition-replica.png){ width=90% }
-
-\newpage
 
 Una funzionalità importante di Kafka è la possibilità di utilizzare i topic come database di messaggi persistenti.  
 I messaggi vengono tenuti in memoria per un particolare periodo di tempo oppure in base allo spazio di memoria di occupato, entrambe le opzioni sono configurabili alla creazione di un broker, vi è poi la possibilità di abilitare la _log compaction_ ovvero un meccanismo che permette a Kafka di mantenere in memoria _solo gli ultimi messaggi indicizzati su un indicativo specifico_.

@@ -625,7 +625,7 @@ ci permetterà di calcolare la frequenza di visualizzazione del video.
 
 \newpage
 
-\subsubsection{Producers e consumers}\label{producers-e-consumers}
+\subsubsection{Producers}\label{producers}
 
 Kafka è utilizzata da due tipologie di client: \emph{producers} e
 \emph{consumers}.
@@ -710,7 +710,7 @@ Per poter creare un producer sono necessari tre parametri:
   serializzare in byte array il record da pubblicare.
 \end{itemize}
 
-Un esempio di producer è dato dal seguente codice scala:
+Un esempio di producer è dato dal seguente codice Scala:
 
 \small  
 
@@ -817,38 +817,89 @@ Esistono tre possibili valori per \texttt{acks}:
 
 \newpage
 
-I \emph{consumers} leggono i messaggi pubblicati sui topic ai quali si
-sono iscritti.\\
-I messaggi possono essere letti partendo dalla testa (o inizio) del
-topic oppure uno specifico \emph{offset} fino ad arrivare alla coda (o
-fine).\\
-Un \emph{offset} è un identicativo numerico corrispondente ad una chiave
-per uno specifico messaggio del topic ed è compito del consumer di tener
-traccia degli offset di tutti i messaggi che lui stesso ha già letto.\\
-L'offset di un messaggio è \emph{specifico ad una specifica
-\textbf{partizione}}.\\
-La capacità di mantenere in memoria gli offset dei messaggi già letti
-garantisce al consumer la capacità di fermare, ed in un secondo momento
-reiniziare, il processo di lettura di un topic.
+\subsubsection{Consumers}\label{consumers}
+
+Un \emph{consumer} è un client Kafka utilizzato per leggere dati da un
+topic e tipicamente è parte di un \emph{consumer group}.\\
+Un consumer group è definito da uno specifico \texttt{group.id} ed un
+topic che tutti i membri del gruppo hanno in comune; Ogni partizione del
+topic è letta da un solo consumer del gruppo e più consumer del gruppo
+non possono leggere dalla stessa partizione.\\
+Supponiamo di avere un topic T1 con quattro partizioni, nel caso in cui
+il nostro gruppo è formato da un solo consumer C1 sarà solo lui a
+consumare l'intero topic.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.90000\textwidth]{../images/topic-and-consumers.png}
-\caption{Esempio di un topic letto da un gruppo di consumers
+\includegraphics[width=1.00000\textwidth]{../images/single-consumer.png}
+\caption{Un consumer con quattro partizioni \label{figure_3}}
+\end{figure}
+
+Se aggiungiamo un nuovo consumer C2 al gruppo, ogni consumer riceverà
+dati da solo due partizioni disponibili.
+
+\begin{figure}
+\centering
+\includegraphics[width=1.00000\textwidth]{../images/two-consumers.png}
+\caption{Due consumer consumano le quattro partizioni \label{figure_3}}
+\end{figure}
+
+\newpage
+
+Con quattro consumer, ogni consumer leggerà da una sola partizione.
+
+\begin{figure}
+\centering
+\includegraphics[width=1.00000\textwidth]{../images/four-consumers.png}
+\caption{Quattro consumer consumano l'intero topic individualmente
 \label{figure_3}}
 \end{figure}
 
-I consumers lavorano in \emph{gruppi di consumers}: uno o più consumer
-lavorano per leggere un intero topic, con la proprietà che
-\emph{consumers diversi non possono leggere dalla stessa partizione}.
+Ed infine, nel caso in cui il gruppo contenga più consumer del numero di
+partizioni del topic vi saranno sicuramente dei consumer che non
+leggeranno dal topic.
 
-Questa struttura porta ad un alto throughput in lettura di un topic
-permettendo uno sviluppo orizzontale del numero di consumers necessari
-per leggere un numero elevato di messaggi per partizione. Nel caso di un
-crash di uno dei consumer un consumer group è dotato di un meccanismo di
-load balancing che permetterà ad un altro consumer del gruppo di
-continuare a leggere i messaggi della partizione che stava venendo
-consumata.
+\begin{figure}
+\centering
+\includegraphics[width=1.00000\textwidth]{../images/five-consumers.png}
+\caption{Un numero troppo elevato di consumer rispetto alle partizioni
+di un topic \label{figure_3}}
+\end{figure}
+
+Questo meccanismo di bilanciamento dei consumer rispetto alle partizioni
+di un topic permette di scalare l'architettura orizzontalmente nel caso
+di topic con grossi moli di dati sensibili che necessitano di essere
+consumati da applicazioni con operazioni ad alta latenza come la
+scrittura su un database o l'esecuzione di calcoli: con Kafka, per
+evitare situazioni a ``collo di bottiglia'', basta aumentare il numero
+di partizioni di un topic ed il numero di consumer di quel particolare
+topic.
+
+Un altro importante vantaggio dell'utilizzo dei consumer group è dato
+dalla possibilità di ribilanciare il gruppo nel caso di crash, morte o
+aggiunta di un consumer.\\
+Per \emph{ribilanciare il consumer group} si intende il processo di
+cambio di proprietà di una partizione da un consumer A ad un consumer B;
+Questo procedimento, insieme alla possibilità di aggiungere e rimuovere
+consumer per ogni partizione, è ciò permette a Kafka di scalare la
+propria architettura su grossi numeri di record e topic. E' importante
+notare che questa funzionalità non è comunque desiderabile: durante un
+rebalance il consumer group non può consumare i dati di un topic,
+comportando quindi un rallentamento nella lettura dei dati.
+
+Un consumer per non risultare morto deve inviare degli \emph{heartbeats}
+al broker eletto a \emph{cordinator} del consumer group. Questi ``segni
+di vita'' sono inviati al broker ogni volta che il consumer tenta di
+leggere dal topic.
+
+Nel caso in cui il broker non riceva un heartbeat da un consumer entro
+un particolare lasso di tempo, verrà subito scatenato un ribilanciamento
+del gruppo a cui appartiene il consumer. Allo stesso modo, nel caso in
+cui un consumer venga rimosso dal gruppo, sarà lo stesso consumer ad
+inviare un messaggio di ``uscita'' dal gruppo al broker che anche in
+questo caso forzerà un ribilanciamento del consumer group.
+
+Un esempio di consumer sviluppato in Scala è dato dal seguente codice:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -880,6 +931,114 @@ consumata.
 \end{Highlighting}
 \end{Shaded}
 
+\newpage
+
+Come in precedenza con l'implementazione del producer, prima di poter
+creare un producer è necessario definire alcune configurazioni minime:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{bootstrap.servers}: l'indirizzo del broker
+\item
+  \texttt{key.deserializer}: il tipo di classe da utilizzare per
+  deserializzare la chiave dei dati pubblicati su un topic
+\item
+  \texttt{value.deserializer}: il tipo di classe da utilizzare per
+  deserializzare i dati pubblicati su un topic
+\item
+  \texttt{group.id}: l'identificativo del consumer group di cui il
+  consumer fa parte
+\end{itemize}
+
+I consumer leggono i dati di un topic attraverso un meccanismo di
+``pull'', ovvero sono loro stessi a richiedere al broker i dati.\\
+Ogni volta che un consumer decide di leggere da un topic è lui stesso a
+tenere traccia dell'ultimo messaggio che è stato letto e per tenerne
+traccia utilizzerà un \emph{offset}: un identificativo corrispondente
+alla posizione del messaggio nella partizione (il primo messaggio avrà
+offset pari a 0, l'n-esimo messaggio offset n, etc.).
+
+Dato che sono gli stessi consumer a tenere traccia dell'offset dei
+messaggi letti e che sono sempre loro a richiedere i dati al broker
+consumer group diversi possono leggere lo stesso topic senza perdita di
+messaggi dal topic: i record presenti in un topic sono immutabili.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.90000\textwidth]{../images/topic-and-consumers.png}
+\caption{Un topic con più gruppi di consumer \label{figure_3}}
+\end{figure}
+
+La lettura di una partizione può partire o dal primo messaggio esistente
+oppure specificando un particolare offset.
+
+Come si può vedere dalla funziona \texttt{readTopic()} definita
+nell'esempio, un consumer utilizza un loop infinito di chiamate a
+\texttt{.poll()} definito su un intervallo di tempo variabile (ovvero il
+metodo messo a disposizione dall'interfaccia di Kafka) per richiedere al
+broker tutti i messaggi che quel consumer non ha ancora letto.\\
+Per sapere quali messaggi inviare il broker deve riceve dal consumer
+l'offset dell'ultimo messaggio letto attraverso una operazione di
+\_commit; Gli offset vengono pubblicati dai consumer su di uno speciale
+topic Kafka chiamato \texttt{\_\_consumer\_offset} al quale tutti i
+broker hanno accesso e a cui fanno riferimento per calcolare quali
+messaggi inviare.
+
+Il topic \texttt{\_\_consumer\_offset} è inoltre utilizzato nel caso di
+ribilanciamento di un gruppo.\\
+A seguito di un ribilanciamento un o più consumer del gruppo possono
+ricevere un nuovo insieme di partizioni, e per capire da dove iniziare
+il nuovo processo di lettura, devono interrogare il topic
+\texttt{\_\_consumer\_offset}.
+
+Se l'offset pubblicato su \texttt{\_\_consumer\_offset} è \emph{minore}
+dell'offset dell'ultimo messaggio che il consumer client ha in memoria,
+tutti i messaggi compresi tra i due offset verranno riprocessati.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.90000\textwidth]{../images/early-offset.png}
+\caption{Replay dei messaggi in base all'offset \label{figure_3}}
+\end{figure}
+
+Se l'offset pubblicato su \texttt{\_\_consumer\_offset} è
+\emph{maggiore} dell'offset dell'ultimo messaggio che il consumer client
+ha in memoria, tutti i messaggi compresi tra i due offset verranno
+\emph{persi}.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.90000\textwidth]{../images/late-offset.png}
+\caption{Perdita di messaggi in base all'offset \label{figure_3}}
+\end{figure}
+
+Per una corretta gestione dei messaggi è quindi di assoluta importanza
+la capacità di gestire gli offset in modo adeguato alle necessità di
+ogni progetto, per questo motivo esistono varie possibile configurazione
+del processo di commit:
+
+\begin{itemize}
+\tightlist
+\item
+  automatic commit: ogni cinque secondi il consumer genera un commit
+  dell'ultimo offset letto con \texttt{.poll()}, è la configurazione di
+  default di ogni consumer.
+\item
+  commit current offset: è lo stesso consumer a decidere quando inviare
+  l'ultimo offset letto attraverso l'uso della funzione
+  \texttt{commitSync()}: alla chiamata della funzione viene inviato al
+  broker l'ultimo offset letto da \texttt{.poll()} ed il consumer rimane
+  in attesa di un segnale di \texttt{acknowledgment} da parte del
+  broker, in caso positivo il consumer continuerà nel processo di
+  lettura, altrimenti verrà lanciata un'eccezione. E' prevista la
+  possibilità di riprovare un numero di volte il processo di commit.
+\item
+  commit current offset in modalità asincrona: come la modalità
+  precedente ma non bloccante per il consumer, l'offset viene inviato
+  chiamando .commitAsync().
+\end{itemize}
+
 \subsubsection{Brokers e clusters}\label{brokers-e-clusters}
 
 Un \emph{broker} è un server Kafka con svariati compiti quali ricevere,
@@ -910,8 +1069,6 @@ monitorare l'andamento del cluster.
 \includegraphics[width=0.90000\textwidth]{../images/partition-replica.png}
 \caption{Gestione delle repliche \label{figure_5}}
 \end{figure}
-
-\newpage
 
 Una funzionalità importante di Kafka è la possibilità di utilizzare i
 topic come database di messaggi persistenti.\\
