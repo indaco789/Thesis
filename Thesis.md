@@ -485,10 +485,10 @@ Un esempio di **schema dei dati** di un record con cinque campi:
     {"name":"product_id", "type":"long", "doc":"The product"},
     {"name":"quantity", "type":"int"},
     {"name":"payment",
-     "type":{"type":"enum",
-	     "name":"payment_types",
-             "symbols":["cash","mastercard","visa"]},
-     "doc":"The method of payment"}
+        "type":{"type":"enum",
+            "name":"payment_types",
+                "symbols":["cash","mastercard","visa"]},
+        "doc":"The method of payment"}
   ]
 }
 ```
