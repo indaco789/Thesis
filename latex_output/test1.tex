@@ -125,18 +125,21 @@
   4.3. \protect\hyperlink{es-vantaggi}{Vantaggi}\\
   4.4. \protect\hyperlink{es-svantaggi}{Svantaggi}
 \item
-  \protect\hyperlink{kafka-desc}{Apache Kafka: a streaming platform}\\
-  5.1. {[}Descrizione ed uso di una streaming platform{]}\\
-  5.2. {[}L'architettura di Kafka{]}\\
-  5.3. {[}Competitors e soluzioni alternative{]}
+  \protect\hyperlink{kafka-desc}{Apache Kafka: Ecosistema}\\
+  5.1. {[}Introduzione{]}\\
+  5.2. {[}Messaggi{]}\\
+  5.3. {[}Topic e partizioni{]}\\
+  5.4. {[}Producers{]}\\
+  5.5. {[}Consumers{]}\\
+  5.6. {[}Brokers e clusters{]}\\
+  5.7. {[}Schema{]}\\
+  5.8. {[}Schema registry{]}\\
 \item
-  {[}L'ecosistema di Kafka{]}\\
-  6.1. {[}Kafka Connect{]}\\
-  6.2. {[}Kafka Streams{]}
+  {[}Architetture Event-driven{]}\\
+  6.1. {[}Kafka come piattaforma per Event Sourcing{]}\\
+  6.2. {[}Sistemi legacy, database ed Event Sourcing{]}
 \item
   {[}Conclusioni{]}
-\item
-  {[}Esempi di utilizzo{]}
 \item
   {[}Bibliografia{]}
 \end{enumerate}
@@ -524,6 +527,8 @@ strettamente legata al dominio applicativo dell'applicazione.
 \subsection{5. Apache Kafka e
 l'ecosistema}\label{apache-kafka-e-lecosistema}
 
+\subsubsection{5.1. Introduzione}\label{introduzione-1}
+
 \emph{Publish/Subscribe} è un pattern architetturale utilizzato per la
 comunicazione asincrona tra diversi processi od oggetti.
 
@@ -558,7 +563,7 @@ crash e scalabità del sistema.
 
 \newpage
 
-\subsubsection{Messaggi}\label{messaggi}
+\subsubsection{5.2. Messaggi}\label{messaggi}
 
 L'unità dati fondamentali in Kafka è chiamata \emph{messaggio} o
 \emph{record}.
@@ -584,7 +589,7 @@ di un batch per ogni singolo messaggio.
 
 \newpage
 
-\subsubsection{Topic e partizioni}\label{topic-e-partizioni}
+\subsubsection{5.3. Topic e partizioni}\label{topic-e-partizioni}
 
 Un \emph{topic} è un elemento utilizzato in Kafka per categorizzare una
 collezione di messaggi, e consiste in un unico stream di dati.
@@ -625,7 +630,7 @@ ci permetterà di calcolare la frequenza di visualizzazione del video.
 
 \newpage
 
-\subsubsection{Producers}\label{producers}
+\subsubsection{5.4. Producers}\label{producers}
 
 Kafka è utilizzata da due tipologie di client: \emph{producers} e
 \emph{consumers}.
@@ -817,7 +822,7 @@ Esistono tre possibili valori per \texttt{acks}:
 
 \newpage
 
-\subsubsection{Consumers}\label{consumers}
+\subsubsection{5.5. Consumers}\label{consumers}
 
 Un \emph{consumer} è un client Kafka utilizzato per leggere dati da un
 topic e tipicamente è parte di un \emph{consumer group}.\\
@@ -1039,7 +1044,7 @@ del processo di commit:
   chiamando .commitAsync().
 \end{itemize}
 
-\subsubsection{Brokers e clusters}\label{brokers-e-clusters}
+\subsubsection{5.6. Brokers e clusters}\label{brokers-e-clusters}
 
 Un \emph{broker} è un server Kafka con svariati compiti quali ricevere,
 indicizzare e salvare i messaggi inviati dai producers ed inviare i
@@ -1081,7 +1086,7 @@ indicizzati su un indicativo specifico}.
 
 \newpage
 
-\subsubsection{Schema}\label{schema}
+\subsubsection{5.7. Schema}\label{schema}
 
 Nonostante i messaggi in Kafka non siano altro che degli array di byte è
 fortemente consigliato l'uso di \emph{schema} per la gestione e l'uso
@@ -1267,7 +1272,7 @@ di Apache Avro}.
 
 \newpage
 
-\subsubsection{Schema Registry}\label{schema-registry}
+\subsubsection{5.8. Schema Registry}\label{schema-registry}
 
 Uno dei vantaggi di Avro rispetto a JSON è la possibilità di non dover
 inserire lo schema dei dati ``completo'' in ogni record permettendo di
@@ -1314,7 +1319,10 @@ quello di un producer.
 
 \newpage
 
-\subsection{6. Kafka come piattaforma per Event
+\subsection{6. Architetture
+Event-driven}\label{architetture-event-driven}
+
+\subsubsection{6.1. Kafka come piattaforma per Event
 Sourcing}\label{kafka-come-piattaforma-per-event-sourcing}
 
 Il pattern Event Sourcing e la piattaforma Apache Kafka sono accomunati
@@ -1365,10 +1373,11 @@ Perchè una piattaforma possa funzionare come database/event store è
 necessario che sia \emph{affidabile}, \emph{modulare} e dotata di
 strumenti per la creazione di \emph{viste} degli eventi registrati.
 
-Kafka è sicuramente \emph{modulare} grazie al sistema dei brokers, il
-quale permette uno svilippo dei consumer orizzontale, performante ed
-``elastico'', facilmente ridimensionabile a seconda della mole di dati
-presente nel sistema.\\
+Kafka è \emph{modulare} grazie al sistema dei brokers, il quale permette
+uno svilippo dei consumer orizzontale, performante ed ``elastico'',
+facilmente ridimensionabile a seconda della mole di dati presente nel
+sistema.
+
 Kafka è inoltre \emph{affidabile} su più fronti:
 
 \begin{itemize}
@@ -1381,6 +1390,18 @@ Kafka è inoltre \emph{affidabile} su più fronti:
 \item
   la \emph{durabilità} dei messaggi è garantita dal meccanismo di
   replica su più partizioni.
+\item
+  l'utilizzo dello schema registry garantisce maggiore sicurezza nel
+  caso di \emph{evoluzione dello schema dei dati}, rendendo disponibile
+  uno strumento che automaticamente valida nuove evoluzione della forma
+  dei dati aiutando gli sviluppatori nel creare soluzioni
+  ``backward-compatible''.
+\item
+  il log, con la sua qualità di \emph{immutabilità}, oltre ad essere la
+  struttura dati dominante della piattaforma ne è anche il \emph{sistema
+  di versioning dei dati}, garantendo l'esistenza di una
+  \emph{cronologia non modificabile} di tutti gli eventi che sono stati
+  registrati.
 \item
   la possibilità di creare un numero arbitrario di topic permette la
   \emph{segmentazione} dei dati/eventi secondo la granularità che il
@@ -1400,6 +1421,10 @@ Kafka è inoltre \emph{affidabile} su più fronti:
 \begin{itemize}
 \tightlist
 \item
+  Kafka permette di specificare per quanto tempo mantenere l'intero
+  stato dei propri topic, rendendo di fatto la piattaforma un ``database
+  per eventi''.
+\item
   attraverso l'uso di \emph{Kafka Connect API} è estremamente facile
   leggere e scrivere dati da/a database \emph{esterni}.
 \item
@@ -1408,40 +1433,119 @@ Kafka è inoltre \emph{affidabile} su più fronti:
   su event store.
 \end{itemize}
 
-\subsubsection{3.2 Kafka Connect}\label{kafka-connect}
+Il pattern event sourcing si basa sull'idea di avere una sequenza di
+eventi che, ove necessario, è possibile eseguire per ottenere lo stato
+corrente del sistema; In genere la costruzione dello stato attuale della
+piattaforma è una operazione dispendiosa e ES non dovrebbe essere preso
+in considerazione se l'unico approccio all'analisi o uso dei dati del
+sistema è una serie di query allo stato attuale, ma è anche vero che
+avere una vista aggiornata dello stato corrente può essere utile anche
+per quei sistemi che decidono di abbracciare completamente l'approccio
+basato sugli eventi.
 
-\begin{quote}
-Schema
-\end{quote}
+I topic in Kafka sono dei log di eventi immutabili ma con una
+particolarità: è possibile \emph{comprimerli} in base al valore della
+chiave.
 
-\begin{quote}
-Source connectors
-\end{quote}
+\begin{figure}
+\centering
+\includegraphics[width=0.80000\textwidth]{../images/log-compaction.png}
+\caption{Log compaction \label{figure_5}}
+\end{figure}
 
-\begin{quote}
-Sink connectors
-\end{quote}
+Il sistema di \emph{log compaction} garantisce che Kafka, dato un topic,
+conserverà solamente l'ultimo messaggio a parità di chiave pubblicato
+sullo stesso topic.\\
+Questa funzionalità può quindi essere utilizzata come \emph{vista dello
+stato corrente del sistema} o di alcune sue parti oppure come
+\emph{meccanismo di difesa} per la fase di recovery post-crash del
+sistema.
 
-\begin{quote}
-Community involment
-\end{quote}
+Il problema del calcolo del stato corrente è quindi risolto affiancando
+ai log utilizzati come stream di eventi un topic compresso ``istanza''
+del stato del sistema.
 
-\subsubsection{3.3 Kafka Streams}\label{kafka-streams}
+E' da notare che questo meccanismo di compressione dei log può anche
+essere utilizzato per archiviare parte di un vecchio log in modo da
+risparmiare spazio in memoria.
 
-\begin{quote}
-cos'è streams
-\end{quote}
+\subsection{6.2. Sistemi legacy, database ed Event
+Sourcing}\label{sistemi-legacy-database-ed-event-sourcing}
 
-\begin{quote}
-KSQL/LSQL
-\end{quote}
+Se si decide di sviluppare un nuovo progetto partendo da zero ed
+utilizzando Kafka ed ES, non è difficile immaginare che creare la nuova
+struttura sarà relativamente semplice in quanto ci ritroveremo a
+sviluppare soluzioni software basate su eventi e verrà naturale
+pubblicare questi eventi su Kafka.\\
+Nel caso in cui si decida di addottare Kafka ed ES su un vecchio
+progetto sorgono spontanee domande come ``Quali sono i miei eventi?'',
+``Come posso utilizzare i database già presenti?'' oppure ``Ultimata la
+migrazione che fine faranno i vecchi database e le vecchie
+applicazioni?''. Domande come queste sono risolte dalla \emph{Connect
+API} di Kafka.
 
-\subsection{8. Esempi di utilizzo di
-Kafka}\label{esempi-di-utilizzo-di-kafka}
+Kafka Connect è un framework che permette di integrare Kafka con
+moltissime delle soluzioni database già presenti sul mercato (MySQL,
+PostgreSQL, Elasticearch, Mongo, ecc.).\\
+Il framework si basa sull'uso di \emph{Source connectors} per importare
+dati da sorgenti esterne e \emph{Sink connectors} per la fase di
+scrittura su strutture esterne; Kafka viene rilasciato di base con molti
+connettori già pronti e testati all'uso e molti altri sviluppati dalla
+community open-source sono disponibili online. E' inoltre prevista la
+possibilità di sviluppare connettori custom per soluzioni più
+particolari del normale.
+
+I source connector funzionano facendo leva sul log transazionale
+generato con tramite Change Data Capture (CDC) del database sorgente,
+che non è altro che un log sul quale vengono scritte, in ordine
+temporale, tutte le operazioni di insert, update e delete fatte sul
+database in questione. E' facile immaginare che questo log transazionale
+è facilmente utilizzabile per definire lo stream di eventi necessario a
+Kafka per funzionare, ed è esattamente cosi che funzionano i connettori:
+definita una configurazione per il connettore, il transactional log del
+database viene copiato su di un topic Kafka.\\
+Esistono ovviamente delle differenze nel funzionamento di alcuni
+connettori (alcuni database supportano CDC basato su polling, altri su
+meccanismi push-pull, ecc.) ma il risultato del procedimento di
+creazione del topic legato al database sorgente sarà sempre lo stesso.\\
+Specularmente i sink connector sono invece utilizzati per operazioni di
+write/update su dei database partendo da un topic specificato.\\
+Di nota è la possibilità, grazie ai sink connectors, di utilizzare
+svariati database come data store per topic compressi, garatendo cosi al
+sistema la possibilità di sfruttare le classiche tecnologie basate su
+database per tutte quelle operazioni di query dei dati per il quale
+Kafka non è necessariamente la soluzione migliore.
 
 \newpage
 
-\subsection{9. Bibliografia}\label{bibliografia}
+Utilizzando source e sink connectors è quindi possibile creare pipeline
+complesse di dati tra Kafka, vari database e architetture ``legacy'' in
+modo da permettere al sistema di evolversi gradualmente verso una
+soluzione basata solamente su Kafka (se necessario).\\
+Si immagini ad esempio di utilizzare i vecchi dati presenti in una
+applicazione legacy per popolare i topic della piattaforma Kafka e
+parallelamente sviluppare nuove soluzioni basata sulla nuova
+architettura per raggiungere gli utenti della applicazione.
+
+\begin{figure}
+\centering
+\includegraphics[width=1.00000\textwidth]{../images/legacy-kafka.png}
+\caption{Architettura legacy con servizi Kafka \label{figure_5}}
+\end{figure}
+
+Un esempio potrebbe essere quello di un e-commerce: potremmo immaginare
+di avere il servizio di gestione e creazione dell'inventario come la
+nostra ``legacy app'' nell'immagine, mentre potremmo avere il servizio
+di validazione dell'ordine (conferma dell'ordine, informazioni di
+tracking, ecc.) gestito tramite Kafka.
+
+\newpage
+
+\subsection{7. Conclusioni}\label{conclusioni}
+
+\newpage
+
+\subsection{8. Bibliografia}\label{bibliografia}
 
 https://docs.confluent.io/current/clients/producer.html\\
 https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  30 APR 2018 11:15
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  30 APR 2018 17:20
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -861,6 +861,15 @@ LaTeX Warning: Label `figure_5' multiply defined.
 
 LaTeX Warning: Label `figure_5' multiply defined.
 
+
+LaTeX Warning: Label `figure_5' multiply defined.
+
+
+LaTeX Warning: Label `figure_5' multiply defined.
+
+
+LaTeX Warning: Label `figure_5' multiply defined.
+
 )
 \openout1 = `test1.aux'.
 
@@ -957,192 +966,196 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
+Underfull \hbox (badness 10000) in paragraph at lines 128--138
+
+ []
+
 [1
 
 {/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-[2] [3] <../images/etl.png, id=139, 564.60938pt x 259.26863pt>
+[2] [3] <../images/etl.png, id=142, 564.60938pt x 259.26863pt>
 File: ../images/etl.png Graphic file (type png)
 
 <use ../images/etl.png>
-Package pdftex.def Info: ../images/etl.png used on input line 231.
+Package pdftex.def Info: ../images/etl.png used on input line 234.
 (pdftex.def)             Requested size: 276.00626pt x 126.74207pt.
  [4 <../images/etl.png>]
-LaTeX Font Info:    Try loading font information for TS1+lmr on input line 279.
+LaTeX Font Info:    Try loading font information for TS1+lmr on input line 282.
 
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) [5] [6]
-<../images/log.png, id=155, 397.485pt x 187.70125pt>
+<../images/log.png, id=158, 397.485pt x 187.70125pt>
 File: ../images/log.png Graphic file (type png)
  <use ../images/log.png>
-Package pdftex.def Info: ../images/log.png used on input line 415.
+Package pdftex.def Info: ../images/log.png used on input line 418.
 (pdftex.def)             Requested size: 234.60509pt x 110.78574pt.
 
 [7 <../images/log.png>]
-LaTeX Font Info:    Try loading font information for T1+lmtt on input line 425.
+LaTeX Font Info:    Try loading font information for T1+lmtt on input line 428.
 
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-<../images/streams-table-duality.jpg, id=165, 1777.64125pt x 1541.76pt>
+<../images/streams-table-duality.jpg, id=168, 1777.64125pt x 1541.76pt>
 File: ../images/streams-table-duality.jpg Graphic file (type jpg)
 
 <use ../images/streams-table-duality.jpg>
 Package pdftex.def Info: ../images/streams-table-duality.jpg used on input line
- 444.
+ 447.
 (pdftex.def)             Requested size: 275.99266pt x 239.37025pt.
  [8 <../images/streams-table-duality.jpg>] [9] [10] [11] [12]
-<../images/topic-and-partitions.png, id=188, 505.89pt x 184.69pt>
+<../images/topic-and-partitions.png, id=191, 505.89pt x 184.69pt>
 File: ../images/topic-and-partitions.png Graphic file (type png)
 
 <use ../images/topic-and-partitions.png>
 Package pdftex.def Info: ../images/topic-and-partitions.png used on input line 
-597.
+602.
 (pdftex.def)             Requested size: 310.4991pt x 113.3568pt.
  [13 <../images/topic-and-partitions.png>] <../images/producer-process.png, id=
-196, 906.38625pt x 782.925pt>
+199, 906.38625pt x 782.925pt>
 File: ../images/producer-process.png Graphic file (type png)
 
 <use ../images/producer-process.png>
-Package pdftex.def Info: ../images/producer-process.png used on input line 644.
+Package pdftex.def Info: ../images/producer-process.png used on input line 649.
 
 (pdftex.def)             Requested size: 310.49074pt x 268.19798pt.
  [14 <../images/producer-process.png>]
 [15]
-Underfull \hbox (badness 2310) in paragraph at lines 704--709
+Underfull \hbox (badness 2310) in paragraph at lines 709--714
 []\T1/lmtt/m/n/10 key.serializer\T1/lmr/m/n/10 (+20) : nome della classe che ve
 rrà uti-liz-zata per se-
  []
 
 
-Underfull \hbox (badness 2452) in paragraph at lines 704--709
+Underfull \hbox (badness 2452) in paragraph at lines 709--714
 \T1/lmr/m/n/10 (+20) ri-al-iz-zare in byte ar-ray le chi-avi dei record che vog
 liamo pub-
  []
 
 
-Underfull \hbox (badness 1348) in paragraph at lines 704--709
+Underfull \hbox (badness 1348) in paragraph at lines 709--714
 \T1/lmr/m/n/10 (+20) bli-care con kafka. E' pos-si-bile crearne di nuovi im-ple
 -men-tando
  []
 
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <9> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 719.
-[16] [17] <../images/single-consumer.png, id=219, 940.51375pt x 350.30875pt>
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 724.
+[16] [17] <../images/single-consumer.png, id=222, 940.51375pt x 350.30875pt>
 File: ../images/single-consumer.png Graphic file (type png)
 
 <use ../images/single-consumer.png>
-Package pdftex.def Info: ../images/single-consumer.png used on input line 834.
+Package pdftex.def Info: ../images/single-consumer.png used on input line 839.
 (pdftex.def)             Requested size: 344.99962pt x 128.50038pt.
 
-<../images/two-consumers.png, id=220, 936.49875pt x 348.30125pt>
+<../images/two-consumers.png, id=223, 936.49875pt x 348.30125pt>
 File: ../images/two-consumers.png Graphic file (type png)
 
 <use ../images/two-consumers.png>
-Package pdftex.def Info: ../images/two-consumers.png used on input line 843.
+Package pdftex.def Info: ../images/two-consumers.png used on input line 848.
 (pdftex.def)             Requested size: 344.99869pt x 128.3114pt.
  [18 <../images/single-consumer.png> <../images/two-consumers.png>]
-<../images/four-consumers.png, id=229, 940.51375pt x 350.30875pt>
+<../images/four-consumers.png, id=232, 940.51375pt x 350.30875pt>
 File: ../images/four-consumers.png Graphic file (type png)
 
 <use ../images/four-consumers.png>
-Package pdftex.def Info: ../images/four-consumers.png used on input line 853.
+Package pdftex.def Info: ../images/four-consumers.png used on input line 858.
 (pdftex.def)             Requested size: 344.99962pt x 128.50038pt.
 
-<../images/five-consumers.png, id=230, 940.51375pt x 406.51875pt>
+<../images/five-consumers.png, id=233, 940.51375pt x 406.51875pt>
 File: ../images/five-consumers.png Graphic file (type png)
 
 <use ../images/five-consumers.png>
-Package pdftex.def Info: ../images/five-consumers.png used on input line 864.
+Package pdftex.def Info: ../images/five-consumers.png used on input line 869.
 (pdftex.def)             Requested size: 344.99962pt x 149.11935pt.
  [19 <../images/four-consumers.png> <../images/five-consumers.png>]
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 907.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 912.
  [20]
-<../images/consumer-groups.png, id=244, 940.51375pt x 548.0475pt>
+<../images/consumer-groups.png, id=247, 940.51375pt x 548.0475pt>
 File: ../images/consumer-groups.png Graphic file (type png)
 
 <use ../images/consumer-groups.png>
-Package pdftex.def Info: ../images/consumer-groups.png used on input line 969.
+Package pdftex.def Info: ../images/consumer-groups.png used on input line 974.
 (pdftex.def)             Requested size: 344.99962pt x 201.03499pt.
  [21 <../images/consumer-groups.png>]
-<../images/early-offset.png, id=251, 896.34875pt x 286.06876pt>
+<../images/early-offset.png, id=254, 896.34875pt x 286.06876pt>
 File: ../images/early-offset.png Graphic file (type png)
 
 <use ../images/early-offset.png>
-Package pdftex.def Info: ../images/early-offset.png used on input line 1001.
+Package pdftex.def Info: ../images/early-offset.png used on input line 1006.
 (pdftex.def)             Requested size: 344.99275pt x 110.10406pt.
 
-<../images/late-offset.png, id=252, 894.34125pt x 322.20375pt>
+<../images/late-offset.png, id=255, 894.34125pt x 322.20375pt>
 File: ../images/late-offset.png Graphic file (type png)
 
 <use ../images/late-offset.png>
-Package pdftex.def Info: ../images/late-offset.png used on input line 1012.
+Package pdftex.def Info: ../images/late-offset.png used on input line 1017.
 (pdftex.def)             Requested size: 344.99794pt x 124.29218pt.
  [22 <../images/early-offset.png> <../images/late-offset.png>]
-<../images/kafka-cluster.png, id=261, 834.11626pt x 472.76625pt>
+<../images/kafka-cluster.png, id=264, 834.11626pt x 472.76625pt>
 File: ../images/kafka-cluster.png Graphic file (type png)
 
 <use ../images/kafka-cluster.png>
-Package pdftex.def Info: ../images/kafka-cluster.png used on input line 1054.
+Package pdftex.def Info: ../images/kafka-cluster.png used on input line 1059.
 (pdftex.def)             Requested size: 310.50186pt x 175.98842pt.
  [23 <../images/kafka-cluster.png>]
-<../images/partition-replica.png, id=268, 831.105pt x 451.6875pt>
+<../images/partition-replica.png, id=271, 831.105pt x 451.6875pt>
 File: ../images/partition-replica.png Graphic file (type png)
 
 <use ../images/partition-replica.png>
-Package pdftex.def Info: ../images/partition-replica.png used on input line 106
-9.
+Package pdftex.def Info: ../images/partition-replica.png used on input line 107
+4.
 (pdftex.def)             Requested size: 310.4969pt x 168.7483pt.
  [24 <../images/partition-replica.png>]
 [25] [26] [27]
-<../images/schema-registry.png, id=289, 948.54375pt x 338.26375pt>
+<../images/schema-registry.png, id=292, 948.54375pt x 338.26375pt>
 File: ../images/schema-registry.png Graphic file (type png)
 
 <use ../images/schema-registry.png>
-Package pdftex.def Info: ../images/schema-registry.png used on input line 1286.
+Package pdftex.def Info: ../images/schema-registry.png used on input line 1291.
 
 (pdftex.def)             Requested size: 310.48752pt x 110.7241pt.
  [28 <../images/schema-registry.png>]
-<../images/log-kafka.png, id=299, 732.7375pt x 322.20375pt>
+<../images/log-kafka.png, id=302, 732.7375pt x 322.20375pt>
 File: ../images/log-kafka.png Graphic file (type png)
 
 <use ../images/log-kafka.png>
-Package pdftex.def Info: ../images/log-kafka.png used on input line 1337.
+Package pdftex.def Info: ../images/log-kafka.png used on input line 1345.
 (pdftex.def)             Requested size: 276.00575pt x 121.36691pt.
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 1348
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 1356
 .
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 1348
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 1356
 .
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 134
-8.
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 135
+6.
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 134
-8.
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 135
+6.
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 1348.
+(Font)              <10> on input line 1356.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 1348.
+(Font)              <7> on input line 1356.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 1348.
-LaTeX Font Info:    Try loading font information for U+msa on input line 1348.
+(Font)              <5> on input line 1356.
+LaTeX Font Info:    Try loading font information for U+msa on input line 1356.
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -1150,7 +1163,7 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 (/usr/local/texlive/2017/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 1348.
+LaTeX Font Info:    Try loading font information for U+msb on input line 1356.
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -1158,66 +1171,80 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 (/usr/local/texlive/2017/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 ) [29 <../images/log-kafka.png>]
-<../images/public-private-topics.png, id=308, 610.28pt x 321.2pt>
+<../images/public-private-topics.png, id=312, 610.28pt x 321.2pt>
 File: ../images/public-private-topics.png Graphic file (type png)
 
 <use ../images/public-private-topics.png>
 Package pdftex.def Info: ../images/public-private-topics.png used on input line
- 1395.
+ 1416.
 (pdftex.def)             Requested size: 241.50027pt x 127.10541pt.
- [30 <../images/public-private-topics.png>] [31]
-Overfull \hbox (49.20042pt too wide) in paragraph at lines 1446--1459
+ [30 <../images/public-private-topics.png>] <../images/log-compaction.png, id=3
+19, 550.055pt x 372.39125pt>
+File: ../images/log-compaction.png Graphic file (type png)
+
+<use ../images/log-compaction.png>
+Package pdftex.def Info: ../images/log-compaction.png used on input line 1452.
+(pdftex.def)             Requested size: 276.00882pt x 186.85999pt.
+ [31 <../images/log-compaction.png>] [32]
+<../images/legacy-kafka.png, id=331, 652.4375pt x 368.37625pt>
+File: ../images/legacy-kafka.png Graphic file (type png)
+
+<use ../images/legacy-kafka.png>
+Package pdftex.def Info: ../images/legacy-kafka.png used on input line 1532.
+(pdftex.def)             Requested size: 345.0137pt x 194.80003pt.
+ [33 <../images/legacy-kafka.png>] [34]
+Overfull \hbox (49.20042pt too wide) in paragraph at lines 1550--1563
 \T1/lmr/m/n/10 (-20) engineer-should-know-about-real-time-datas-unifying https:
 //www.confluent.io/blog/stream-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1446--1459
+Underfull \hbox (badness 10000) in paragraph at lines 1550--1563
 \T1/lmr/m/n/10 (+20) https://www.confluent.io/blog/data-dichotomy-rethinking-th
 e-way-we-treat-
  []
 
 
-Overfull \hbox (0.15797pt too wide) in paragraph at lines 1446--1459
+Overfull \hbox (0.15797pt too wide) in paragraph at lines 1550--1563
 \T1/lmr/m/n/10 (+10) https://www.confluent.io/blog/building-a-microservices-eco
 system-with-kafka-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1446--1459
+Underfull \hbox (badness 10000) in paragraph at lines 1550--1563
 \T1/lmr/m/n/10 (+20) https://content.pivotal.io/blog/understanding-when-to-use-
 rabbitmq-or-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1446--1459
+Underfull \hbox (badness 10000) in paragraph at lines 1550--1563
 \T1/lmr/m/n/10 (+20) https://qconsf.com/sf2016/system/files/keynotes-slides/etl
 _is_dead_long-
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1460.
-[32]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1460.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1564.
+[35]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1564.
  (./test1.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1460.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1460.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1564.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1564.
 
 Package rerunfilecheck Info: File `test1.out' has not changed.
-(rerunfilecheck)             Checksum: 9E694BA9DC078C3DFFF54899AB317C33;3387.
+(rerunfilecheck)             Checksum: 9D09DBACBA4D659BEBCB15C6ADAB4CBF;3862.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1460.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1564.
  ) 
 Here is how much of TeX's memory you used:
- 12585 strings out of 492995
- 183405 string characters out of 6132705
- 276677 words of memory out of 5000000
- 15754 multiletter control sequences out of 15000+600000
+ 12600 strings out of 492995
+ 183761 string characters out of 6132705
+ 276790 words of memory out of 5000000
+ 15764 multiletter control sequences out of 15000+600000
  49675 words of font info for 108 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 32i,6n,38p,336b,386s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 32i,6n,38p,351b,387s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{kafka-desc} has been referenced but does not exis
 t, replaced by a fixed one
 
@@ -1244,10 +1271,10 @@ exlive/2017/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/201
 7/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></usr/local/texlive/2017/texmf-di
 st/fonts/type1/public/lm/lmtt10.pfb></usr/local/texlive/2017/texmf-dist/fonts/t
 ype1/public/lm/lmtt9.pfb>
-Output written on test1.pdf (32 pages, 1659805 bytes).
+Output written on test1.pdf (35 pages, 1922115 bytes).
 PDF statistics:
- 381 PDF objects out of 1000 (max. 8388607)
- 303 compressed objects within 4 object streams
- 94 named destinations out of 1000 (max. 500000)
- 10510 words of extra memory for PDF output out of 12000 (max. 10000000)
+ 403 PDF objects out of 1000 (max. 8388607)
+ 318 compressed objects within 4 object streams
+ 99 named destinations out of 1000 (max. 500000)
+ 10528 words of extra memory for PDF output out of 12000 (max. 10000000)
 
