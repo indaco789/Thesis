@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  30 APR 2018 18:36
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.3.1)  30 APR 2018 18:41
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -969,10 +969,6 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Underfull \hbox (badness 10000) in paragraph at lines 128--138
-
- []
-
 [1
 
 {/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
@@ -1289,7 +1285,7 @@ texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2017/texmf-dist
 /fonts/type1/public/lm/lmtk10.pfb></usr/local/texlive/2017/texmf-dist/fonts/typ
 e1/public/lm/lmtt10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/
 lm/lmtt9.pfb>
-Output written on test1.pdf (37 pages, 2033246 bytes).
+Output written on test1.pdf (37 pages, 2033240 bytes).
 PDF statistics:
  426 PDF objects out of 1000 (max. 8388607)
  336 compressed objects within 4 object streams

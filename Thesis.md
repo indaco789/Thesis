@@ -17,7 +17,7 @@
     5.5. [Consumers]  
     5.6. [Brokers e clusters]  
     5.7. [Schema]  
-    5.8. [Schema registry]    
+    5.8. [Schema registry]
 6. [Architetture Event-driven]  
     6.1. [Kafka come piattaforma per Event Sourcing]  
     6.2. [Sistemi legacy, database ed Event Sourcing]  
