@@ -45,11 +45,11 @@ Kafka nasce per sfruttare a pieno lo stream processing e favorire una gestione i
 
 Prima di poter discutere della soluzione architetturale fornita da Apache Kafka e quali vantaggi propone rispetto alle soluzioni di batch ETL è necessario approfondire alcuni temi, tra cui il più importante è sicurante event sourcing (ES).  
 
-Il primo capitolo presenta una veloce descrizione di un processo ETL in modo da dare visione del oggetto di cui si vuole dibattere l'effetiva praticità.  
+Il primo capitolo presenta una veloce descrizione di un processo ETL in modo da dare visione del pattern strutturale per il quale si vuole dare una alternativa con Kafka.  
 
-Il secondo capitolo è utilizzato per illustrare uno dei concetti chiave della tesi: l'importanza di gestire e vedere le basi di dati come eventi, perchè utilizzare il concetto di eventi per modelizzare i dati ed infine, quale strumento è possibile utilizzarlo per farlo.  
+Il secondo capitolo è utilizzato per illustrare uno dei concetti chiave della tesi: l'importanza di gestire e vedere le basi di dati come eventi, perchè utilizzare il concetto di eventi per modelizzare i dati ed infine, quale strumento è possibile utilizzare per farlo.  
 
-Il terzo capitolo è dedicato ad esaminare la piattaforma Apache Kafka, sia da un punto di vista tecnico-architetturale, esaminando le singole parti che compongono la piattaforma, sia l'ecosistema che si è venuto a creare intorno alla piattaforma, principalmente l'utilizzio delle librerie Kafka Connect, Kafka Streams e il recente sviluppo di KSQL, un linguaggio SQL-like per ricerche su stream di dati in tempo reale; Viene inoltre presentato come event sourcing si collega perfettamente a Kafka. 
+Il terzo capitolo è dedicato ad esaminare la piattaforma Apache Kafka, sia da un punto di vista tecnico-architetturale, esaminando le singole parti che compongono la piattaforma, sia l'ecosistema che si è venuto a creare intorno alla piattaforma, principalmente l'utilizzo delle librerie Kafka Connect, Kafka Streams e il recente sviluppo di KSQL, un linguaggio SQL-like per ricerche su stream di dati in tempo reale; Viene inoltre presentato come event sourcing si collega perfettamente a Kafka. 
 
 Infine vengono presentati degli esempi di utilizzo di Kafka e, nelle conclusioni, vengono messi a confronto i processi ETL e soluzioni di streaming come Kafka nel contesto di gestione di grosse moli di dati tra microservizi.
 
@@ -177,31 +177,7 @@ Come descritto in precedenza, per ottenere lo stato corrente del sistema è nece
 
 Le modalità per risolvere questo problema sono determinate dal dominio e uso dell'applicazione che utlizza ES, ma generalmente per ovviare a questa debolezza vengono realizzati degli snapshot dello stato dell'applicazione da utilizzare per l'esecuzione delle query di ricerca.  La frequenza di generazione ed aggiornamento di questi snapshot è strettamente legata al dominio applicativo dell'applicazione.
 
-<!---
-Supponiamo di dover sviluppare una soluzione software per una piattaforma di e-commerce, avremo tre microservizi:  
-
-- UserInterface (UI)
-- Servizio per la gestione degli ordini (Orders service)
-- Servizio stock (Stock service)
-
-![esempio_es \label{figure_3}](../images/figure1.png){ width=50% }
-
-> Esempio di utilizzo di event sourcing => come faccio? è giusto copiare l'esempio che c'è già su un sito in modo da sfruttarne le figure?
--->
-
 \newpage
-<!---
-> Descrivere le caratteristiche principali di un sistema di streaming : distribuito, append only, etc.
-
-> Differenza tra Message Brokers e transactional append only logs: Rabbit MQ vs Kafka
-
-
-### 2.5. Svantaggi di un processo ETL: perchè favorire stream processing ed event sourcing
-  > Introdurre il concetto di schema
-
-
-> Perchè la gestione dei dati è importante nelle architetture a microservizi
--->
 
 ## 5. Apache Kafka e l'ecosistema
 
@@ -587,7 +563,39 @@ Supponiamo di avere uno schema registry e di voler produrre dei messaggi su di u
 L'utilizzo dello schema registry da parte di un consumer è speculare a quello di un producer.
 
 \newpage
-> Come collegare event sourcing e kafka => perchè kafka è una buona piattaforma per event sourcing
+
+## 6. Kafka come piattaforma per Event Sourcing
+Il pattern Event Sourcing e la piattaforma Apache Kafka sono accomunati da uno specifico elemento: _il log_.  
+
+Entrambe le soluzioni utilizzano la medesima struttura dati per risolvere un particolare problema, è quindi spontaneo che nel tempo ES sia diventato un pattern predominante nelle applicazioni dell'ecosistema Kafka.
+
+Riassumendo i capitoli precedenti, Event Sourcing utilizza il log come struttura dati per poter mantenere una sequenza immutabile di eventi generati da una applicazione o da più parti di un sistema; Questa sequenza di eventi definisce la storia del sistema e può essere utilizzato per ricavare lo stato del sistema in un qualsiasi momento della sua vita.
+
+![Scrittura e lettura da un log \label{figure_5}](../images/log-kafka.png){ width=80% }
+
+Il log è una struttura dati fondamentale e naturalmente efficiente dato il caso d'uso: sia la lettura che la scrittura di dati da un log (o topic Kafka) sono sequenziali e sfruttano a pieno le funzionalità di batching e caching offerte da Kafka.  
+
+Nel caso di un producer, l'operazione di inserimento di un nuovo elemento nel topic è estremamente efficiente in quanto si tratta di un semplice inserimento in coda di costo $O(1)$, e nel caso di utilizzo di un consumer la lettura da un topic sarà sempre effettuata in batch e sequenziale (che sia dall'inizio del topic o da un particolare offset è irrilevante) e quindi anche in questo caso avrà costo $O(1)$.  
+Il limite imposto dalla lettura sequenziale di un topic permette inoltre una riduzione dei costi di gestione della piattaforma non dovendo gestire in memoria indici tipici di altre strutture dati come tabelle hash o alberi, utilizzati per letture indicizzate o cancellazioni.
+
+La lettura sequenziale di un topic è pur sempre un limite della piattaforma ma che nel caso d'uso di una applicazione sviluppata seguendo event sourcing diventa assolutamente irrilevante in quanto è lo stesso pattern a premere per l'utilizzo di un log come event store.
+
+L'utilizzo di Kafka come Event Store è un altro dei motivi che rende la piattaforma un ottimo strumento da utilizzare con Event Sourcing.  
+Perchè una piattaforma possa funzionare come database/event store è necessario che sia _affidabile_, _modulare_ e dotata di strumenti per la creazione di _viste_ degli eventi registrati.
+
+Kafka è sicuramente _modulare_ grazie al sistema dei brokers, il quale permette uno svilippo dei consumer orizzontale, performante ed "elastico", facilmente ridimensionabile a seconda della mole di dati presente nel sistema.  
+Kafka è inoltre _affidabile_ su più fronti: 
+
+
+- nonostante non sia una qualità necessariamente utile in un sistema che utilizza ES, la _temporabilità_ dei messaggi è garantita attraverso la definizione di una chiave al momento della pubblicazione dei messaggi oppure tramite l'utilizzo di una singola partizione.
+- la _durabilità_ dei messaggi è garantita dal meccanismo di replica su più partizioni.
+- la possibilità di creare un numero arbitrario di topic permette la _segmentazione_ dei dati/eventi secondo la granularità che il team di sviluppo ritiene più opportuna; Non è assolutamente sbagliato sviluppare una soluzione con microservizi che utilizzato topic 'privati' per le loro necessità e topic 'publici' per comunicare tra loro.
+
+![Topic publici e privati in un sistema distribuito \label{figure_5}](../images/public-private-topics.png){ width=70% }
+
+- attraverso l'uso di _Kafka Connect API_ è estremamente facile leggere e scrivere dati da/a database _esterni_.
+- per la lettura e pubblicazione di dati da/a Kafka a microservizi _Kafka Streams API_ offre una soluzione semplice e ad-hoc basata su event store.
+
 
 ### 3.2 Kafka Connect
 > Schema
