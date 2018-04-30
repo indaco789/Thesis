@@ -20,7 +20,8 @@
     5.8. [Schema registry]    
 6. [Architetture Event-driven]  
     6.1. [Kafka come piattaforma per Event Sourcing]  
-    6.2. [Sistemi legacy, database ed Event Sourcing]
+    6.2. [Sistemi legacy, database ed Event Sourcing]  
+    6.3. [Kafka Streams]
 7. [Conclusioni]
 8. [Bibliografia]
 
@@ -272,7 +273,7 @@ import scala.concurrent.Promise
 
 case class Producer(topic: String){
     val props = new Properties()
-    props.put("bootstrap.servers", localhost:9092)
+    props.put("bootstrap.servers", "localhost:9092")
     props.put("key.serializer", 
         "org.apache.kafka.common.serialization.StringSerializer")
     props.put("value.serializer", 
@@ -365,7 +366,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 
 case class Consumer(topic: String){
     val props = new Properties()
-    props.put("bootstrap.servers", localhost:9092)
+    props.put("bootstrap.servers", "localhost:9092")
     props.put("key.deserializer", 
         "org.apache.kafka.common.serialization.StringSerializer")
     props.put("value.deserializer", 
@@ -638,10 +639,62 @@ Di nota è la possibilità, grazie ai sink connectors, di utilizzare svariati da
 Utilizzando source e sink connectors è quindi possibile creare pipeline complesse di dati tra Kafka, vari database e architetture "legacy" in modo da permettere al sistema di evolversi gradualmente verso una soluzione basata solamente su Kafka (se necessario).  
 Si immagini ad esempio di utilizzare i vecchi dati presenti in una applicazione legacy per popolare i topic della piattaforma Kafka e parallelamente sviluppare nuove soluzioni basata sulla nuova architettura per raggiungere gli utenti della applicazione.
 
-![Architettura legacy con servizi Kafka \label{figure_5}](../images/legacy-kafka.png){ width=100% }
+![Architettura legacy con servizi Kafka \label{figure_5}](../images/legacy-kafka.png){ width=105% }
 
 Un esempio potrebbe essere quello di un e-commerce: potremmo immaginare di avere il servizio di gestione e creazione dell'inventario come la nostra "legacy app" nell'immagine, mentre potremmo avere il servizio di validazione dell'ordine (conferma dell'ordine, informazioni di tracking, ecc.) gestito tramite Kafka.
 
+\newpage
+
+## 6.3. Kafka Streams
+Per poter sviluppare soluzioni software basate sullo stream di eventi di topic è necessario trovare una soluzione per poter avere accesso a questi dati da un qualsiasi linguaggio di programmazione; Questa soluzione è data dalla libreria _Kafka Streams_.  
+Kafka Streams è una libreria che fornisce una astrazione sul concetto di state store proposto da Kafka in modo da creare applicazioni o microservizi con uno qualsiasi dei linguaggi supportati (Java o Scala).  
+Uno state store è un database chiave-valore creato per interfacciarsi con un topic Kafka, è possibile leggere e scrivere da un topic Kafka semplicemente utilizzando le funzioni proposte dalla libreria.  
+La libreria offre delle primitive per creare delle applicazioni basato sul concetto di _topologie_, ovvero un grafo di stream processors (i nodi del grafo) connessi tra loro da stream di dati (i lati del grafo.)
+
+![Generica topologia di una applicazione Kafka Stream \label{figure_5}](../images/topology-stream.png){ width=50% }
+
+Uno _stream processor_ è un nodo della topologia con il compito di processare in qualche modo i dati che riceve. Ogni processor riceve dal nodo precedente nella topologia un record alla volta, applica una operazione al record e produce uno o più record in output verso tutti i suoi successori.
+
+Le operazioni eseguite da ogni nodo possono essere espremesse utilizzando una Domain-specific Language (DSL) dichiarativa e funzionale (esempi tipici sono funzioni come `map` e `filter`) oppure una API di basso livello più vicina allo state store (e quindi più lontana dall'astrazione utilizzata con la DSL).
+
+Un esempio di un stream application che utilizza la stream DSL è dato dal seguente codice Scala:
+
+\small 
+
+```{ .scala }
+package io.confluent.examples.streams
+
+import java.util.Properties
+
+import org.apache.kafka.common.serialization._
+import org.apache.kafka.streams._
+import org.apache.kafka.streams.kstream.{KStream, KStreamBuilder}
+
+object MapFunctionScalaExample {
+  def main(args: Array[String]) {
+    val builder = new KStreamBuilder
+
+    val streamingConfig = {
+      val settings = new Properties()
+      settings.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
+      settings.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, 
+                    Serdes.ByteArray.getClass.getName)
+      settings.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, 
+                    Serdes.String.getClass.getName)
+      settings
+    }
+
+    val text: KStream[Array[Byte], String] = builder.stream("input-topic")
+    val upperCasedText: KStream[Array[Byte], String] = textLines.mapValues(_.toUpperCase())
+    upperCasedText.to("output-topic")
+  }
+}
+```
+
+Nell'esempio, partendo dal topic `input-topic` viene creato uno stream di record con chiave di tipo `ByteArray` e value (o contenuto del messaggio) di tipo `String`.  
+Ad ogni messaggio viene applicata la funziona `.toUpperCase()` tramite la funzione `.mapValues()` definita dalla DSL (e quindi nodo della topologia di questa applicazione), infine viene pubblicato un nuovo record con il nuovo messaggio (la stringa in maiuscolo) su un nuovo topic `output-topic`.
+
+\normalsize
 
 \newpage
 

@@ -137,7 +137,8 @@
 \item
   {[}Architetture Event-driven{]}\\
   6.1. {[}Kafka come piattaforma per Event Sourcing{]}\\
-  6.2. {[}Sistemi legacy, database ed Event Sourcing{]}
+  6.2. {[}Sistemi legacy, database ed Event Sourcing{]}\\
+  6.3. {[}Kafka Streams{]}
 \item
   {[}Conclusioni{]}
 \item
@@ -728,7 +729,7 @@ Un esempio di producer è dato dal seguente codice Scala:
 
 \KeywordTok{case} \KeywordTok{class} \FunctionTok{Producer}\NormalTok{(topic: String)\{}
     \KeywordTok{val}\NormalTok{ props = }\KeywordTok{new}\NormalTok{ Properties()}
-\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"bootstrap.servers"}\NormalTok{, localhost:}\DecValTok{9092}\NormalTok{)}
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"bootstrap.servers"}\NormalTok{, }\StringTok{"localhost:9092"}\NormalTok{)}
 \NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"key.serializer"}\NormalTok{, }
         \StringTok{"org.apache.kafka.common.serialization.StringSerializer"}\NormalTok{)}
 \NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"value.serializer"}\NormalTok{, }
@@ -914,7 +915,7 @@ Un esempio di consumer sviluppato in Scala è dato dal seguente codice:
 
 \KeywordTok{case} \KeywordTok{class} \FunctionTok{Consumer}\NormalTok{(topic: String)\{}
     \KeywordTok{val}\NormalTok{ props = }\KeywordTok{new}\NormalTok{ Properties()}
-\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"bootstrap.servers"}\NormalTok{, localhost:}\DecValTok{9092}\NormalTok{)}
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"bootstrap.servers"}\NormalTok{, }\StringTok{"localhost:9092"}\NormalTok{)}
 \NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"key.deserializer"}\NormalTok{, }
         \StringTok{"org.apache.kafka.common.serialization.StringSerializer"}\NormalTok{)}
 \NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"value.deserializer"}\NormalTok{, }
@@ -1529,7 +1530,7 @@ architettura per raggiungere gli utenti della applicazione.
 
 \begin{figure}
 \centering
-\includegraphics[width=1.00000\textwidth]{../images/legacy-kafka.png}
+\includegraphics[width=1.05000\textwidth]{../images/legacy-kafka.png}
 \caption{Architettura legacy con servizi Kafka \label{figure_5}}
 \end{figure}
 
@@ -1538,6 +1539,93 @@ di avere il servizio di gestione e creazione dell'inventario come la
 nostra ``legacy app'' nell'immagine, mentre potremmo avere il servizio
 di validazione dell'ordine (conferma dell'ordine, informazioni di
 tracking, ecc.) gestito tramite Kafka.
+
+\newpage
+
+\subsection{6.3. Kafka Streams}\label{kafka-streams}
+
+Per poter sviluppare soluzioni software basate sullo stream di eventi di
+topic è necessario trovare una soluzione per poter avere accesso a
+questi dati da un qualsiasi linguaggio di programmazione; Questa
+soluzione è data dalla libreria \emph{Kafka Streams}.\\
+Kafka Streams è una libreria che fornisce una astrazione sul concetto di
+state store proposto da Kafka in modo da creare applicazioni o
+microservizi con uno qualsiasi dei linguaggi supportati (Java o
+Scala).\\
+Uno state store è un database chiave-valore creato per interfacciarsi
+con un topic Kafka, è possibile leggere e scrivere da un topic Kafka
+semplicemente utilizzando le funzioni proposte dalla libreria.\\
+La libreria offre delle primitive per creare delle applicazioni basato
+sul concetto di \emph{topologie}, ovvero un grafo di stream processors
+(i nodi del grafo) connessi tra loro da stream di dati (i lati del
+grafo.)
+
+\begin{figure}
+\centering
+\includegraphics[width=0.50000\textwidth]{../images/topology-stream.png}
+\caption{Generica topologia di una applicazione Kafka Stream
+\label{figure_5}}
+\end{figure}
+
+Uno \emph{stream processor} è un nodo della topologia con il compito di
+processare in qualche modo i dati che riceve. Ogni processor riceve dal
+nodo precedente nella topologia un record alla volta, applica una
+operazione al record e produce uno o più record in output verso tutti i
+suoi successori.
+
+Le operazioni eseguite da ogni nodo possono essere espremesse
+utilizzando una Domain-specific Language (DSL) dichiarativa e funzionale
+(esempi tipici sono funzioni come \texttt{map} e \texttt{filter}) oppure
+una API di basso livello più vicina allo state store (e quindi più
+lontana dall'astrazione utilizzata con la DSL).
+
+Un esempio di un stream application che utilizza la stream DSL è dato
+dal seguente codice Scala:
+
+\small 
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{package}\NormalTok{ io.}\FunctionTok{confluent}\NormalTok{.}\FunctionTok{examples}\NormalTok{.}\FunctionTok{streams}
+
+\KeywordTok{import}\NormalTok{ java.}\FunctionTok{util}\NormalTok{.}\FunctionTok{Properties}
+
+\KeywordTok{import}\NormalTok{ org.}\FunctionTok{apache}\NormalTok{.}\FunctionTok{kafka}\NormalTok{.}\FunctionTok{common}\NormalTok{.}\FunctionTok{serialization}\NormalTok{._}
+\KeywordTok{import}\NormalTok{ org.}\FunctionTok{apache}\NormalTok{.}\FunctionTok{kafka}\NormalTok{.}\FunctionTok{streams}\NormalTok{._}
+\KeywordTok{import}\NormalTok{ org.}\FunctionTok{apache}\NormalTok{.}\FunctionTok{kafka}\NormalTok{.}\FunctionTok{streams}\NormalTok{.}\FunctionTok{kstream}\NormalTok{.\{KStream, KStreamBuilder\}}
+
+\KeywordTok{object}\NormalTok{ MapFunctionScalaExample \{}
+  \KeywordTok{def} \FunctionTok{main}\NormalTok{(args: Array[String]) \{}
+    \KeywordTok{val}\NormalTok{ builder = }\KeywordTok{new}\NormalTok{ KStreamBuilder}
+
+    \KeywordTok{val}\NormalTok{ streamingConfig = \{}
+      \KeywordTok{val}\NormalTok{ settings = }\KeywordTok{new}\NormalTok{ Properties()}
+\NormalTok{      settings.}\FunctionTok{put}\NormalTok{(StreamsConfig.}\FunctionTok{BOOTSTRAP_SERVERS_CONFIG}\NormalTok{, }\StringTok{"localhost:9092"}\NormalTok{)}
+\NormalTok{      settings.}\FunctionTok{put}\NormalTok{(StreamsConfig.}\FunctionTok{DEFAULT_KEY_SERDE_CLASS_CONFIG}\NormalTok{, }
+\NormalTok{                    Serdes.}\FunctionTok{ByteArray}\NormalTok{.}\FunctionTok{getClass}\NormalTok{.}\FunctionTok{getName}\NormalTok{)}
+\NormalTok{      settings.}\FunctionTok{put}\NormalTok{(StreamsConfig.}\FunctionTok{DEFAULT_VALUE_SERDE_CLASS_CONFIG}\NormalTok{, }
+\NormalTok{                    Serdes.}\FunctionTok{String}\NormalTok{.}\FunctionTok{getClass}\NormalTok{.}\FunctionTok{getName}\NormalTok{)}
+\NormalTok{      settings}
+\NormalTok{    \}}
+
+    \KeywordTok{val}\NormalTok{ text: KStream[Array[Byte], String] = builder.}\FunctionTok{stream}\NormalTok{(}\StringTok{"input-topic"}\NormalTok{)}
+    \KeywordTok{val}\NormalTok{ upperCasedText: KStream[Array[Byte], String] = textLines.}\FunctionTok{mapValues}\NormalTok{(_.}\FunctionTok{toUpperCase}\NormalTok{())}
+\NormalTok{    upperCasedText.}\FunctionTok{to}\NormalTok{(}\StringTok{"output-topic"}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Nell'esempio, partendo dal topic \texttt{input-topic} viene creato uno
+stream di record con chiave di tipo \texttt{ByteArray} e value (o
+contenuto del messaggio) di tipo \texttt{String}.\\
+Ad ogni messaggio viene applicata la funziona \texttt{.toUpperCase()}
+tramite la funzione \texttt{.mapValues()} definita dalla DSL (e quindi
+nodo della topologia di questa applicazione), infine viene pubblicato un
+nuovo record con il nuovo messaggio (la stringa in maiuscolo) su un
+nuovo topic \texttt{output-topic}.
+
+\normalsize
 
 \newpage
 
