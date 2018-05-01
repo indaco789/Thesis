@@ -20,7 +20,7 @@
     5.8. [Schema registry]
 6. [Architetture Event-driven]  
     6.1. [Kafka come piattaforma per Event Sourcing]  
-    6.2. [Sistemi legacy, database ed Event Sourcing]  
+    6.2. [Kafka Connect: sistemi legacy, database ed Event Sourcing]  
     6.3. [Kafka Streams]
 7. [Conclusioni]
 8. [Bibliografia]
@@ -621,7 +621,7 @@ Il problema del calcolo del stato corrente è quindi risolto affiancando ai log 
 
 E' da notare che questo meccanismo di compressione dei log può anche essere utilizzato per archiviare parte di un vecchio log in modo da risparmiare spazio in memoria.
 
-## 6.2. Sistemi legacy, database ed Event Sourcing
+## 6.2. Kafka Connect: sistemi legacy, database ed Event Sourcing
 
 Se si decide di sviluppare un nuovo progetto partendo da zero ed utilizzando Kafka ed ES, non è difficile immaginare che creare la nuova struttura sarà relativamente semplice in quanto ci ritroveremo a sviluppare soluzioni software basate su eventi e verrà naturale pubblicare questi eventi su Kafka.  
 Nel caso in cui si decida di addottare Kafka ed ES su un vecchio progetto sorgono spontanee domande come "Quali sono i miei eventi?", "Come posso utilizzare i database già presenti?" oppure "Ultimata la migrazione che fine faranno i vecchi database e le vecchie applicazioni?". Domande come queste sono risolte dalla _Connect API_ di Kafka.
@@ -699,6 +699,45 @@ Ad ogni messaggio viene applicata la funziona `.toUpperCase()` tramite la funzio
 \newpage
 
 ## 7. Conclusioni
+
+Nei capitoli precendenti ho presentato le idee alla base dell'utilizzo di Apache Kafka, la sua architettura e il pattern (Event Sourcing) più comunemente utilizzato per sviluppare soluzioni software con la piattaforma; E' quindi ora necessario spiegare _perchè_ Apache Kafka è una soluzione alternativa ai comuni processi di ETL e il contesto che ha portato al suo sviluppo.
+
+Nell'ultima decade la tipologia e mole di dati e i sistemi di analisi e gestione di questi dati si sono trovati ad affrontare degli importanti cambiamenti nell'ambito dei processi di ETL.  
+In passato si era abituati a sistemi di gestione/analisi dei dati formati da più database operazionali che venivano utilizzati per creare una pipeline di dati diretta verso una o più datawarehouse; Questo processo di migrazione in genere non era richiesto che fosse eseguito più di poche volte al giorno, ed è proprio questa scelta architetturale che ha portato alla creazione dei vecchi tools di ETL.  
+
+![Database operazionali e datawarehouse \label{figure_5}](../images/op-dwh.png){ width=90% }
+
+Lo scenario che si è presentanto negli ultimi anni è però completamente diverso e può essere riassunto in pochi punti:
+
+- Sempre più spesso, le vecchie architettura basate su un singolo database è scartata in favore di architetture formate da microservizi distribuiti che raccolgono dati da più fonti
+- Le tipologie di fonti di dati con cui interfaciarsi sono in rapida espansione, non esistono più solo database relazionali ma piuttosto, oltre agli stessi database relazionali, le aziende si trovano a dover fare uso di dati provienienti da database NoSQL, sensori, metriche e log delle tipologie più disparate e da un numero sempre crescente di sorgenti.
+- La spinta verso lo _streaming_ dei dati e una richiesta di aggiornamento dei dati "istantanea" porta il comune processo di ETL ad essere troppo lento per i moderni standard di analisi dei dati.
+
+Questo non implica che un comune processo di ETL non può funzionare o che non sia possibile sviluppare delle soluzioni ad-hoc a seconda dei casi, il vero problema è che non avendo uno _standard_, una piattaforma o tecnologia con precise funzionalità atte a risolvere i problemi di questo scenario spesso ci si ritrova davanti a sistemi over-engineered o troppo complessi con capacità di sviluppo modulare basse e difficilmente integrabili con nuove tecnologie emergenti.  
+
+Il risultato è che spesso una soluzione ad-hoc basato su un processo di ETL finisce per essere un groviglio di pipeline tra applicazioni, database e datawarehouse difficile da utilizzare e analizzare, sopratutto in caso di emergenze.
+
+![Soluzioni ETL ad-hoc \label{figure_5}](../images/etl-adhoc.png){ width=90% }
+
+La necessità di sviluppare soluzioni ETL nasce durante gli anni '90, con la montante richiesta da parte della grande distribuzione di poter analizare le abitudini di acquisto online dei propri clienti.  
+In genere questo processo era formato da tre fasi, l'estrazione di dati da più database operazionali, la trasformazione di questi dati in modo che aderissero allo schema della data warehouse ed infine il caricamento dei dati nella data warehouse.
+Con l'avanzare del tempo e della ricerca in questo campo si è però giunti alla conclusione che la _data coverage_ nelle datawarehouse è spesso molto bassa rispetto ai dati presenti nei database operazionali, questo problema nasce dalla difficoltà nel analizzare e trasformare moli di dati importanti provenienti da più sorgenti (spesso con schemi di dati diversi) in gruppi di dati omogeni rispetto allo schema delle data warehouse.
+
+Lo scenario moderno ha essenzialmente bisogno di piattaforme di real-time ETL, delle _streaming platform_, capaci di processare grossi volumi di dati delle tipologie più disparate, in tempo reale e capaci di addattarsi a possibili sviluppi futuri nella propria architettura (forward-compatible) come l'aggiunta di nuovi microservizi o l'utilizzo di nuove sorgenti di dati.
+
+![Architettura basata su streaming platform \label{figure_5}](../images/streaming-platform.png){ width=90% }
+
+Sono esattamente queste necessità che hanno portato un gruppo di sviluppatori di LinkedIn a sviluppare Apache Kafka, una streaming platform ormai utilizzata da moltissime grandi aziende nel ambito dei servizi web (Netflix, PayPal per citarne alcune). 
+Kafka risolve tutti i problemi presentati precedentemente:
+
+- La necessità di gestire grossi volumi di dati in tempo reale è risolta grazie alla sua architettura basata sul concetto di log, l'utilizzo dei producers, consumers e lo schema registry presentati nei capitoli precedenti.
+- L'API Kafka Connect svolge il ruolo delle fasi di *E*xtraction e *L*oad dei processi di ETL, fornendo uno strumento capace di mettere in collegamento la piattaforma Kafka con una moltitudine di fonti di dati sia per la lettura che la scrittura delle trasformazioni.
+- Il ruolo della fase di *T*ransform nei processi ETL è svolto dall'API Kafka Streams, la quale permette di sviluppare soluzioni software con il quale trattare e trasformare i dati pubblicati sulla piattaforma Kafka.
+
+Apache Kafka è una tecnologia importante, in continua crescita e in continua adozione da moltissime realtà internazionali nell'ambito IT, non per questo non ha debolezze.  
+Proprio perchè è una nuova tecnologia in continua evoluzione, le capacità di una azienda di adattare i propri sistemi all'utilizzo di Kafka sono strettamente legate alle loro capacità di adozione e studio di nuove tecnologie e soluzioni architetturali.
+
+Nonostante le difficoltà tecnologiche, non ci sono però dubbi che i processi di ETL stiano subendo una forte spinta evolutiva e che le piattaforme di streaming come Kafka rappresentano una valida alternativa ed il futuro dei processi di analisi e gestione di grossi volumi di dati.
 
 \newpage
 
