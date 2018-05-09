@@ -119,30 +119,34 @@
   \protect\hyperlink{etl}{ETL}
 \item
   \protect\hyperlink{event-sourcing}{Event sourcing}\\
-  4.1. \protect\hyperlink{intro-data}{L'importanza dei dati e degli
+  4.1. \protect\hyperlink{es-intro}{L'importanza dei dati e degli
   eventi}\\
   4.2. \protect\hyperlink{es-desc}{Descrizione}\\
   4.3. \protect\hyperlink{es-vantaggi}{Vantaggi}\\
   4.4. \protect\hyperlink{es-svantaggi}{Svantaggi}
 \item
-  \protect\hyperlink{kafka-desc}{Apache Kafka: Ecosistema}\\
-  5.1. {[}Introduzione{]}\\
-  5.2. {[}Messaggi{]}\\
-  5.3. {[}Topic e partizioni{]}\\
-  5.4. {[}Producers{]}\\
-  5.5. {[}Consumers{]}\\
-  5.6. {[}Brokers e clusters{]}\\
-  5.7. {[}Schema{]}\\
-  5.8. {[}Schema registry{]}
+  \protect\hyperlink{kafka}{Apache Kafka: Ecosistema}\\
+  5.1. \protect\hyperlink{kafka-intro}{Introduzione}\\
+  5.2. \protect\hyperlink{kafka-msg}{Messaggi}\\
+  5.3. \protect\hyperlink{kafka-topic}{Topic e partizioni}\\
+  5.4. \protect\hyperlink{kafka-prod}{Producers}\\
+  5.5. \protect\hyperlink{kafka-consum}{Consumers}\\
+  5.6. \protect\hyperlink{kafka-brok}{Brokers e clusters}\\
+  5.7. \protect\hyperlink{kafka-schm}{Schema}\\
+  5.8. \protect\hyperlink{kafka-schm-re}{Schema registry}
 \item
-  {[}Architetture Event-driven{]}\\
-  6.1. {[}Kafka come piattaforma per Event Sourcing{]}\\
-  6.2. {[}Kafka Connect: sistemi legacy, database ed Event Sourcing{]}\\
-  6.3. {[}Kafka Streams{]}
+  \protect\hyperlink{architettura}{Architetture Event-driven}\\
+  6.1. \protect\hyperlink{architettura-intro}{Kafka come piattaforma per
+  Event Sourcing}\\
+  6.2. \protect\hyperlink{architettura-conn}{Kafka Connect: sistemi
+  legacy, database ed Event Sourcing}\\
+  6.3. \protect\hyperlink{architettura-stream}{Kafka Streams}
 \item
-  {[}Conclusioni{]}
+  \protect\hyperlink{conclusioni}{Conclusioni}
 \item
-  {[}Bibliografia{]}
+  \protect\hyperlink{bibliografia}{Bibliografia}
+\item
+  \protect\hyperlink{sitografia}{Sitografia}
 \end{enumerate}
 
 \newpage
@@ -233,7 +237,7 @@ delle varie fonti di dati.
 \begin{figure}
 \centering
 \includegraphics[width=0.80000\textwidth]{../images/etl.png}
-\caption{etl\_process \label{figure_4}}
+\caption{Rappresentazione di un processo di ETL \label{figure_4}}
 \end{figure}
 
 Un processo di ETL si compone di tre parti:
@@ -417,7 +421,7 @@ tempo di scrittura del record.
 \begin{figure}
 \centering
 \includegraphics[width=0.68000\textwidth]{../images/log.png}
-\caption{log\_data\_structure \label{figure_1}}
+\caption{Struttura di un log \label{figure_1}}
 \end{figure}
 
 I record sono inseriti in fondo al log e il processo di lettura è
@@ -446,7 +450,7 @@ validità tecnica per la gestione dei dati di una applicazione.
 \begin{figure}
 \centering
 \includegraphics[width=0.80000\textwidth]{../images/streams-table-duality.jpg}
-\caption{event\_log\_database\_duality \label{figure_2}}
+\caption{Dualità tra stream e database \label{figure_2}}
 \end{figure}
 
 \newpage
@@ -525,8 +529,7 @@ strettamente legata al dominio applicativo dell'applicazione.
 
 \newpage
 
-\subsection{5. Apache Kafka e
-l'ecosistema}\label{apache-kafka-e-lecosistema}
+\subsection{5. Apache Kafka: Ecosistema}\label{apache-kafka-ecosistema}
 
 \subsubsection{5.1. Introduzione}\label{introduzione-1}
 
@@ -1629,7 +1632,8 @@ nuovo topic \texttt{output-topic}.
 
 \newpage
 
-\subsection{7. Conclusioni}\label{conclusioni}
+\hypertarget{conclusioni}{\subsection{7.
+Conclusioni}\label{conclusioni}}
 
 Nei capitoli precendenti ho presentato le idee alla base dell'utilizzo
 di Apache Kafka, la sua architettura e il pattern (Event Sourcing) più
@@ -1764,20 +1768,56 @@ dati.
 
 \newpage
 
-\subsection{8. Bibliografia}\label{bibliografia}
+\hypertarget{bibliografia}{\subsection{8.
+Bibliografia}\label{bibliografia}}
 
-https://docs.confluent.io/current/clients/producer.html\\
+\small
+[1] Narkhede, N. and Shapira, G. and Palino, T. (2017), \emph{Kafka: The
+Definitive Guide: Real-Time Data and Stream Processing at Scale},
+O'Reilly Media Inc.
+
+{[}2{]} Kleppmann, M. (2016), \emph{Making Sense of Stream Processing},
+O'Reilly Media Inc.
+
+\hypertarget{sitografia}{\subsection{9. Sitografia}\label{sitografia}}
+
+\small
+[1] Martin F., \emph{Event Sourcing},\\
+https://martinfowler.com/eaaDev/EventSourcing.html
+
+{[}2{]} Wikipedia contributors. (2018), \emph{Event store},\\
+https://en.wikipedia.org/w/index.php?title=Event\_store\&oldid=824633488
+
+{[}3{]} Narkhede, N. \emph{ETL Is Dead, Long Live Streams: Real-Time
+Streams with Apache Kafka},\\
+www.youtube.com/watch?v=I32hmY4diFY
+
+{[}4{]} Kreps J. (2013), \emph{The Log: What every software engineer
+should know about real-time data's unifying abstraction},\\
 https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
+
+{[}5{]} Kreps J. (2015), \emph{Putting Apache Kafka To Use: A Practical
+Guide to Building a Streaming Platform},\\
 https://www.confluent.io/blog/stream-data-platform-1/
-https://martinfowler.com/eaaDev/EventSourcing.html\\
-https://en.wikipedia.org/wiki/Event\_store\\
-https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/\\
-https://www.confluent.io/blog/build-services-backbone-events/\\
-https://www.confluent.io/blog/apache-kafka-for-service-architectures/\\
-https://www.confluent.io/blog/messaging-single-source-truth/\\
-https://www.confluent.io/blog/building-a-microservices-ecosystem-with-kafka-streams-and-ksql/\\
-https://content.pivotal.io/blog/understanding-when-to-use-rabbitmq-or-apache-kafka\\
-https://qconsf.com/sf2016/system/files/keynotes-slides/etl\_is\_dead\_long-live\_streams.pdf
-\textless{}= https://www.youtube.com/watch?v=I32hmY4diFY
+
+{[}6{]} Stopford B. (2016), \emph{The Data Dichotomy: Rethinking the Way
+We Treat Data and Services},\\
+https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/
+
+{[}7{]} Stopford B. (2017), \emph{Build Services on a Backbone of
+Events},\\
+https://www.confluent.io/blog/build-services-backbon5-events/
+
+{[}8{]} Stopford B. (2017), \emph{Using Apache Kafka as a Scalable,
+Event-Driven Backbone for Service Architectures},\\
+https://www.confluent.io/blog/apache-kafka-for-service-architectures/
+
+{[}9{]} Stopford B. (2017), \emph{Messaging as the Single Source of
+Truth},\\
+https://www.confluent.io/blog/messaging-single-source-truth/
+
+{[}10{]} Stopford B. (2017), \emph{Building a Microservices Ecosystem
+with Kafka Streams and KSQL},\\
+https://www.confluent.io/blog/building-a-microservices-ecosystem-with-kafka-streams-and-ksql/3
 
 \end{document}
