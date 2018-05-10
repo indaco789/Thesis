@@ -158,20 +158,21 @@ Negli ultimi anni l'avvento delle architetture a microservizi ha portato
 la necessità di studiare nuove soluzioni al problema della gestione di
 molteplici fonti di dati.
 
-In sistemi complessi formati da più microservizi tanti componenti
+In sistemi complessi formati da più microservizi, svariati componenti
 interdipendenti comunicano tra loro scambiandosi dati e attingendo da
-numerose fonti di dati comuni come database, data warehouses oppure
+numerose fonti di dati comuni come database, data warehouses oppure dei
 servizi esterni.
 
 La necessità di filtrare, standardizzare e gestire molte fonti di dati
-aveva portato alla nascita del processo di \textbf{Extract, Transform,
+aveva portato alla nascita del processo di \emph{Extract, Transform,
 Load} (ETL) per l'estrazione, trasformazione e caricamento di dati in
 sistemi di sintesi come data warehouse o data mart, questo processo si
-sta però rivelando complicato ed impegnativo in un mondo dove la mole di
-dati prodotta dal logging di eventi critici ad un qualsiasi business è
-in continua crescita: semplici esempi sono la gestione degli eventi in
-un sistema \textbf{Internet of things} (IoT) oppure lo studio delle
-abitudini dei propri clienti per un servizio di e-commerce.
+sta però rivelando complicato, impegnativo e dispendioso in un mondo
+dove la mole di dati prodotta dal logging di eventi critici per un
+qualsiasi business è in continua crescita: semplici esempi sono la
+gestione degli eventi in un sistema \emph{Internet of things} (IoT)
+oppure lo studio delle abitudini dei propri clienti per un servizio
+online.
 
 Lo stream processing tra microservizi propone un nuovo approccio per la
 gestione di questi problemi, fornendo una soluzione adatta alla gestione
@@ -194,45 +195,47 @@ Introduzione}\label{introduzione}}
 
 Prima di poter discutere della soluzione architetturale fornita da
 Apache Kafka e quali vantaggi propone rispetto alle soluzioni di batch
-ETL è necessario approfondire alcuni temi, tra cui il più importante è
+ETL, è necessario approfondire alcuni temi tra cui il più importante è
 sicurante event sourcing (ES).
 
-Il primo capitolo presenta una veloce descrizione di un processo ETL in
+Il terzo capitolo presenta una veloce descrizione di un processo ETL in
 modo da dare visione del pattern strutturale per il quale si vuole dare
 una alternativa con Kafka.
 
-Il secondo capitolo è utilizzato per illustrare uno dei concetti chiave
+Il quarto capitolo è utilizzato per illustrare uno dei concetti chiave
 della tesi: l'importanza di gestire e vedere le basi di dati come
 eventi, perchè utilizzare il concetto di eventi per modelizzare i dati
-ed infine, quale strumento è possibile utilizzare per farlo.
+ed infine, come utilizzare event sourcing.
 
-Il terzo capitolo è dedicato ad esaminare la piattaforma Apache Kafka,
-sia da un punto di vista tecnico-architetturale, esaminando le singole
-parti che compongono la piattaforma, sia l'ecosistema che si è venuto a
-creare intorno alla piattaforma, principalmente l'utilizzo delle
-librerie Kafka Connect, Kafka Streams e il recente sviluppo di KSQL, un
-linguaggio SQL-like per ricerche su stream di dati in tempo reale; Viene
-inoltre presentato come event sourcing si collega perfettamente a Kafka.
+Il quinto ed il sesto capitolo sono dedicati ad esaminare la piattaforma
+Apache Kafka, sia da un punto di vista tecnico-architetturale
+esaminandone le singole parti che compongono la piattaforma, sia
+l'ecosistema che si è venuto a creare intorno alla piattaforma,
+principalmente l'utilizzo delle librerie Kafka Connect e Kafka Streams;
+Viene inoltre presentato come utilizzare ES nel contesto dell'uso della
+piattaforma Kafka.
 
-Infine vengono presentati degli esempi di utilizzo di Kafka e, nelle
-conclusioni, vengono messi a confronto i processi ETL e soluzioni di
-streaming come Kafka nel contesto di gestione di grosse moli di dati tra
-microservizi.
+Infine nelle conclusioni vengono messi a confronto i processi ETL e la
+soluzione di streaming di dati offerta da Kafka nel contesto della
+gestione di grosse moli di dati tra microservizi e dei sistemi
+distribuiti.
 
 \newpage
 
 \hypertarget{etl}{\subsection{3. ETL}\label{etl}}
 
-Un processo di Extract, Transform, Load (ETL) è un processo mirato alla
-trasformazione di dati contenuti su più database per ottenere un nuovo
-insieme di dati, filtrato e traformato secondo una particolare logica,
-destinato ad essere salvato in una data warehouse.
+Un processo di \emph{Extract, Transform, Load} (ETL) è un processo
+mirato alla trasformazione di dati contenuti su più database per
+ottenere un nuovo insieme di dati, filtrato e trasformato secondo una
+particolare logica, destinato ad essere salvato in una data warehouse.
 
 Verso la fine degli anni '70 molte aziende iniziarono ad utilizzare
 molteplici database per salvare e gestire informazioni, è proprio in
 questo contesto che nascono i processi di ETL: con l'avanzare del tempo
 è stato necessario studiare un metodo per l'aggregazione e gestione
-delle varie fonti di dati.
+delle varie fonti di dati in modo tale da ottenere un insieme omogeno di
+dati da utilizzare per operazioni di analisi o verifica relative al
+business dell'azienda.
 
 \begin{figure}
 \centering
@@ -252,9 +255,9 @@ L'obiettivo di questa fase è estrarre tutti i dati necessari dalle
 possibili sorgenti e prepararli alla fase di Transform.
 
 Un importante problema legato a questa fase è il processo di
-\textbf{validazione delle sorgenti dati}: con più sorgenti dati spesso
-ci si ritrova a dover gestire più \emph{formati} non necessariamente
-compatibili tra loro.\\
+\emph{validazione delle sorgenti dati}: con più sorgenti dati spesso ci
+si ritrova a dover gestire più formati non necessariamente compatibili
+tra loro.\\
 Per poter garantire alla fase di Transform dei dati comprensibili,
 durante la fase di Extract vengono definite delle \emph{regole di
 validazione} per filtrare i dati provenienti dalle varie sorgenti, un
@@ -267,7 +270,7 @@ Nella fase di \textbf{Transform} una serie di regole e funzioni vengono
 applicate ai dati generati dalla fase di Extract per prepararli alla
 fase di Load nella data warehouse.
 
-Il primo compito della fase di Transform è la \textbf{pulizia dei dati}:
+Il primo compito della fase di Transform è la \emph{pulizia dei dati}:
 spesso le varie fonti di dati, nonostante siano state validate, possono
 presentare incongruenze tra loro come caratteri speciali legati
 all'encoding della propria sorgente oppure formati dei dati diversi ma
@@ -277,8 +280,8 @@ Per garantire un corretto funzionamento delle operazioni di
 trasformazione è quindi necessario pulire i dati ed adattarli ad un
 formato comune.
 
-Il secondo compito della fase di Transform è la \textbf{trasformazione
-dei dati} in nuovi dati richiesti dal business, esempi di trasformazioni
+Il secondo compito della fase di Transform è la \emph{trasformazione dei
+dati} in nuovi dati richiesti dal business, esempi di trasformazioni
 sono:
 
 \begin{itemize}
@@ -338,14 +341,14 @@ sviluppo del software agile) cliente e team di sviluppo si confrontano,
 cercando di trovare un linguaggio comune per definire la logica e
 l'utilizzo del software richiesto; Una volta stabiliti i requisti, il
 team di sviluppo generalmente inizia uno studio interno atto a produrre
-un \textbf{modello dei dati} che verrà usato come base per definire lo
+un \emph{modello dei dati} che verrà usato come base per definire lo
 schema dei database utilizzati dal sistema.\\
 Un cliente comune molto spesso non ha padronanza del concetto di `stato
 di una applicazione', ma piuttosto si limita ad esporre i propri
-requisiti descrivendo i possibili \textbf{eventi} che, traslati sul
-modello di sviluppo incentrato su i database, portano il team di
-sviluppo a ragionare sui possibili stati di un database in risposta a
-questi eventi.
+requisiti descrivendo i possibili eventi che, traslati sul modello di
+sviluppo incentrato su i database, portano il team di sviluppo a
+ragionare sui possibili stati di un database in risposta a questi
+eventi.
 
 Lo stato di un database di una applicazione è strettamente legato
 all'insieme degli eventi del dominio applicativo; L'unico modo per
@@ -436,12 +439,11 @@ L'ordine di pubblicazione degli eventi è di estrema importanza in quanto
 è ciò che permette al pattern di rappresentare correttamente lo stato di
 una applicazione.
 
-E' possibile vedere lo \textbf{stato corrente di una applicazione} come
-una \textbf{sequenza di operazioni di modifica dello stato eseguite
-partendo da uno stato iniziale}, questo implica che è possibile vedere
-un \textbf{evento} come il \textbf{delta tra lo stato iniziale di una
-applicazione e lo stato corrente dell'applicazione dopo l'esecuzione
-dell'evento}.\\
+E' possibile vedere lo stato corrente di una applicazione come una
+\emph{sequenza di operazioni di modifica dello stato eseguite partendo
+da uno stato iniziale}, questo implica che è possibile vedere un evento
+come il \emph{delta tra lo stato iniziale di una applicazione e lo stato
+corrente dell'applicazione dopo l'esecuzione dell'evento}.\\
 La possibilità di trasformare lo stato corrente di una applicazione in
 una funzione dello stato iniziale dell'applicazione e una sequenza di
 eventi è il meccanismo che permette ad event sourcing di avere una
@@ -510,7 +512,8 @@ comprensibile.
 
 Event sourcing potrebbe non essere utile per una applicazione che
 richiede frequenti e continue query di richiesta sullo stato del
-sistema.\\
+sistema.
+
 Come descritto in precedenza, per ottenere lo stato corrente del sistema
 è necessario eseguire tutti gli eventi pubblicati sull'event store
 partendo da uno stato iniziale; Se la nostra applicazione richiede di
@@ -521,9 +524,10 @@ viene eseguita una nuova richiesta} (un esempio di richiesta sullo stato
 caratteristica).
 
 Le modalità per risolvere questo problema sono determinate dal dominio e
-uso dell'applicazione che utlizza ES, ma generalmente per ovviare a
+uso dell'applicazione che utilizza ES, ma generalmente per ovviare a
 questa debolezza vengono realizzati degli snapshot dello stato
-dell'applicazione da utilizzare per l'esecuzione delle query di ricerca.
+dell'applicazione da utilizzare per l'esecuzione delle query di
+ricerca.\\
 La frequenza di generazione ed aggiornamento di questi snapshot è
 strettamente legata al dominio applicativo dell'applicazione.
 
@@ -543,23 +547,24 @@ a dei destinatari.
 
 I destinatari non conoscono i mittenti, ed i mittenti non si interessano
 di chi sono i destinatari: l'unico compito del mittente è quello di
-pubblicare dei messaggi sul broker, starà poi al destinario il compito
+pubblicare dei messaggi sul broker, starà poi al destinatario il compito
 di abbonarsi (dall'inglese \emph{subscribe}) al broker in modo da
 ricevere tutti i nuovi messaggi.
 
 Questo pattern viene spesso utilizzato quando ci si trova ad avere più
 processi o servizi che generano delle metriche o dei dati, i quali sono
-di vitale importanza per altrettanti servizi; Una soluzione alternativa
-sarebbe creare dei canali dedicati tra produttori e consumatori ma
-questo non permetterebbe alla struttura di supportare un numero sempre
-più elevato di servizi od oggetti, ed in un mondo dove è sempre più
-frequente l'utilizzo di microservizi e il logging di eventi e dati (Big
-Data) porterebbe ad un debito tecnologico elevato e difficile da
-correggere.
+di vitale importanza per altrettanti servizi.
+
+Una soluzione alternativa sarebbe creare dei canali dedicati tra
+produttori e consumatori ma questo non permetterebbe alla struttura di
+supportare un numero sempre più elevato di servizi od oggetti, ed in un
+mondo dove è sempre più frequente l'utilizzo di microservizi e il
+logging di eventi e dati (Big Data) porterebbe ad un debito tecnologico
+elevato e difficile da correggere.
 
 E' in questo contesto che nasce Apache Kafka, una \emph{streaming
 platform} basata su un append-only log utilizzato da dei \emph{producer}
-per pubblicare dei messaggi utilizzati da dei \emph{consumer}.\\
+per pubblicare dei messaggi consumati da dei \emph{consumer}.\\
 I messaggi pubblicati vengono persistiti nel tempo, sono leggibili
 deterministicamente da qualsiasi consumer ed distributi all'interno del
 sistema secondo particolari logiche in modo da garantire protezione da
@@ -576,7 +581,8 @@ Ogni messaggio è suddiviso in \emph{key} (opzionale) e \emph{value} e
 possono essere di qualsiasi formato; Kafka non impone particolari
 standard riguardo i formati dei dati utilizzabili all'interno del
 sistema ma con lo scorrere del tempo \emph{Avro} è diventato lo standard
-de facto.\\
+de facto.
+
 Il campo \texttt{key}, quando definito, è un byte array utilizzato come
 metadata per garantire un particolare ordinamento all'interno di un
 \emph{topic}, un altro elemento fondamentale dell'architettura.
@@ -584,7 +590,8 @@ metadata per garantire un particolare ordinamento all'interno di un
 Nonostante Kafka sia una streaming platform, la scrittura e propagazione
 dei messaggi all'interno della rete non avviene necessariamente per
 messaggio, invece, piccoli gruppi di messaggi diretti verso la stesso
-topic vengono raggruppati in \emph{batches}.\\
+topic vengono raggruppati in \emph{batches}.
+
 La gestione dei messaggi in batch nasce per motivi di efficienza per
 bilanciare throughput e latenza: a fronte di una latenza più alta per la
 consegna di un batch, vengono sprecate meno le risorse del sistema che
@@ -623,7 +630,8 @@ creare uno storage di eventi ricevuti dal front-end di una applicazione:
 tipici eventi che vengono spesso loggati da un front-end possono essere
 \emph{i link cliccati in una pagina}, \emph{quali pagine sono state
 visualizzate in una sessione} oppure \emph{se è stato visualizzato un
-particolare video embdeed}.\\
+particolare video embdeed}.
+
 Per ogniuno di questi eventi verrà creato un singolo \texttt{topic} per
 raggruppare tutte le notifiche e dati generati da uno di quei
 particolari eventi a front-end: ad esempio avremo il topic
@@ -658,7 +666,8 @@ Il processo di pubblicazione di un messaggio inizia con la produzione di
 un \texttt{ProducerRecord} il quale deve contenere il topic sul quale
 vuole pubblicare il messaggio ad una value, ovvero il contenuto del
 messaggio; Opzionalmente è possibile specificare una chiave o una
-partizione specifica.\\
+partizione specifica.
+
 Nella maggior parte dei casi d'uso di Kafka, il producer non si pone mai
 il problema di decidere su quale partizione andare a scrivere un
 particolare messaggio ma piuttosto vengono utilizzati dei meccanismi di
@@ -689,13 +698,15 @@ ritornerà un errore. In caso di errore, il producer può provare a
 rinviare il batch di messaggi.
 
 Ogni partizione in un cluster ha un \emph{leader} ed un insieme di sue
-\emph{repliche} distribuite sui vari brokers.\\
+\emph{repliche} distribuite sui vari brokers.
+
 Tutte le pubblicazioni dirette ad una particolare partizione devono
 prima essere pubblicate sul leader, ed in un secondo momento devo
 essereno replicate sulle repliche (o followers), questo meccanismo è
 utilizzato per garantire la durabilità dei dati in un cluster: se uno
 dei leader muore, viene eletta una delle repliche a nuovo leader della
-partizione e viene creata una nuova replica.\\
+partizione e viene creata una nuova replica.
+
 E' possibile garantire diversi livelli di durabilità a seconda di come
 viene configurato il producer, favorendo od evitando problemi di
 scrittura e lettura dei messaggi a scapito del throughput.
@@ -778,17 +789,17 @@ Un producer può inviare record con tre diverse modalità:
 \begin{itemize}
 \tightlist
 \item
-  Fire-and-forget: il messaggio viene mandato al server e viene ignorata
-  la possibilità che questo messaggio non venga ricevuto.
+  \textbf{Fire-and-forget}: il messaggio viene mandato al server e viene
+  ignorata la possibilità che questo messaggio non venga ricevuto.
 \item
-  Sincrona: il messaggio viene mandato con un metodo \texttt{send()} il
-  quale restituisce un \texttt{Future}, viene quindi utilizzato il
-  metodo \texttt{.get()} per attendere una risposta dal server per
-  capire se il messaggio è effettivamente stato ricevuto.
+  \textbf{Sincrona}: il messaggio viene mandato con un metodo
+  \texttt{send()} il quale restituisce un \texttt{Future}, viene quindi
+  utilizzato il metodo \texttt{.get()} per attendere una risposta dal
+  server per capire se il messaggio è effettivamente stato ricevuto.
 \item
-  Asincrona: il metodo \texttt{send()} restituisce una \texttt{callback}
-  che verrà eseguita quando (e se) riceverà una risposta dal broker
-  Kafka.
+  \textbf{Asincrona}: il metodo \texttt{send()} restituisce una
+  \texttt{callback} che verrà eseguita quando (e se) riceverà una
+  risposta dal broker Kafka.
 \end{itemize}
 
 E' possibile configurare un producer
@@ -1280,13 +1291,12 @@ di Apache Avro}.
 
 Uno dei vantaggi di Avro rispetto a JSON è la possibilità di non dover
 inserire lo schema dei dati ``completo'' in ogni record permettendo di
-pubblicare su un topic dei messaggi meno pesanti rispetto a JSON ed è
-proprio per sfruttare questo vantaggio che nasce lo \emph{Schema
-Registry}.\\
+pubblicare su un topic dei messaggi meno pesanti ed è proprio per
+sfruttare questo vantaggio che nasce lo \emph{Schema Registry}.\\
 Uno \emph{schema registry} è un servizio di gestione degli schema Avro
 utilizzato da Kafka per servire ed evolvere i metadati di un topic; E'
 utilizzato dai producers nella fase di scrittura (serializzazione di un
-messaggio). dai consumer nella fase di lettura (deserializzazione di un
+messaggio), dai consumer nella fase di lettura (deserializzazione di un
 messaggio) ed impone delle regole di forma a tutti i client che
 intendono utilizzare un topic specificato con formato dati Avro.
 
