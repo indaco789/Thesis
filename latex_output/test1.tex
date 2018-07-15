@@ -102,8 +102,6 @@
 
 \date{}
 
-\input{intro}
-
 \begin{document}
 
 \section{Kafka: streaming data}\label{kafka-streaming-data}
@@ -156,39 +154,45 @@
 \hypertarget{motivazioni}{\subsection{1.
 Motivazioni}\label{motivazioni}}
 
-Negli ultimi anni l'avvento delle architetture a microservizi ha portato
-la necessità di studiare nuove soluzioni al problema della gestione di
-molteplici fonti di dati.
+Nell'ultimo decennio\footnote{Wikipedia contributors. (2018),
+  \emph{Microservices},
+  https://en.wikipedia.org/wiki/Microservices\#History} l'avvento delle
+architetture a microservizi ha portato con sé la necessità di studiare
+nuove soluzioni al problema della gestione di molteplici fonti di dati
+in soluzioni software complesse.
 
-In sistemi complessi formati da più microservizi, svariati componenti
-interdipendenti comunicano tra loro scambiandosi dati e attingendo da
-numerose fonti di dati comuni come database, data warehouses oppure dei
-servizi esterni.
+Nei sistemi che adottano una architettura a microservizi, svariati
+componenti interdipendenti comunicano tra loro scambiandosi dati e
+attingendo da numerose sorgenti di dati comuni come database, data
+warehouses oppure dei servizi esterni.
 
-La necessità di filtrare, standardizzare e gestire molte fonti di dati
-aveva portato alla nascita del processo di \emph{Extract, Transform,
-Load} (ETL) per l'estrazione, trasformazione e caricamento di dati in
-sistemi di sintesi come data warehouse o data mart, questo processo si
-sta però rivelando complicato, impegnativo e dispendioso in un mondo
-dove la mole di dati prodotta dal logging di eventi critici per un
-qualsiasi business è in continua crescita: semplici esempi sono la
-gestione degli eventi in un sistema \emph{Internet of things} (IoT)
-oppure lo studio delle abitudini dei propri clienti per un servizio
-online.
+La necessità di filtrare, normalizzare e gestire molte fonti di dati ha
+portato nei primi anni '90\footnote{\emph{What is ETL?},
+  https://www.sas.com/en\_us/insights/data-management/what-is-etl.html}
+alla nascita del processo di \emph{Extract, Transform, Load} (ETL) per
+l'estrazione, trasformazione e caricamento di dati in sistemi di sintesi
+come data warehouse o data mart, questo processo si sta però rivelando
+complicato, impegnativo e dispendioso in un mondo dove la mole di dati
+prodotta dal logging di eventi critici per un qualsiasi business è in
+continua crescita: semplici esempi sono la gestione degli eventi in un
+sistema \emph{Internet of things} (IoT) oppure lo studio delle abitudini
+dei propri clienti per un servizio online.
 
 Lo stream processing tra microservizi propone un nuovo approccio per la
 gestione di questi problemi, fornendo una soluzione adatta alla gestione
 di dati in real-time altamente scalabile e ad alto throughput.
 
-Apache Kafka è una piattaforma di streaming dati nata in un contesto
-aziendale importante che mira a rivoluzionare il modo con cui i
-microservizi di un business comunicano tra loro, favorendo un approccio
-improntato sulla gestione di eventi legati al comportamento dei dati,
-più che i dati in se.\\
+Apache Kafka è una piattaforma di streaming di dati sviluppata da
+Linkedin\footnote{Koshy J. (2016), \emph{Kafka Ecosystem at LinkedIn},
+  https://engineering.linkedin.com/blog/2016/04/kafka-ecosystem-at-linkedin}
+nata dalla necessità di trovare un metodo per la gestione di enormi moli
+di dati.
+
 Kafka nasce per sfruttare a pieno lo stream processing e favorire una
-gestione intelligente di grosse moli di dati, abbandonando il classico
-processo ``batch'' ETL per una soluzione, appunto, basata sullo
-streaming dei dati tra microservizi.
+gestione intelligente dei dati, abbandonando il classico processo
+``batch'' ETL per una soluzione basata sullo streaming tra microservizi
+favorendo un approccio improntato sulla gestione di eventi legati al
+comportamento dei dati, più che i dati in sé.
 
 \newpage
 
@@ -1784,23 +1788,33 @@ dati.
 Bibliografia}\label{bibliografia}}
 
 \small
-[1] Narkhede, N. and Shapira, G. and Palino, T. (2017), \emph{Kafka: The
+[a] Narkhede N. and Shapira G. and Palino T. (2017), \emph{Kafka: The
 Definitive Guide: Real-Time Data and Stream Processing at Scale},
 O'Reilly Media Inc.
 
-{[}2{]} Kleppmann, M. (2016), \emph{Making Sense of Stream Processing},
+{[}b{]} Kleppmann M. (2016), \emph{Making Sense of Stream Processing},
 O'Reilly Media Inc.
 
 \hypertarget{sitografia}{\subsection{9. Sitografia}\label{sitografia}}
 
 \small
-[1] Martin F., \emph{Event Sourcing},\\
+
+{[}1{]} Wikipedia contributors. (2018), \emph{Microservices},\\
+https://en.wikipedia.org/wiki/Microservices\#History
+
+{[}2{]} \_What is ETL?\_,\\
+https://www.sas.com/en\_us/insights/data-management/what-is-etl.html
+
+{[}3{]} Koshy J. (2016), \emph{Kafka Ecosystem at LinkedIn},\\
+https://engineering.linkedin.com/blog/2016/04/kafka-ecosystem-at-linkedin
+
+{[}c{]} Martin F. \emph{Event Sourcing},\\
 https://martinfowler.com/eaaDev/EventSourcing.html
 
-{[}2{]} Wikipedia contributors. (2018), \emph{Event store},\\
+{[}d{]} Wikipedia contributors. (2018), \emph{Event store},\\
 https://en.wikipedia.org/w/index.php?title=Event\_store\&oldid=824633488
 
-{[}3{]} Narkhede, N. \emph{ETL Is Dead, Long Live Streams: Real-Time
+{[}{]} Narkhede N. \emph{ETL Is Dead, Long Live Streams: Real-Time
 Streams with Apache Kafka},\\
 www.youtube.com/watch?v=I32hmY4diFY
 
