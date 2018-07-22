@@ -263,7 +263,9 @@ possibili sorgenti e prepararli alla fase di Transform.
 Un importante problema legato a questa fase è il processo di
 \emph{validazione delle sorgenti dati}: con più sorgenti dati spesso ci
 si ritrova a dover gestire più formati non necessariamente compatibili
-tra loro.\\
+tra loro\footnote{Wikipedia contributors. (2018), \emph{Extract,
+  transform, load},\\
+  https://en.wikipedia.org/wiki/Extract,\_transform,\_load\#Extract}.\\
 Per poter garantire alla fase di Transform dei dati comprensibili,
 durante la fase di Extract vengono definite delle \emph{regole di
 validazione} per filtrare i dati provenienti dalle varie sorgenti, un
@@ -280,7 +282,7 @@ Il primo compito della fase di Transform è la \emph{pulizia dei dati}:
 spesso le varie fonti di dati, nonostante siano state validate, possono
 presentare incongruenze tra loro come caratteri speciali legati
 all'encoding della propria sorgente oppure formati dei dati diversi ma
-compatibili (un esempio può essere la differneza di formattazione tra
+compatibili (un esempio può essere la differenza di formattazione tra
 date americane ed europee).\\
 Per garantire un corretto funzionamento delle operazioni di
 trasformazione è quindi necessario pulire i dati ed adattarli ad un
@@ -337,10 +339,12 @@ sourcing}\label{event-sourcing}}
 \subsubsection{4.1. L'importanza dei dati e degli
 eventi}\label{limportanza-dei-dati-e-degli-eventi}
 
-Lo status quo delle moderne applicazioni web è basato sul utilizzo di
+Lo status quo delle moderne applicazioni web è basato sull'utilizzo di
 database per rappresentare le specifiche di dominio, spesso espresse da
 un cliente e/o da un esperto del dominio esterno all'ambiente di
-sviluppo.
+sviluppo\footnote{Wikipedia contributors. (2018), \emph{Analisi dei
+  requisiti},\\
+  https://it.wikipedia.org/wiki/Analisi\_dei\_requisiti}.
 
 Durante la fase di analisi dei requisiti (supponendo un modello di
 sviluppo del software agile) cliente e team di sviluppo si confrontano,
@@ -362,9 +366,12 @@ modificare o interagire con questo database è tramite i comandi di
 inserimento, cancellazione o lettura, tutti comandi che vengono eseguiti
 solamente all'avvenire di un particolare evento.
 
-Un database mantiene solo lo stato corrente di una applicazione; Non
-esiste il concetto di cronologia del database a meno di utilizzare
-soluzioni basate su \textbf{Change Data Capture} (CDC), generalmente
+Un database è spesso utilizzato solamente per mantenere lo stato
+corrente di una applicazione; Non esiste il concetto di cronologia del
+database a meno di utilizzare soluzioni basate su \textbf{Change Data
+Capture} (CDC)\footnote{Wikipedia contributors. (2018), \emph{Change
+  data capture},\\
+  https://en.wikipedia.org/wiki/Change\_data\_capture}, generalmente
 utilizzate per generare un transactional log contenente tutte le
 operazioni eseguite sul suddetto database.\\
 In questo modello database-driven, un evento genera un cambiamento su
@@ -372,20 +379,25 @@ una base di dati; Gli eventi e lo stato di un database sono però
 concetti diversi e slegati tra loro, l'esecuzione di un evento a volte
 può portare ad una asincronia tra l'esecuzione di un evento e lo stato
 di un database, tanto più se questo database è utilizzato da tutti i
-microservizi di una applicazione.
+microservizi di una applicazione\footnote{Stopford B. (2017),
+  \emph{Messaging as the Single Source of Truth},\\
+  https://www.confluent.io/blog/messaging-single-source-truth/}.
 
 Una soluzione al problema di più microservizi che utilizzano lo stesso
 database è di utilizzare delle views del database locali ad ogni
 microservizio: ogni servizio lavorerà su una copia locale del database
 ed un job esterno si occuperà di compattare le views e mantenere il
-database aggiornato rispetto a tutti i cambiamenti.\\
-Questa soluzione ha un enorme problema: supponiamo di notare un errore
-sul database e di doverlo correggere, come possiamo decidere quale delle
-views è ``più corretta'' delle altre? Per aiutarci nella ricerca
-dell'errore potremmo utilizzare il transactional log di ogni views, ma
-su database di grandezze importanti esaminare il log di ogni views che
-lo compone potrebbe essere un problema complesso e dispendioso in
-termini di tempo.
+database aggiornato rispetto a tutti i cambiamenti.
+
+\newpage
+
+Questa soluzione presenta un grosso problema: supponiamo di notare un
+errore sul database e di doverlo correggere, come possiamo decidere
+quale delle views è ``più corretta'' delle altre? Per aiutarci nella
+ricerca dell'errore potremmo utilizzare il transactional log di ogni
+views, ma su database di grandezze importanti esaminare il log di ogni
+views che lo compone potrebbe essere un problema complesso e dispendioso
+in termini di tempo.
 
 Event sourcing propone di risolvere questo genere di problemi
 allontanandosi da una progettazione state-driven elevando gli eventi a
@@ -396,7 +408,10 @@ elementi chiavi del modello dei dati di una applicazione.
 Event sourcing (ES) è un design pattern che si contrappone ad una
 visione del mondo basata sullo stato di una applicazione fornendo come
 alternativa l'uso degli eventi, ovvero delle azioni o accadimenti che
-l'applicazione è in grado di riconoscere e gestire.
+l'applicazione è in grado di riconoscere e gestire come \emph{singoli
+cambiamenti} dello stato del ``mondo''. \footnote{Stopford B. (2017),
+  \emph{Messaging as the Single Source of Truth},
+  https://www.confluent.io/blog/messaging-single-source-truth/}
 
 Durante l'analisi dei requisiti di una applicazione, spesso ci si trova
 a confronto con esperti di un dominio applicativo che non hanno
@@ -425,7 +440,10 @@ sempre allo stesso stato, errore compreso}.
 
 Un event store è comunemente implementato utilizzando un \textbf{log},
 una sequenza di record append-only e totalmente ordinata in base al
-tempo di scrittura del record.
+tempo di scrittura del record.\footnote{Stopford B. (2017), \emph{Using
+  Apache Kafka as a Scalable, Event-Driven Backbone for Service
+  Architectures},
+  https://www.confluent.io/blog/apache-kafka-for-service-architectures/}
 
 \begin{figure}
 \centering
@@ -544,7 +562,10 @@ strettamente legata al dominio applicativo dell'applicazione.
 \subsubsection{5.1. Introduzione}\label{introduzione-1}
 
 \emph{Publish/Subscribe} è un pattern architetturale utilizzato per la
-comunicazione asincrona tra diversi processi od oggetti.
+comunicazione asincrona tra diversi processi od oggetti.\footnote{Narkhede
+  N. and Shapira G. and Palino T. (2017), \emph{Kafka: The Definitive
+  Guide: Real-Time Data and Stream Processing at Scale}, O'Reilly Media
+  Inc., pp.~1-3}
 
 In questo schema mittenti e destinatari dialogano tra loro per mezzo di
 un \emph{broker}, un processo incaricato, da una parte, di ricevere
@@ -1351,7 +1372,9 @@ da uno specifico elemento: \emph{il log}.
 Entrambe le soluzioni utilizzano la medesima struttura dati per
 risolvere un particolare problema, è quindi spontaneo che nel tempo ES
 sia diventato un pattern predominante nelle applicazioni dell'ecosistema
-Kafka.
+Kafka.\footnote{Narkhede N., (2016), \emph{Event sourcing, CQRS, stream
+  processing and Apache Kafka: What's the connection?},
+  https://www.confluent.io/blog/event-sourcing-cqrs-stream-processing-apache-kafka-whats-connection/}
 
 Riassumendo i capitoli precedenti, Event Sourcing utilizza il log come
 struttura dati per poter mantenere una sequenza immutabile di eventi
@@ -1536,8 +1559,6 @@ sistema la possibilità di sfruttare le classiche tecnologie basate su
 database per tutte quelle operazioni di query dei dati per il quale
 Kafka non è necessariamente la soluzione migliore.
 
-\newpage
-
 Utilizzando source e sink connectors è quindi possibile creare pipeline
 complesse di dati tra Kafka, vari database e architetture ``legacy'' in
 modo da permettere al sistema di evolversi gradualmente verso una
@@ -1598,8 +1619,9 @@ utilizzando una Domain-specific Language (DSL) dichiarativa e funzionale
 una API di basso livello più vicina allo state store (e quindi più
 lontana dall'astrazione utilizzata con la DSL).
 
-Un esempio di un stream application che utilizza la stream DSL è dato
-dal seguente codice Scala:
+Un esempio di una stream application che utilizza la stream DSL è dato
+dal seguente codice Scala\footnote{\emph{Confluent Examples},\\
+  https://github.com/diegoicosta/kafka-confluent-examples/blob/master/kafka-streams/src/main/scala/io/confluent/examples/streams/MapFunctionScalaExample.scala}:
 
 \small 
 
@@ -1628,12 +1650,15 @@ dal seguente codice Scala:
 \NormalTok{    \}}
 
     \KeywordTok{val}\NormalTok{ text: KStream[Array[Byte], String] = builder.}\FunctionTok{stream}\NormalTok{(}\StringTok{"input-topic"}\NormalTok{)}
-    \KeywordTok{val}\NormalTok{ upperCasedText: KStream[Array[Byte], String] = textLines.}\FunctionTok{mapValues}\NormalTok{(_.}\FunctionTok{toUpperCase}\NormalTok{())}
+    \KeywordTok{val}\NormalTok{ upperCasedText: KStream[Array[Byte], String] = }
+\NormalTok{        textLines.}\FunctionTok{mapValues}\NormalTok{(_.}\FunctionTok{toUpperCase}\NormalTok{())}
 \NormalTok{    upperCasedText.}\FunctionTok{to}\NormalTok{(}\StringTok{"output-topic"}\NormalTok{)}
 \NormalTok{  \}}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
+
+\normalsize
 
 Nell'esempio, partendo dal topic \texttt{input-topic} viene creato uno
 stream di record con chiave di tipo \texttt{ByteArray} e value (o
@@ -1643,8 +1668,6 @@ tramite la funzione \texttt{.mapValues()} definita dalla DSL (e quindi
 nodo della topologia di questa applicazione), infine viene pubblicato un
 nuovo record con il nuovo messaggio (la stringa in maiuscolo) su un
 nuovo topic \texttt{output-topic}.
-
-\normalsize
 
 \newpage
 
@@ -1660,7 +1683,9 @@ contesto che ha portato al suo sviluppo.
 
 Nell'ultima decade la tipologia e mole di dati e i sistemi di analisi e
 gestione di questi dati si sono trovati ad affrontare degli importanti
-cambiamenti nell'ambito dei processi di ETL.\\
+cambiamenti nell'ambito dei processi di ETL\footnote{Narkhede N.
+  \emph{ETL Is Dead, Long Live Streams: Real-Time Streams with Apache
+  Kafka}, www.youtube.com/watch?v=I32hmY4diFY}.\\
 In passato si era abituati a sistemi di gestione/analisi dei dati
 formati da più database operazionali che venivano utilizzati per creare
 una pipeline di dati diretta verso una o più datawarehouse; Questo
@@ -1805,6 +1830,10 @@ https://en.wikipedia.org/wiki/Microservices\#History
 {[}2{]} \_What is ETL?\_,\\
 https://www.sas.com/en\_us/insights/data-management/what-is-etl.html
 
+{[}4{]} Wikipedia contributors. (2018), \emph{Extract, transform,
+load},\\
+https://en.wikipedia.org/wiki/Extract,\_transform,\_load
+
 {[}3{]} Koshy J. (2016), \emph{Kafka Ecosystem at LinkedIn},\\
 https://engineering.linkedin.com/blog/2016/04/kafka-ecosystem-at-linkedin
 
@@ -1832,7 +1861,7 @@ https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-an
 
 {[}7{]} Stopford B. (2017), \emph{Build Services on a Backbone of
 Events},\\
-https://www.confluent.io/blog/build-services-backbon5-events/
+https://www.confluent.io/blog/build-services-backbone-events/
 
 {[}8{]} Stopford B. (2017), \emph{Using Apache Kafka as a Scalable,
 Event-Driven Backbone for Service Architectures},\\

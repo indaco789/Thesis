@@ -82,14 +82,17 @@ La prima parte del processo di ETL è la fase di **Extract** ed involve l'estraz
 
 L'obiettivo di questa fase è estrarre tutti i dati necessari dalle possibili sorgenti e prepararli alla fase di Transform.
 
-Un importante problema legato a questa fase è il processo di _validazione delle sorgenti dati_: con più sorgenti dati spesso ci si ritrova a dover gestire più formati non necessariamente compatibili tra loro.  
+Un importante problema legato a questa fase è il processo di _validazione delle sorgenti dati_: con più sorgenti dati spesso ci si ritrova a dover gestire più formati non necessariamente compatibili tra loro[^4].  
 Per poter garantire alla fase di Transform dei dati comprensibili, durante la fase di Extract vengono definite delle _regole di validazione_ per filtrare i dati provenienti dalle varie sorgenti, un esempio di regola di validazione è il controllo dei tipi di dati presenti nella fonte.
+
+[^4]: Wikipedia contributors. (2018), _Extract, transform, load_,   
+https://en.wikipedia.org/wiki/Extract,_transform,_load#Extract  
 
 \newpage
 
 Nella fase di **Transform** una serie di regole e funzioni vengono applicate ai dati generati dalla fase di Extract per prepararli alla fase di Load nella data warehouse.
 
-Il primo compito della fase di Transform è la _pulizia dei dati_: spesso le varie fonti di dati, nonostante siano state validate, possono presentare incongruenze tra loro come caratteri speciali legati all'encoding della propria sorgente oppure formati dei dati diversi ma compatibili (un esempio può essere la differneza di formattazione tra date americane ed europee).  
+Il primo compito della fase di Transform è la _pulizia dei dati_: spesso le varie fonti di dati, nonostante siano state validate, possono presentare incongruenze tra loro come caratteri speciali legati all'encoding della propria sorgente oppure formati dei dati diversi ma compatibili (un esempio può essere la differenza di formattazione tra date americane ed europee).  
  Per garantire un corretto funzionamento delle operazioni di trasformazione è quindi necessario pulire i dati ed adattarli ad un formato comune.
 
 Il secondo compito della fase di Transform è la _trasformazione dei dati_ in nuovi dati richiesti dal business, esempi di trasformazioni sono:
@@ -121,18 +124,28 @@ Senza definire uno schema dei dati chiaro e preciso, si correrebbe il rischio di
 
 ### 4.1. L'importanza dei dati e degli eventi 
 
-Lo status quo delle moderne applicazioni web è basato sul utilizzo di database per rappresentare le specifiche di dominio, spesso espresse da un cliente e/o da un esperto del dominio esterno all'ambiente di sviluppo.  
+Lo status quo delle moderne applicazioni web è basato sull'utilizzo di database per rappresentare le specifiche di dominio, spesso espresse da un cliente e/o da un esperto del dominio esterno all'ambiente di sviluppo[^5].  
 
 Durante la fase di analisi dei requisiti (supponendo un modello di sviluppo del software agile) cliente e team di sviluppo si confrontano, cercando di trovare un linguaggio comune per definire la logica e l'utilizzo del software richiesto; Una volta stabiliti i requisti, il team di sviluppo generalmente inizia uno studio interno atto a produrre un _modello dei dati_ che verrà usato come base per definire lo schema dei database utilizzati dal sistema.  
 Un cliente comune molto spesso non ha padronanza del concetto di 'stato di una applicazione', ma piuttosto si limita ad esporre i propri requisiti descrivendo i possibili eventi che, traslati sul modello di sviluppo incentrato su i database, portano il team di sviluppo a ragionare sui possibili stati di un database in risposta a questi eventi. 
 
 Lo stato di un database di una applicazione è strettamente legato all'insieme degli eventi del dominio applicativo; L'unico modo per modificare o interagire con questo database è tramite i comandi di inserimento, cancellazione o lettura, tutti comandi che vengono eseguiti solamente all'avvenire di un particolare evento.  
 
-Un database mantiene solo lo stato corrente di una applicazione; Non esiste il concetto di cronologia del database a meno di utilizzare soluzioni basate su **Change Data Capture** (CDC), generalmente utilizzate per generare un transactional log contenente tutte le operazioni eseguite sul suddetto database.  
-In questo modello database-driven, un evento genera un cambiamento su una base di dati; Gli eventi e lo stato di un database sono però concetti diversi e slegati tra loro, l'esecuzione di un evento a volte può portare ad una asincronia tra l'esecuzione di un evento e lo stato di un database, tanto più se questo database è utilizzato da tutti i microservizi di una applicazione.  
+Un database è spesso utilizzato solamente per mantenere lo stato corrente di una applicazione; Non esiste il concetto di cronologia del database a meno di utilizzare soluzioni basate su **Change Data Capture** (CDC)[^6], generalmente utilizzate per generare un transactional log contenente tutte le operazioni eseguite sul suddetto database.  
+In questo modello database-driven, un evento genera un cambiamento su una base di dati; Gli eventi e lo stato di un database sono però concetti diversi e slegati tra loro, l'esecuzione di un evento a volte può portare ad una asincronia tra l'esecuzione di un evento e lo stato di un database, tanto più se questo database è utilizzato da tutti i microservizi di una applicazione[^7].  
 
-Una soluzione al problema di più microservizi che utilizzano lo stesso database è di utilizzare delle views del database locali ad ogni microservizio: ogni servizio lavorerà su una copia locale del database ed un job esterno si occuperà di compattare le views e mantenere il database aggiornato rispetto a tutti i cambiamenti.  
-Questa soluzione ha un enorme problema: supponiamo di notare un errore sul database e di doverlo correggere, come possiamo decidere quale delle views è "più corretta" delle altre? Per aiutarci nella ricerca dell'errore potremmo utilizzare il transactional log di ogni views, ma su database di grandezze importanti esaminare il log di ogni views che lo compone potrebbe essere un problema complesso e dispendioso in termini di tempo.
+Una soluzione al problema di più microservizi che utilizzano lo stesso database è di utilizzare delle views del database locali ad ogni microservizio: ogni servizio lavorerà su una copia locale del database ed un job esterno si occuperà di compattare le views e mantenere il database aggiornato rispetto a tutti i cambiamenti.
+
+[^5]: Wikipedia contributors. (2018), _Analisi dei requisiti_,  
+    https://it.wikipedia.org/wiki/Analisi_dei_requisiti  
+[^6]: Wikipedia contributors. (2018), _Change data capture_,  
+    https://en.wikipedia.org/wiki/Change_data_capture  
+[^7]: Stopford B. (2017), _Messaging as the Single Source of Truth_,  
+    https://www.confluent.io/blog/messaging-single-source-truth/  
+
+\newpage
+
+Questa soluzione presenta un grosso problema: supponiamo di notare un errore sul database e di doverlo correggere, come possiamo decidere quale delle views è "più corretta" delle altre? Per aiutarci nella ricerca dell'errore potremmo utilizzare il transactional log di ogni views, ma su database di grandezze importanti esaminare il log di ogni views che lo compone potrebbe essere un problema complesso e dispendioso in termini di tempo.
 
 Event sourcing propone di risolvere questo genere di problemi allontanandosi da una progettazione state-driven elevando gli eventi a elementi chiavi del modello dei dati di una applicazione.
 
@@ -140,7 +153,7 @@ Event sourcing propone di risolvere questo genere di problemi allontanandosi da 
 
 <div id='es-desc'/>
 
-Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo basata sullo stato di una applicazione fornendo come alternativa l'uso degli eventi, ovvero delle azioni o accadimenti che l'applicazione è in grado di riconoscere e gestire.
+Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo basata sullo stato di una applicazione fornendo come alternativa l'uso degli eventi, ovvero delle azioni o accadimenti che l'applicazione è in grado di riconoscere e gestire come _singoli cambiamenti_ dello stato del "mondo". [^8]
 
 Durante l'analisi dei requisiti di una applicazione, spesso ci si trova a confronto con esperti di un dominio applicativo che non hanno particolare conoscenza delle tecnologie necessarie per implementare le loro richieste, è compito del programmatore (o del team di programmatore) analizzare le sue richieste e trasformarle in idee gestibili.  
 In genere questi esperti spiegheranno al programmatore le loro necessità illustrando il funzionamento del dominio utilizzando concetti molto più vicini a degli _eventi_ piuttosto che _sequenze di richieste/risposte a/da un database_; Supponendo di dover sviluppare una piattaforma di e-commerce, è molto più probabile che l'esperto di dominio richieda di gestire eventi come "aggiungere un oggetto al carrello" oppure "comprare un oggetto" piuttosto che "creare dei database per gestire carrello, stock oggetti rimamenti, oggetti comprati".
@@ -148,7 +161,7 @@ In genere questi esperti spiegheranno al programmatore le loro necessità illust
 La struttura dati fondamentale alla base di ES è l'**event store**, una tipologia di database ottimizzata per la gestione di eventi.  
 In un event store, gli eventi vengono inseriti in fondo alla struttura in ordine di avvenimento e non possono essere modificati o cancellati; Nel caso venga pubblicato per errore un evento sbagliato o inesatto per annularlo basterà pubblicare un evento contrario. Questo meccanismo garantisce che la ripetizione della storia degli eventi _porterà sempre allo stesso stato, errore compreso_.
 
-Un event store è comunemente implementato utilizzando un **log**, una sequenza di record append-only e totalmente ordinata in base al tempo di scrittura del record.
+Un event store è comunemente implementato utilizzando un **log**, una sequenza di record append-only e totalmente ordinata in base al tempo di scrittura del record.[^9]
 
 ![Struttura di un log \label{figure_1}](../images/log.png){ width=68% }
 
@@ -162,6 +175,9 @@ E' possibile vedere lo stato corrente di una applicazione come una _sequenza di 
 La possibilità di trasformare lo stato corrente di una applicazione in una funzione dello stato iniziale dell'applicazione e una sequenza di eventi è il meccanismo che permette ad event sourcing di avere una validità tecnica per la gestione dei dati di una applicazione.
 
 ![Dualità tra stream e database \label{figure_2}](../images/streams-table-duality.jpg){ width=80% }
+
+[^8]: Stopford B. (2017), _Messaging as the Single Source of Truth_, https://www.confluent.io/blog/messaging-single-source-truth/  
+[^9]: Stopford B. (2017), _Using Apache Kafka as a Scalable, Event-Driven Backbone for Service Architectures_, https://www.confluent.io/blog/apache-kafka-for-service-architectures/  
 
 \newpage
 
@@ -207,7 +223,7 @@ La frequenza di generazione ed aggiornamento di questi snapshot è strettamente 
 
 <div id='kafka-intro'/>
 
-_Publish/Subscribe_ è un pattern architetturale utilizzato per la comunicazione asincrona tra diversi processi od oggetti.
+_Publish/Subscribe_ è un pattern architetturale utilizzato per la comunicazione asincrona tra diversi processi od oggetti.[^10]
 
 In questo schema mittenti e destinatari dialogano tra loro per mezzo di un _broker_, un processo incaricato, da una parte, di ricevere messaggi da dei mittenti e dall'altra di consegnare gli stessi messaggi a dei destinatari. 
 
@@ -219,6 +235,8 @@ Una soluzione alternativa sarebbe creare dei canali dedicati tra produttori e co
 
 E' in questo contesto che nasce Apache Kafka, una _streaming platform_ basata su un append-only log utilizzato da dei _producer_ per pubblicare dei messaggi consumati da dei _consumer_.  
 I messaggi pubblicati vengono persistiti nel tempo, sono leggibili deterministicamente da qualsiasi consumer ed distributi all'interno del sistema secondo particolari logiche in modo da garantire protezione da crash e scalabità del sistema.
+
+[^10]: Narkhede N. and Shapira G. and Palino T. (2017), _Kafka: The Definitive Guide: Real-Time Data and Stream Processing at Scale_, O'Reilly Media Inc., pp. 1-3
 
 \newpage
 
@@ -625,7 +643,7 @@ L'utilizzo dello schema registry da parte di un consumer è speculare a quello d
 
 Il pattern Event Sourcing e la piattaforma Apache Kafka sono accomunati da uno specifico elemento: _il log_.  
 
-Entrambe le soluzioni utilizzano la medesima struttura dati per risolvere un particolare problema, è quindi spontaneo che nel tempo ES sia diventato un pattern predominante nelle applicazioni dell'ecosistema Kafka.
+Entrambe le soluzioni utilizzano la medesima struttura dati per risolvere un particolare problema, è quindi spontaneo che nel tempo ES sia diventato un pattern predominante nelle applicazioni dell'ecosistema Kafka.[^12]
 
 Riassumendo i capitoli precedenti, Event Sourcing utilizza il log come struttura dati per poter mantenere una sequenza immutabile di eventi generati da una applicazione o da più parti di un sistema; Questa sequenza di eventi definisce la storia del sistema e può essere utilizzato per ricavare lo stato del sistema in un qualsiasi momento della sua vita.
 
@@ -671,6 +689,8 @@ Il problema del calcolo del stato corrente è quindi risolto affiancando ai log 
 
 E' da notare che questo meccanismo di compressione dei log può anche essere utilizzato per archiviare parte di un vecchio log in modo da risparmiare spazio in memoria.
 
+[^12]: Narkhede N., (2016), _Event sourcing, CQRS, stream processing and Apache Kafka: What’s the connection?_, https://www.confluent.io/blog/event-sourcing-cqrs-stream-processing-apache-kafka-whats-connection/  
+
 ## 6.2. Kafka Connect: sistemi legacy, database ed Event Sourcing
 
 <div id='architettura-conn'/>
@@ -685,8 +705,6 @@ I source connector funzionano facendo leva sul log transazionale generato con tr
 Esistono ovviamente delle differenze nel funzionamento di alcuni connettori (alcuni database supportano CDC basato su polling, altri su meccanismi push-pull, ecc.) ma il risultato del procedimento di creazione del topic legato al database sorgente sarà sempre lo stesso.  
 Specularmente i sink connector sono invece utilizzati per operazioni di write/update su dei database partendo da un topic specificato.  
 Di nota è la possibilità, grazie ai sink connectors, di utilizzare svariati database come data store per topic compressi, garatendo cosi al sistema la possibilità di sfruttare le classiche tecnologie basate su database per tutte quelle operazioni di query dei dati per il quale Kafka non è necessariamente la soluzione migliore.
-
-\newpage
 
 Utilizzando source e sink connectors è quindi possibile creare pipeline complesse di dati tra Kafka, vari database e architetture "legacy" in modo da permettere al sistema di evolversi gradualmente verso una soluzione basata solamente su Kafka (se necessario).  
 Si immagini ad esempio di utilizzare i vecchi dati presenti in una applicazione legacy per popolare i topic della piattaforma Kafka e parallelamente sviluppare nuove soluzioni basata sulla nuova architettura per raggiungere gli utenti della applicazione.
@@ -712,7 +730,7 @@ Uno _stream processor_ è un nodo della topologia con il compito di processare i
 
 Le operazioni eseguite da ogni nodo possono essere espremesse utilizzando una Domain-specific Language (DSL) dichiarativa e funzionale (esempi tipici sono funzioni come `map` e `filter`) oppure una API di basso livello più vicina allo state store (e quindi più lontana dall'astrazione utilizzata con la DSL).
 
-Un esempio di un stream application che utilizza la stream DSL è dato dal seguente codice Scala:
+Un esempio di una stream application che utilizza la stream DSL è dato dal seguente codice Scala[^11]:
 
 \small 
 
@@ -740,16 +758,19 @@ object MapFunctionScalaExample {
     }
 
     val text: KStream[Array[Byte], String] = builder.stream("input-topic")
-    val upperCasedText: KStream[Array[Byte], String] = textLines.mapValues(_.toUpperCase())
+    val upperCasedText: KStream[Array[Byte], String] = 
+        textLines.mapValues(_.toUpperCase())
     upperCasedText.to("output-topic")
   }
 }
 ```
+\normalsize
 
 Nell'esempio, partendo dal topic `input-topic` viene creato uno stream di record con chiave di tipo `ByteArray` e value (o contenuto del messaggio) di tipo `String`.  
 Ad ogni messaggio viene applicata la funziona `.toUpperCase()` tramite la funzione `.mapValues()` definita dalla DSL (e quindi nodo della topologia di questa applicazione), infine viene pubblicato un nuovo record con il nuovo messaggio (la stringa in maiuscolo) su un nuovo topic `output-topic`.
 
-\normalsize
+[^11]: _Confluent Examples_,   
+https://github.com/diegoicosta/kafka-confluent-examples/blob/master/kafka-streams/src/main/scala/io/confluent/examples/streams/MapFunctionScalaExample.scala
 
 \newpage
 
@@ -759,7 +780,7 @@ Ad ogni messaggio viene applicata la funziona `.toUpperCase()` tramite la funzio
 
 Nei capitoli precendenti ho presentato le idee alla base dell'utilizzo di Apache Kafka, la sua architettura e il pattern (Event Sourcing) più comunemente utilizzato per sviluppare soluzioni software con la piattaforma; E' quindi ora necessario spiegare _perchè_ Apache Kafka è una soluzione alternativa ai comuni processi di ETL e il contesto che ha portato al suo sviluppo.
 
-Nell'ultima decade la tipologia e mole di dati e i sistemi di analisi e gestione di questi dati si sono trovati ad affrontare degli importanti cambiamenti nell'ambito dei processi di ETL.  
+Nell'ultima decade la tipologia e mole di dati e i sistemi di analisi e gestione di questi dati si sono trovati ad affrontare degli importanti cambiamenti nell'ambito dei processi di ETL[^14].  
 In passato si era abituati a sistemi di gestione/analisi dei dati formati da più database operazionali che venivano utilizzati per creare una pipeline di dati diretta verso una o più datawarehouse; Questo processo di migrazione in genere non era richiesto che fosse eseguito più di poche volte al giorno, ed è proprio questa scelta architetturale che ha portato alla creazione dei vecchi tools di ETL.  
 
 ![Database operazionali e datawarehouse \label{figure_5}](../images/op-dwh.png){ width=90% }
@@ -796,6 +817,8 @@ Proprio perchè è una nuova tecnologia in continua evoluzione, le capacità di 
 
 Nonostante le difficoltà tecnologiche, non ci sono però dubbi che i processi di ETL stiano subendo una forte spinta evolutiva e che le piattaforme di streaming come Kafka rappresentano una valida alternativa ed il futuro dei processi di analisi e gestione di grossi volumi di dati.
 
+[^14]: Narkhede N. _ETL Is Dead, Long Live Streams: Real-Time Streams with Apache Kafka_, www.youtube.com/watch?v=I32hmY4diFY
+
 \newpage
 
 ## 8. Bibliografia
@@ -816,6 +839,9 @@ https://en.wikipedia.org/wiki/Microservices#History
 
 [2] _What is ETL?_,  
 https://www.sas.com/en_us/insights/data-management/what-is-etl.html
+
+[4] Wikipedia contributors. (2018), _Extract, transform, load_,  
+https://en.wikipedia.org/wiki/Extract,_transform,_load  
 
 [3] Koshy J. (2016), _Kafka Ecosystem at LinkedIn_,  
 https://engineering.linkedin.com/blog/2016/04/kafka-ecosystem-at-linkedin
@@ -839,7 +865,7 @@ https://www.confluent.io/blog/stream-data-platform-1/
 https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/  
 
 [7] Stopford B. (2017), _Build Services on a Backbone of Events_,  
-https://www.confluent.io/blog/build-services-backbon5-events/  
+https://www.confluent.io/blog/build-services-backbone-events/  
 
 [8] Stopford B. (2017), _Using Apache Kafka as a Scalable, Event-Driven Backbone for Service Architectures_,  
 https://www.confluent.io/blog/apache-kafka-for-service-architectures/  
