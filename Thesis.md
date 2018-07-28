@@ -4,23 +4,23 @@
 1. [Motivazioni](#motivazioni)
 2. [Introduzione](#introduzione)
 3. [ETL](#etl)
-4. [Event sourcing](#event-sourcing)  
-    4.1. [L'importanza dei dati e degli eventi](#es-intro)  
-    4.2. [Descrizione](#es-desc)  
-    4.3. [Vantaggi](#es-vantaggi)  
+4. [Event sourcing](#event-sourcing)
+    4.1. [L'importanza dei dati e degli eventi](#es-intro)
+    4.2. [Descrizione](#es-desc)
+    4.3. [Vantaggi](#es-vantaggi)
     4.4. [Svantaggi](#es-svantaggi)
-5. [Apache Kafka: Ecosistema](#kafka)  
-    5.1. [Introduzione](#kafka-intro)  
-    5.2. [Messaggi](#kafka-msg)  
-    5.3. [Topic e partizioni](#kafka-topic)  
-    5.4. [Producers](#kafka-prod)  
-    5.5. [Consumers](#kafka-consum)  
-    5.6. [Brokers e clusters](#kafka-brok)  
-    5.7. [Schema](#kafka-schm)  
+5. [Apache Kafka: Ecosistema](#kafka)
+    5.1. [Introduzione](#kafka-intro)
+    5.2. [Messaggi](#kafka-msg)
+    5.3. [Topic e partizioni](#kafka-topic)
+    5.4. [Producers](#kafka-prod)
+    5.5. [Consumers](#kafka-consum)
+    5.6. [Brokers e clusters](#kafka-brok)
+    5.7. [Schema](#kafka-schm)
     5.8. [Schema registry](#kafka-schm-re)
-6. [Architetture Event-driven](#architettura)  
-    6.1. [Kafka come piattaforma per Event Sourcing](#architettura-intro)  
-    6.2. [Kafka Connect: sistemi legacy, database ed Event Sourcing](#architettura-conn)  
+6. [Architetture Event-driven](#architettura)
+    6.1. [Kafka come piattaforma per Event Sourcing](#architettura-intro)
+    6.2. [Kafka Connect: sistemi legacy, database ed Event Sourcing](#architettura-conn)
     6.3. [Kafka Streams](#architettura-stream)
 7. [Conclusioni](#conclusioni)
 8. [Bibliografia](#bibliografia)
@@ -42,11 +42,21 @@ Lo stream processing tra microservizi propone un nuovo approccio per la gestione
 
 Apache Kafka è una piattaforma di streaming di dati sviluppata da Linkedin[^3] nata dalla necessità di trovare un metodo per la gestione di enormi moli di dati.
 
-Kafka nasce per sfruttare a pieno lo stream processing e favorire una gestione intelligente dei dati, abbandonando il classico processo "batch" ETL per una soluzione basata sullo streaming tra microservizi favorendo un approccio improntato sulla gestione di eventi legati al comportamento dei dati, più che i dati in sé.  
+Kafka nasce per sfruttare a pieno lo stream processing e favorire una gestione intelligente dei dati, abbandonando il classico processo "batch" ETL per una soluzione basata sullo streaming tra microservizi favorendo un approccio improntato sulla gestione di eventi legati al comportamento dei dati, più che i dati in sé.
 
-[^1]: Wikipedia contributors. (2018), _Microservices_, https://en.wikipedia.org/wiki/Microservices#History  
-[^2]: _What is ETL?_, https://www.sas.com/en_us/insights/data-management/what-is-etl.html  
+Durante il mio tirocinio curriculare presso Credimi[^4] ho avuto la possibilità di partecipare allo studio ed implementazione di Kafka in vari punti del backend dell'azienda.
+Credimi è una startup che opera nell'ambito fintech fornendo soluzioni di factoring[^5] per aziende, il backend è sviluppato in Scala e richiede molteplici interazioni con sistemi esterni.
+
+Un punto dell'architettura dove è stata studiata ed implementata una soluzione tramite Kafka è il sistema di proposta/decisione sulla validità di un utente che richiede un anticipo su una fattura caricata in piattaforma.
+Al caricamento di una fattura da parte di un utente nel backend inizia un complesso processo di richieste a servizi esterni, denominati _centrali rischi_, utilizzati per reperire dati finanziari che verranno utilizzati per calcolare preventivamente l'affidabilità di questo utente e generare una _proposta di finanziamento_ che sarà valutata dal back office aziendale.
+
+In questo ambito Kafka è stato utilizzato come tecnologia alternativa ad un processo di ETL in modo da, in primo luogo, standarizzare i dati ricevuti dalle varie centrali rischi ed infine confrontare ed unire queste informazioni in un formato comprensibile ed utilizzabile dal backend per generare la proposta di finanziamento.
+
+[^1]: Wikipedia contributors. (2018), _Microservices_, https://en.wikipedia.org/wiki/Microservices#History
+[^2]: _What is ETL?_, https://www.sas.com/en_us/insights/data-management/what-is-etl.html
 [^3]: Koshy J. (2016), _Kafka Ecosystem at LinkedIn_, https://engineering.linkedin.com/blog/2016/04/kafka-ecosystem-at-linkedin
+[^4]: _Credimi_, https://www.credimi.com/
+[^5]: Wikipedia contributors. (2018), _Factoring_, https://it.wikipedia.org/wiki/Factoring
 
 \newpage
 
@@ -54,11 +64,11 @@ Kafka nasce per sfruttare a pieno lo stream processing e favorire una gestione i
 
 <div id='introduzione'/>
 
-Prima di poter discutere della soluzione architetturale fornita da Apache Kafka e quali vantaggi propone rispetto alle soluzioni di batch ETL, è necessario approfondire alcuni temi tra cui il più importante è sicurante event sourcing (ES).  
+Prima di poter discutere della soluzione architetturale fornita da Apache Kafka e quali vantaggi propone rispetto alle soluzioni di batch ETL, è necessario approfondire alcuni temi tra cui il più importante è sicurante event sourcing (ES).
 
-Il terzo capitolo presenta una veloce descrizione di un processo ETL in modo da dare visione del pattern strutturale per il quale si vuole dare una alternativa con Kafka.  
+Il terzo capitolo presenta una veloce descrizione di un processo ETL in modo da dare visione del pattern strutturale per il quale si vuole dare una alternativa con Kafka.
 
-Il quarto capitolo è utilizzato per illustrare uno dei concetti chiave della tesi: l'importanza di gestire e vedere le basi di dati come eventi, perchè utilizzare il concetto di eventi per modelizzare i dati ed infine, come utilizzare event sourcing.   
+Il quarto capitolo è utilizzato per illustrare uno dei concetti chiave della tesi: l'importanza di gestire e vedere le basi di dati come eventi, perchè utilizzare il concetto di eventi per modelizzare i dati ed infine, come utilizzare event sourcing.
 
 Il quinto ed il sesto capitolo sono dedicati ad esaminare la piattaforma Apache Kafka, sia da un punto di vista tecnico-architetturale esaminandone le singole parti che compongono la piattaforma, sia l'ecosistema che si è venuto a creare intorno alla piattaforma, principalmente l'utilizzo delle librerie Kafka Connect e Kafka Streams; Viene inoltre presentato come utilizzare ES nel contesto dell'uso della piattaforma Kafka.
 
@@ -82,17 +92,17 @@ La prima parte del processo di ETL è la fase di **Extract** ed involve l'estraz
 
 L'obiettivo di questa fase è estrarre tutti i dati necessari dalle possibili sorgenti e prepararli alla fase di Transform.
 
-Un importante problema legato a questa fase è il processo di _validazione delle sorgenti dati_: con più sorgenti dati spesso ci si ritrova a dover gestire più formati non necessariamente compatibili tra loro[^4].  
+Un importante problema legato a questa fase è il processo di _validazione delle sorgenti dati_: con più sorgenti dati spesso ci si ritrova a dover gestire più formati non necessariamente compatibili tra loro[^4].
 Per poter garantire alla fase di Transform dei dati comprensibili, durante la fase di Extract vengono definite delle _regole di validazione_ per filtrare i dati provenienti dalle varie sorgenti, un esempio di regola di validazione è il controllo dei tipi di dati presenti nella fonte.
 
-[^4]: Wikipedia contributors. (2018), _Extract, transform, load_,   
-https://en.wikipedia.org/wiki/Extract,_transform,_load#Extract  
+[^4]: Wikipedia contributors. (2018), _Extract, transform, load_,
+https://en.wikipedia.org/wiki/Extract,_transform,_load#Extract
 
 \newpage
 
 Nella fase di **Transform** una serie di regole e funzioni vengono applicate ai dati generati dalla fase di Extract per prepararli alla fase di Load nella data warehouse.
 
-Il primo compito della fase di Transform è la _pulizia dei dati_: spesso le varie fonti di dati, nonostante siano state validate, possono presentare incongruenze tra loro come caratteri speciali legati all'encoding della propria sorgente oppure formati dei dati diversi ma compatibili (un esempio può essere la differenza di formattazione tra date americane ed europee).  
+Il primo compito della fase di Transform è la _pulizia dei dati_: spesso le varie fonti di dati, nonostante siano state validate, possono presentare incongruenze tra loro come caratteri speciali legati all'encoding della propria sorgente oppure formati dei dati diversi ma compatibili (un esempio può essere la differenza di formattazione tra date americane ed europee).
  Per garantire un corretto funzionamento delle operazioni di trasformazione è quindi necessario pulire i dati ed adattarli ad un formato comune.
 
 Il secondo compito della fase di Transform è la _trasformazione dei dati_ in nuovi dati richiesti dal business, esempi di trasformazioni sono:
@@ -106,42 +116,42 @@ Il secondo compito della fase di Transform è la _trasformazione dei dati_ in nu
 - Validazione del nuovo formato di dati prodotto
 
 
-Nella fase di **Load** l'insieme di dati generati dalla fase di Transform vengono inseriti in un target, il quale potrebbe essere una data warehouse ma anche più semplicemente un file in un formato utile.  
-Business diversi hanno necessità diverse, per questo l'implementazione della fase di load può avere più modalità implementative, il punto focale di questa fase è proprio stabilire la frequenza e le modalità di aggiornamento dei dati presenti nel target.  
-Decidere la frequenza (giornaliera, mensile, ecc.) e le modalità (sovrascrizione dei vecchi dati o meno) del target possono portare ad un processo di ETL più o meno utile ad una azienda.  
+Nella fase di **Load** l'insieme di dati generati dalla fase di Transform vengono inseriti in un target, il quale potrebbe essere una data warehouse ma anche più semplicemente un file in un formato utile.
+Business diversi hanno necessità diverse, per questo l'implementazione della fase di load può avere più modalità implementative, il punto focale di questa fase è proprio stabilire la frequenza e le modalità di aggiornamento dei dati presenti nel target.
+Decidere la frequenza (giornaliera, mensile, ecc.) e le modalità (sovrascrizione dei vecchi dati o meno) del target possono portare ad un processo di ETL più o meno utile ad una azienda.
 
-Per generare un buon target è buona norma definire uno schema _preciso e chiaro_ della tipologia di dati a cui il target deve aderire.  
-Come detto in precedenza un processo di ETL è utilizzato per aggregare più fonti di informazioni comuni ad un processo aziendale, questo suppone che le informazioni presenti nella data warehouse potrebbero venire usate da più parti di una azienda, le quali potrebbero essere abituate a particolari formati dei dati.  
+Per generare un buon target è buona norma definire uno schema _preciso e chiaro_ della tipologia di dati a cui il target deve aderire.
+Come detto in precedenza un processo di ETL è utilizzato per aggregare più fonti di informazioni comuni ad un processo aziendale, questo suppone che le informazioni presenti nella data warehouse potrebbero venire usate da più parti di una azienda, le quali potrebbero essere abituate a particolari formati dei dati.
 Senza definire uno schema dei dati chiaro e preciso, si correrebbe il rischio di generare un insieme di dati inutilizzabile da determinati reparti in quanto non conforme al formato di dati da loro conosciuto.
 
 \newpage
 
-<div id='event-sourcing'/> 
+<div id='event-sourcing'/>
 
-## 4. Event sourcing 
+## 4. Event sourcing
 
 <div id='es-intro'/>
 
-### 4.1. L'importanza dei dati e degli eventi 
+### 4.1. L'importanza dei dati e degli eventi
 
-Lo status quo delle moderne applicazioni web è basato sull'utilizzo di database per rappresentare le specifiche di dominio, spesso espresse da un cliente e/o da un esperto del dominio esterno all'ambiente di sviluppo[^5].  
+Lo status quo delle moderne applicazioni web è basato sull'utilizzo di database per rappresentare le specifiche di dominio, spesso espresse da un cliente e/o da un esperto del dominio esterno all'ambiente di sviluppo[^5].
 
-Durante la fase di analisi dei requisiti (supponendo un modello di sviluppo del software agile) cliente e team di sviluppo si confrontano, cercando di trovare un linguaggio comune per definire la logica e l'utilizzo del software richiesto; Una volta stabiliti i requisti, il team di sviluppo generalmente inizia uno studio interno atto a produrre un _modello dei dati_ che verrà usato come base per definire lo schema dei database utilizzati dal sistema.  
-Un cliente comune molto spesso non ha padronanza del concetto di 'stato di una applicazione', ma piuttosto si limita ad esporre i propri requisiti descrivendo i possibili eventi che, traslati sul modello di sviluppo incentrato su i database, portano il team di sviluppo a ragionare sui possibili stati di un database in risposta a questi eventi. 
+Durante la fase di analisi dei requisiti (supponendo un modello di sviluppo del software agile) cliente e team di sviluppo si confrontano, cercando di trovare un linguaggio comune per definire la logica e l'utilizzo del software richiesto; Una volta stabiliti i requisti, il team di sviluppo generalmente inizia uno studio interno atto a produrre un _modello dei dati_ che verrà usato come base per definire lo schema dei database utilizzati dal sistema.
+Un cliente comune molto spesso non ha padronanza del concetto di 'stato di una applicazione', ma piuttosto si limita ad esporre i propri requisiti descrivendo i possibili eventi che, traslati sul modello di sviluppo incentrato su i database, portano il team di sviluppo a ragionare sui possibili stati di un database in risposta a questi eventi.
 
-Lo stato di un database di una applicazione è strettamente legato all'insieme degli eventi del dominio applicativo; L'unico modo per modificare o interagire con questo database è tramite i comandi di inserimento, cancellazione o lettura, tutti comandi che vengono eseguiti solamente all'avvenire di un particolare evento.  
+Lo stato di un database di una applicazione è strettamente legato all'insieme degli eventi del dominio applicativo; L'unico modo per modificare o interagire con questo database è tramite i comandi di inserimento, cancellazione o lettura, tutti comandi che vengono eseguiti solamente all'avvenire di un particolare evento.
 
-Un database è spesso utilizzato solamente per mantenere lo stato corrente di una applicazione; Non esiste il concetto di cronologia del database a meno di utilizzare soluzioni basate su **Change Data Capture** (CDC)[^6], generalmente utilizzate per generare un transactional log contenente tutte le operazioni eseguite sul suddetto database.  
-In questo modello database-driven, un evento genera un cambiamento su una base di dati; Gli eventi e lo stato di un database sono però concetti diversi e slegati tra loro, l'esecuzione di un evento a volte può portare ad una asincronia tra l'esecuzione di un evento e lo stato di un database, tanto più se questo database è utilizzato da tutti i microservizi di una applicazione[^7].  
+Un database è spesso utilizzato solamente per mantenere lo stato corrente di una applicazione; Non esiste il concetto di cronologia del database a meno di utilizzare soluzioni basate su **Change Data Capture** (CDC)[^6], generalmente utilizzate per generare un transactional log contenente tutte le operazioni eseguite sul suddetto database.
+In questo modello database-driven, un evento genera un cambiamento su una base di dati; Gli eventi e lo stato di un database sono però concetti diversi e slegati tra loro, l'esecuzione di un evento a volte può portare ad una asincronia tra l'esecuzione di un evento e lo stato di un database, tanto più se questo database è utilizzato da tutti i microservizi di una applicazione[^7].
 
 Una soluzione al problema di più microservizi che utilizzano lo stesso database è di utilizzare delle views del database locali ad ogni microservizio: ogni servizio lavorerà su una copia locale del database ed un job esterno si occuperà di compattare le views e mantenere il database aggiornato rispetto a tutti i cambiamenti.
 
-[^5]: Wikipedia contributors. (2018), _Analisi dei requisiti_,  
-    https://it.wikipedia.org/wiki/Analisi_dei_requisiti  
-[^6]: Wikipedia contributors. (2018), _Change data capture_,  
-    https://en.wikipedia.org/wiki/Change_data_capture  
-[^7]: Stopford B. (2017), _Messaging as the Single Source of Truth_,  
-    https://www.confluent.io/blog/messaging-single-source-truth/  
+[^5]: Wikipedia contributors. (2018), _Analisi dei requisiti_,
+    https://it.wikipedia.org/wiki/Analisi_dei_requisiti
+[^6]: Wikipedia contributors. (2018), _Change data capture_,
+    https://en.wikipedia.org/wiki/Change_data_capture
+[^7]: Stopford B. (2017), _Messaging as the Single Source of Truth_,
+    https://www.confluent.io/blog/messaging-single-source-truth/
 
 \newpage
 
@@ -149,16 +159,16 @@ Questa soluzione presenta un grosso problema: supponiamo di notare un errore sul
 
 Event sourcing propone di risolvere questo genere di problemi allontanandosi da una progettazione state-driven elevando gli eventi a elementi chiavi del modello dei dati di una applicazione.
 
-### 4.2. Descrizione 
+### 4.2. Descrizione
 
 <div id='es-desc'/>
 
 Event sourcing (ES) è un design pattern che si contrappone ad una visione del mondo basata sullo stato di una applicazione fornendo come alternativa l'uso degli eventi, ovvero delle azioni o accadimenti che l'applicazione è in grado di riconoscere e gestire come _singoli cambiamenti_ dello stato del "mondo". [^8]
 
-Durante l'analisi dei requisiti di una applicazione, spesso ci si trova a confronto con esperti di un dominio applicativo che non hanno particolare conoscenza delle tecnologie necessarie per implementare le loro richieste, è compito del programmatore (o del team di programmatore) analizzare le sue richieste e trasformarle in idee gestibili.  
+Durante l'analisi dei requisiti di una applicazione, spesso ci si trova a confronto con esperti di un dominio applicativo che non hanno particolare conoscenza delle tecnologie necessarie per implementare le loro richieste, è compito del programmatore (o del team di programmatore) analizzare le sue richieste e trasformarle in idee gestibili.
 In genere questi esperti spiegheranno al programmatore le loro necessità illustrando il funzionamento del dominio utilizzando concetti molto più vicini a degli _eventi_ piuttosto che _sequenze di richieste/risposte a/da un database_; Supponendo di dover sviluppare una piattaforma di e-commerce, è molto più probabile che l'esperto di dominio richieda di gestire eventi come "aggiungere un oggetto al carrello" oppure "comprare un oggetto" piuttosto che "creare dei database per gestire carrello, stock oggetti rimamenti, oggetti comprati".
 
-La struttura dati fondamentale alla base di ES è l'**event store**, una tipologia di database ottimizzata per la gestione di eventi.  
+La struttura dati fondamentale alla base di ES è l'**event store**, una tipologia di database ottimizzata per la gestione di eventi.
 In un event store, gli eventi vengono inseriti in fondo alla struttura in ordine di avvenimento e non possono essere modificati o cancellati; Nel caso venga pubblicato per errore un evento sbagliato o inesatto per annularlo basterà pubblicare un evento contrario. Questo meccanismo garantisce che la ripetizione della storia degli eventi _porterà sempre allo stesso stato, errore compreso_.
 
 Un event store è comunemente implementato utilizzando un **log**, una sequenza di record append-only e totalmente ordinata in base al tempo di scrittura del record.[^9]
@@ -171,34 +181,34 @@ Generalmente in un processo di sviluppo basato su ES, si tende a nominare gli ev
 
 L'ordine di pubblicazione degli eventi è di estrema importanza in quanto è ciò che permette al pattern di rappresentare correttamente lo stato di una applicazione.
 
-E' possibile vedere lo stato corrente di una applicazione come una _sequenza di operazioni di modifica dello stato eseguite partendo da uno stato iniziale_, questo implica che è possibile vedere un evento come il _delta tra lo stato iniziale di una applicazione e lo stato corrente dell'applicazione dopo l'esecuzione dell'evento_.  
+E' possibile vedere lo stato corrente di una applicazione come una _sequenza di operazioni di modifica dello stato eseguite partendo da uno stato iniziale_, questo implica che è possibile vedere un evento come il _delta tra lo stato iniziale di una applicazione e lo stato corrente dell'applicazione dopo l'esecuzione dell'evento_.
 La possibilità di trasformare lo stato corrente di una applicazione in una funzione dello stato iniziale dell'applicazione e una sequenza di eventi è il meccanismo che permette ad event sourcing di avere una validità tecnica per la gestione dei dati di una applicazione.
 
 ![Dualità tra stream e database \label{figure_2}](../images/streams-table-duality.jpg){ width=80% }
 
-[^8]: Stopford B. (2017), _Messaging as the Single Source of Truth_, https://www.confluent.io/blog/messaging-single-source-truth/  
-[^9]: Stopford B. (2017), _Using Apache Kafka as a Scalable, Event-Driven Backbone for Service Architectures_, https://www.confluent.io/blog/apache-kafka-for-service-architectures/  
+[^8]: Stopford B. (2017), _Messaging as the Single Source of Truth_, https://www.confluent.io/blog/messaging-single-source-truth/
+[^9]: Stopford B. (2017), _Using Apache Kafka as a Scalable, Event-Driven Backbone for Service Architectures_, https://www.confluent.io/blog/apache-kafka-for-service-architectures/
 
 \newpage
 
-### 4.3. Vantaggi 
+### 4.3. Vantaggi
 
 <div id='es-vantaggi'/>
 
-Event sourcing è un pattern estremamente utile per tutti quegli use-case dove è assolutamente necessario mantenere una storia dello sviluppo dello stato dell'applicazione del tempo. Tipici esempi sono gli strumenti di versioning del codice oppure la gestione di un storico bancario.  
+Event sourcing è un pattern estremamente utile per tutti quegli use-case dove è assolutamente necessario mantenere una storia dello sviluppo dello stato dell'applicazione del tempo. Tipici esempi sono gli strumenti di versioning del codice oppure la gestione di un storico bancario.
 
-La capacità dell'event store di essere sia una struttura dati performante per la scrittura dei dati (è una semplice operazione di scrittura in fondo ad una sequenza di complessità O(1)) che una cronologia di tutti gli avvenimenti del sistema, permette una gestione degli errori estremamente semplice.  
+La capacità dell'event store di essere sia una struttura dati performante per la scrittura dei dati (è una semplice operazione di scrittura in fondo ad una sequenza di complessità O(1)) che una cronologia di tutti gli avvenimenti del sistema, permette una gestione degli errori estremamente semplice.
 
-In un qualsiasi database relazionale se durante il normale utilizzo dell'applicazione avviene un errore logico che porta il database ad uno stato non corretto, è sempre necessario un rollback dell'intero database ad un data antecedente l'errore per poter sperare di correggiare l'errore.  
-Tale processo è dispendioso in termini di tempo e non è di facile esecuzione in quanto spesso il processo di backup di un database non viene eseguito dopo ogni inserimento o update di un record; Per poter correggere l'errore sarà quindi necessario calcolare partire dal backup più recente e applicare nuovamente tutte le transformazioni del database, meno l'errore.  
+In un qualsiasi database relazionale se durante il normale utilizzo dell'applicazione avviene un errore logico che porta il database ad uno stato non corretto, è sempre necessario un rollback dell'intero database ad un data antecedente l'errore per poter sperare di correggiare l'errore.
+Tale processo è dispendioso in termini di tempo e non è di facile esecuzione in quanto spesso il processo di backup di un database non viene eseguito dopo ogni inserimento o update di un record; Per poter correggere l'errore sarà quindi necessario calcolare partire dal backup più recente e applicare nuovamente tutte le transformazioni del database, meno l'errore.
 
 L'analisi del motivo dell'errore può inoltre non essere di facile realizzazione con un database relazionale a meno che non siano in uso i meccanismi di CDC: senza una cronologia delle transazioni può essere molto difficile risalire al motivo dell'errore.
 
 Diversamente nel caso dell'utilizzo di Event Sourcing, la gestione e l'analisi di un errore è estremamente semplice.
-Nel caso in cui l'errore, che sarà sempre un evento, non ha generato un effetto "domino" sul sistema (ovvero l'errore non ha portato all'esecuzione di uan catena di errori), una volta individuato è possibile pubblicare un evento "contrario" alla causa dell'errore in modo tale da cancellare l'apporto dell'errore sul sistema.  
-Nel caso contrario, ovvero il caso in cui l'errore ha generato una sequenza di errori, per ottenere lo stato corretto del sistema basterà ripetere l'esecuzione di tutti gli eventi del sistema escludendo quello che ha generato l'errore sulla base di dati.  
+Nel caso in cui l'errore, che sarà sempre un evento, non ha generato un effetto "domino" sul sistema (ovvero l'errore non ha portato all'esecuzione di uan catena di errori), una volta individuato è possibile pubblicare un evento "contrario" alla causa dell'errore in modo tale da cancellare l'apporto dell'errore sul sistema.
+Nel caso contrario, ovvero il caso in cui l'errore ha generato una sequenza di errori, per ottenere lo stato corretto del sistema basterà ripetere l'esecuzione di tutti gli eventi del sistema escludendo quello che ha generato l'errore sulla base di dati.
 
-E' bene notare che con ES la gestione degli errori nello stato del sistema è strettamente legata all'atomicità e definizione degli eventi del sistema: una corretta (semplice) definizione degli eventi del sistema porterà ad una cronologia del sistema più chiara e comprensibile.  
+E' bene notare che con ES la gestione degli errori nello stato del sistema è strettamente legata all'atomicità e definizione degli eventi del sistema: una corretta (semplice) definizione degli eventi del sistema porterà ad una cronologia del sistema più chiara e comprensibile.
 
 \newpage
 
@@ -208,9 +218,9 @@ E' bene notare che con ES la gestione degli errori nello stato del sistema è st
 
 Event sourcing potrebbe non essere utile per una applicazione che richiede frequenti e continue query di richiesta sullo stato del sistema.
 
-Come descritto in precedenza, per ottenere lo stato corrente del sistema è necessario eseguire tutti gli eventi pubblicati sull'event store partendo da uno stato iniziale; Se la nostra applicazione richiede di eseguire molte query di ricerca sullo stato corrente del database sarà quindi necessario calcolare lo stato del sistema _ogni volta che viene eseguita una nuova richiesta_ (un esempio di richiesta sullo stato è la ricerca di tutti i record che presentano una particolare caratteristica).  
+Come descritto in precedenza, per ottenere lo stato corrente del sistema è necessario eseguire tutti gli eventi pubblicati sull'event store partendo da uno stato iniziale; Se la nostra applicazione richiede di eseguire molte query di ricerca sullo stato corrente del database sarà quindi necessario calcolare lo stato del sistema _ogni volta che viene eseguita una nuova richiesta_ (un esempio di richiesta sullo stato è la ricerca di tutti i record che presentano una particolare caratteristica).
 
-Le modalità per risolvere questo problema sono determinate dal dominio e uso dell'applicazione che utilizza ES, ma generalmente per ovviare a questa debolezza vengono realizzati degli snapshot dello stato dell'applicazione da utilizzare per l'esecuzione delle query di ricerca.  
+Le modalità per risolvere questo problema sono determinate dal dominio e uso dell'applicazione che utilizza ES, ma generalmente per ovviare a questa debolezza vengono realizzati degli snapshot dello stato dell'applicazione da utilizzare per l'esecuzione delle query di ricerca.
 La frequenza di generazione ed aggiornamento di questi snapshot è strettamente legata al dominio applicativo dell'applicazione.
 
 \newpage
@@ -225,7 +235,7 @@ La frequenza di generazione ed aggiornamento di questi snapshot è strettamente 
 
 _Publish/Subscribe_ è un pattern architetturale utilizzato per la comunicazione asincrona tra diversi processi od oggetti.[^10]
 
-In questo schema mittenti e destinatari dialogano tra loro per mezzo di un _broker_, un processo incaricato, da una parte, di ricevere messaggi da dei mittenti e dall'altra di consegnare gli stessi messaggi a dei destinatari. 
+In questo schema mittenti e destinatari dialogano tra loro per mezzo di un _broker_, un processo incaricato, da una parte, di ricevere messaggi da dei mittenti e dall'altra di consegnare gli stessi messaggi a dei destinatari.
 
 I destinatari non conoscono i mittenti, ed i mittenti non si interessano di chi sono i destinatari: l'unico compito del mittente è quello di pubblicare dei messaggi sul broker, starà poi al destinatario il compito di abbonarsi (dall'inglese _subscribe_) al broker in modo da ricevere tutti i nuovi messaggi.
 
@@ -233,14 +243,14 @@ Questo pattern viene spesso utilizzato quando ci si trova ad avere più processi
 
 Una soluzione alternativa sarebbe creare dei canali dedicati tra produttori e consumatori ma questo non permetterebbe alla struttura di supportare un numero sempre più elevato di servizi od oggetti, ed in un mondo dove è sempre più frequente l'utilizzo di microservizi e il logging di eventi e dati (Big Data) porterebbe ad un debito tecnologico elevato e difficile da correggere.
 
-E' in questo contesto che nasce Apache Kafka, una _streaming platform_ basata su un append-only log utilizzato da dei _producer_ per pubblicare dei messaggi consumati da dei _consumer_.  
+E' in questo contesto che nasce Apache Kafka, una _streaming platform_ basata su un append-only log utilizzato da dei _producer_ per pubblicare dei messaggi consumati da dei _consumer_.
 I messaggi pubblicati vengono persistiti nel tempo, sono leggibili deterministicamente da qualsiasi consumer ed distributi all'interno del sistema secondo particolari logiche in modo da garantire protezione da crash e scalabità del sistema.
 
 [^10]: Narkhede N. and Shapira G. and Palino T. (2017), _Kafka: The Definitive Guide: Real-Time Data and Stream Processing at Scale_, O'Reilly Media Inc., pp. 1-3
 
 \newpage
 
-### 5.2. Messaggi  
+### 5.2. Messaggi
 
 <div id='kafka-msg'/>
 
@@ -256,7 +266,7 @@ La gestione dei messaggi in batch nasce per motivi di efficienza per bilanciare 
 
 \newpage
 
-### 5.3. Topic e partizioni  
+### 5.3. Topic e partizioni
 
 <div id='kafka-topic'/>
 
@@ -267,7 +277,7 @@ Un topic è suddiviso in _partizioni_, append-only logs sui quali vengono persis
 ![Un topic suddiviso in più partizioni \label{figure_3}](../images/topic-and-partitions.png){ width=90% }
 
 I messaggi sono inseriti in una partizione da un producer nell'ordine in cui sono stati inviati posizionandoli in fondo al log, non sono modificabili o cancellabili e sono contradistinti da un _offset_, un indice numerico che funziona da timestamp del messaggio.
-Un consumer legge i messaggi di un topic partendo dalla testa (o da uno specifico offset) del log proseguendo fino alla coda.  
+Un consumer legge i messaggi di un topic partendo dalla testa (o da uno specifico offset) del log proseguendo fino alla coda.
 
 L'ordine di scrittura è garantito solo per ogni singola partizione: non è detto che messaggi appartenenti al medesimo topic siano in ordine cronologico se inseriti su partizioni diverse.
 
@@ -281,16 +291,16 @@ Per ogniuno di questi eventi verrà creato un singolo `topic` per raggruppare tu
 
 <div id='kafka-prod'/>
 
-Kafka è utilizzata da due tipologie di client: _producers_ e _consumers_.  
+Kafka è utilizzata da due tipologie di client: _producers_ e _consumers_.
 
-I _producers_ hanno il compito di creare messaggi indirizzati a specifici topic (indipendentemente dal numero di partizioni da cui sono formati).  
-Come illustrato in precedenza, un topic è formato da un numero variabile di partizioni utilizzate come meccanismo di replica e gestione dei messaggi; Alla creazione di un messaggio è possibile indicare al producer su quale partizione andare a scrivere il record specificando l'identificativo di una partizione specifica.  
+I _producers_ hanno il compito di creare messaggi indirizzati a specifici topic (indipendentemente dal numero di partizioni da cui sono formati).
+Come illustrato in precedenza, un topic è formato da un numero variabile di partizioni utilizzate come meccanismo di replica e gestione dei messaggi; Alla creazione di un messaggio è possibile indicare al producer su quale partizione andare a scrivere il record specificando l'identificativo di una partizione specifica.
 
 ![Processo di pubblicazione di un messaggio \label{figure_3}](../images/producer-process.png){ width=90% }
 
 Il processo di pubblicazione di un messaggio inizia con la produzione di un `ProducerRecord` il quale deve contenere il topic sul quale vuole pubblicare il messaggio ad una value, ovvero il contenuto del messaggio; Opzionalmente è possibile specificare una chiave o una partizione specifica.
 
-Nella maggior parte dei casi d'uso di Kafka, il producer non si pone mai il problema di decidere su quale partizione andare a scrivere un particolare messaggio ma piuttosto vengono utilizzati dei meccanismi di load-balancing per spartire correttamente i messaggi su tutte le partizioni disponibili presenti nel topic.  
+Nella maggior parte dei casi d'uso di Kafka, il producer non si pone mai il problema di decidere su quale partizione andare a scrivere un particolare messaggio ma piuttosto vengono utilizzati dei meccanismi di load-balancing per spartire correttamente i messaggi su tutte le partizioni disponibili presenti nel topic.
 Tipici esempi di algoritmi di load-balancing sono il calcolo della partizione in base ad una hash key derivata dall'offset del messaggio oppure utilizzando un algoritmo round robin, se necessario è presente la possibilità di specificare un _partioneer_ creato su misura al caso d'uso.
 
 Una volta creato il `ProducerRecord` il producer serializza chiave e value del messaggio in `ByteArray` in modo da effettivamente trasmetterli sulla rete.
@@ -313,9 +323,9 @@ Per poter creare un producer sono necessari tre parametri:
 - `key.serializer`: nome della classe che verrà utilizzata per serializzare in byte array le chiavi dei record che vogliamo pubblicare con kafka. E' possibile crearne di nuovi implementando `org.apache.kafka.common.serialization.Serializer`.
 - `value.serializer`: nome della classe che verrà utilizzata per serializzare in byte array il record da pubblicare.
 
-Un esempio di producer è dato dal seguente codice Scala:  
+Un esempio di producer è dato dal seguente codice Scala:
 
-\small  
+\small
 
 ```{ .scala }
 import java.util.Properties
@@ -326,13 +336,13 @@ import scala.concurrent.Promise
 case class Producer(topic: String){
     val props = new Properties()
     props.put("bootstrap.servers", "localhost:9092")
-    props.put("key.serializer", 
+    props.put("key.serializer",
         "org.apache.kafka.common.serialization.StringSerializer")
-    props.put("value.serializer", 
+    props.put("value.serializer",
         "org.apache.kafka.common.serialization.StringSerializer")
-    
-    private val producer = new KafkaProducer[String, String](props)    
-    
+
+    private val producer = new KafkaProducer[String, String](props)
+
     def send(value: String) = {
       val record = new ProducerRecord[String, String](topic, value)
 
@@ -341,14 +351,14 @@ case class Producer(topic: String){
       } catch {
         case e: Exception => e.printStackTrace
       }
-    }   
+    }
 
     def sendAsync(value: String) = {
         val record = new ProducerRecord[String, String](topic, value)
         val promise = Promise[(RecordMetadata, Exception)]()
 
         producer.send(record, new Callback {
-            override def onCompletion(metadata: RecordMetadata, 
+            override def onCompletion(metadata: RecordMetadata,
                                       exception: Exception) = {
                 promise.success((metadata, exception))
             }
@@ -361,10 +371,10 @@ case class Producer(topic: String){
 
 Creato un oggetto `Properties` con le configurazioni di base, viene creato un nuovo producer capace di pubblicare dei record (di tipo `String`) ad un topic (passato come parametro alla case class) con il metodo `send(value: String)`.
 
-Un producer può inviare record con tre diverse modalità:  
+Un producer può inviare record con tre diverse modalità:
 
 - **Fire-and-forget**: il messaggio viene mandato al server e viene ignorata la possibilità che questo messaggio non venga ricevuto.
-- **Sincrona**: il messaggio viene mandato con un metodo `send()` il quale restituisce un `Future`, viene quindi utilizzato il metodo `.get()` per attendere una risposta dal server per capire se il messaggio è effettivamente stato ricevuto. 
+- **Sincrona**: il messaggio viene mandato con un metodo `send()` il quale restituisce un `Future`, viene quindi utilizzato il metodo `.get()` per attendere una risposta dal server per capire se il messaggio è effettivamente stato ricevuto.
 - **Asincrona**: il metodo `send()` restituisce una `callback` che verrà eseguita quando (e se) riceverà una risposta dal broker Kafka.
 
 E' possibile configurare un producer [secondo una moltitudine di campi di configurazione](https://kafka.apache.org/documentation.html#producerconfigs), ma sicuramente uno dei più importanti è il valore attribuito al campo `acks` il quale è direttamente collegato alla durabilità dei messaggi e definisce quante repliche devono ricevere il messaggio pubblicato sul leader prima di poter garantire al producer la corretta pubblicazione del messaggio.
@@ -382,13 +392,13 @@ Esistono tre possibili valori per `acks`:
 
 <div id='kafka-consum'/>
 
-Un _consumer_ è un client Kafka utilizzato per leggere dati da un topic e tipicamente è parte di un _consumer group_.  
-Un consumer group è definito da uno specifico `group.id` ed un topic che tutti i membri del gruppo hanno in comune; Ogni partizione del topic è letta da un solo consumer del gruppo e più consumer del gruppo non possono leggere dalla stessa partizione.  
+Un _consumer_ è un client Kafka utilizzato per leggere dati da un topic e tipicamente è parte di un _consumer group_.
+Un consumer group è definito da uno specifico `group.id` ed un topic che tutti i membri del gruppo hanno in comune; Ogni partizione del topic è letta da un solo consumer del gruppo e più consumer del gruppo non possono leggere dalla stessa partizione.
 Supponiamo di avere un topic T1 con quattro partizioni, nel caso in cui il nostro gruppo è formato da un solo consumer C1 sarà solo lui a consumare l'intero topic.
 
 ![Un consumer con quattro partizioni \label{figure_3}](../images/single-consumer.png){ width=100% }
 
-Se aggiungiamo un nuovo consumer C2 al gruppo, ogni consumer riceverà dati da solo due partizioni disponibili.  
+Se aggiungiamo un nuovo consumer C2 al gruppo, ogni consumer riceverà dati da solo due partizioni disponibili.
 
 ![Due consumer consumano le quattro partizioni \label{figure_3}](../images/two-consumers.png){ width=100% }
 
@@ -404,7 +414,7 @@ Ed infine, nel caso in cui il gruppo contenga più consumer del numero di partiz
 
 Questo meccanismo di bilanciamento dei consumer rispetto alle partizioni di un topic permette di scalare l'architettura orizzontalmente nel caso di topic con grossi moli di dati sensibili che necessitano di essere consumati da applicazioni con operazioni ad alta latenza come la scrittura su un database o l'esecuzione di calcoli: con Kafka, per evitare situazioni a "collo di bottiglia", basta aumentare il numero di partizioni di un topic ed il numero di consumer di quel particolare topic.
 
-Un altro importante vantaggio dell'utilizzo dei consumer group è dato dalla possibilità di ribilanciare il gruppo nel caso di crash, morte o aggiunta di un consumer.  
+Un altro importante vantaggio dell'utilizzo dei consumer group è dato dalla possibilità di ribilanciare il gruppo nel caso di crash, morte o aggiunta di un consumer.
 Per _ribilanciare il consumer group_ si intende il processo di cambio di proprietà di una partizione da un consumer A ad un consumer B; Questo procedimento, insieme alla possibilità di aggiungere e rimuovere consumer per ogni partizione, è ciò permette a Kafka di scalare la propria architettura su grossi numeri di record e topic. E' importante notare che questa funzionalità non è comunque desiderabile: durante un rebalance il consumer group non può consumare i dati di un topic, comportando quindi un rallentamento nella lettura dei dati.
 
 Un consumer per non risultare morto deve inviare degli _heartbeats_ al broker eletto a _cordinator_ del consumer group. Questi "segni di vita" sono inviati al broker ogni volta che il consumer tenta di leggere dal topic.
@@ -421,20 +431,20 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 case class Consumer(topic: String){
     val props = new Properties()
     props.put("bootstrap.servers", "localhost:9092")
-    props.put("key.deserializer", 
+    props.put("key.deserializer",
         "org.apache.kafka.common.serialization.StringSerializer")
-    props.put("value.deserializer", 
+    props.put("value.deserializer",
         "org.apache.kafka.common.serialization.StringSerializer")
-    props.put("group.id", "example")    
-    
-    private val consumer = new KafkaConsumer[String, String](props)    
+    props.put("group.id", "example")
+
+    private val consumer = new KafkaConsumer[String, String](props)
     consumer.subscribe(util.Collections.singletonList(topic))
 
     def readTopic(){
         while(true){
             val records = consumer.poll(100)
             for (r <- records.asScala){
-                println(s"${r.offset} ${r.key} ${r.value}") 
+                println(s"${r.offset} ${r.key} ${r.value}")
             }
         }
     }
@@ -449,20 +459,20 @@ Come in precedenza con l'implementazione del producer, prima di poter creare un 
 - `value.deserializer`: il tipo di classe da utilizzare per deserializzare i dati pubblicati su un topic
 - `group.id`: l'identificativo del consumer group di cui il consumer fa parte
 
-I consumer leggono i dati di un topic attraverso un meccanismo di "pull", ovvero sono loro stessi a richiedere al broker i dati.   
+I consumer leggono i dati di un topic attraverso un meccanismo di "pull", ovvero sono loro stessi a richiedere al broker i dati.
 Ogni volta che un consumer decide di leggere da un topic è lui stesso a tenere traccia dell'ultimo messaggio che è stato letto e per tenerne traccia utilizzerà un _offset_: un identificativo corrispondente alla posizione del messaggio nella partizione (il primo messaggio avrà offset pari a 0, l'n-esimo messaggio offset n, etc.).
 
 Dato che sono gli stessi consumer a tenere traccia dell'offset dei messaggi letti e che sono sempre loro a richiedere i dati al broker consumer group diversi possono leggere lo stesso topic senza perdita di messaggi dal topic: i record presenti in un topic sono immutabili.
 
-![Un topic con più gruppi di consumer \label{figure_3}](../images/consumer-groups.png){ width=100% }  
+![Un topic con più gruppi di consumer \label{figure_3}](../images/consumer-groups.png){ width=100% }
 
 La lettura di una partizione può partire o dal primo messaggio esistente oppure specificando un particolare offset.
 
-Come si può vedere dalla funziona `readTopic()` definita nell'esempio, un consumer utilizza un loop infinito di chiamate a `.poll()` definito su un intervallo di tempo variabile (ovvero il metodo messo a disposizione dall'interfaccia di Kafka) per richiedere al broker tutti i messaggi che quel consumer non ha ancora letto.  
-Per sapere quali messaggi inviare il broker deve riceve dal consumer l'offset dell'ultimo messaggio letto attraverso una operazione di _commit;  Gli offset vengono pubblicati dai consumer su di uno speciale topic Kafka chiamato `__consumer_offset` al quale tutti i broker hanno accesso e a cui fanno riferimento per calcolare quali messaggi inviare.  
+Come si può vedere dalla funziona `readTopic()` definita nell'esempio, un consumer utilizza un loop infinito di chiamate a `.poll()` definito su un intervallo di tempo variabile (ovvero il metodo messo a disposizione dall'interfaccia di Kafka) per richiedere al broker tutti i messaggi che quel consumer non ha ancora letto.
+Per sapere quali messaggi inviare il broker deve riceve dal consumer l'offset dell'ultimo messaggio letto attraverso una operazione di _commit;  Gli offset vengono pubblicati dai consumer su di uno speciale topic Kafka chiamato `__consumer_offset` al quale tutti i broker hanno accesso e a cui fanno riferimento per calcolare quali messaggi inviare.
 
-Il topic `__consumer_offset` è inoltre utilizzato nel caso di ribilanciamento di un gruppo.  
-A seguito di un ribilanciamento un o più consumer del gruppo possono ricevere un nuovo insieme di partizioni, e per capire da dove iniziare il nuovo processo di lettura, devono interrogare il topic `__consumer_offset`.  
+Il topic `__consumer_offset` è inoltre utilizzato nel caso di ribilanciamento di un gruppo.
+A seguito di un ribilanciamento un o più consumer del gruppo possono ricevere un nuovo insieme di partizioni, e per capire da dove iniziare il nuovo processo di lettura, devono interrogare il topic `__consumer_offset`.
 
 Se l'offset pubblicato su `__consumer_offset` è _minore_ dell'offset dell'ultimo messaggio che il consumer client ha in memoria, tutti i messaggi compresi tra i due offset verranno riprocessati.
 
@@ -470,7 +480,7 @@ Se l'offset pubblicato su `__consumer_offset` è _minore_ dell'offset dell'ultim
 
 Se l'offset pubblicato su `__consumer_offset` è _maggiore_ dell'offset dell'ultimo messaggio che il consumer client ha in memoria, tutti i messaggi compresi tra i due offset verranno _persi_.
 
-![Perdita di messaggi in base all'offset \label{figure_3}](../images/late-offset.png){ width=100% } 
+![Perdita di messaggi in base all'offset \label{figure_3}](../images/late-offset.png){ width=100% }
 
 Per una corretta gestione dei messaggi è quindi di assoluta importanza la capacità di gestire gli offset in modo adeguato alle necessità di ogni progetto, per questo motivo esistono varie possibile configurazione del processo di commit:
 
@@ -484,16 +494,16 @@ Per una corretta gestione dei messaggi è quindi di assoluta importanza la capac
 
 Un _broker_ è un server Kafka con svariati compiti quali ricevere, indicizzare e salvare i messaggi inviati dai producers ed inviare i messaggi richiesti dai consumers; Un singolo broker è capace di gestire migliaia di partizioni e millioni di messaggi al secondo.
 
-I broker sono stati creati per lavorare in _clusters_ ovvero gruppi di brokers ordinanti secondo una particolare gerarchia.  
+I broker sono stati creati per lavorare in _clusters_ ovvero gruppi di brokers ordinanti secondo una particolare gerarchia.
 
 ![Esempio di cluster \label{figure_5}](../images/kafka-cluster.png){ width=90% }
 
 A capo di un cluster troviamo un broker _leader_ al quale tutti gli altri broker del cluster devono far riferimento per permette ai meccanismi di replicazioni dei messaggi di funzionare correttamente: una partizione può essere assegnata a più broker, questo permette al cluster di poter gestire fallimenti dei brokers.
-In ogni cluster un particolare broker viene eletto a _controller_, ovvero un broker con l'incarico di gestire la suddivisione delle partizioni sull'intero cluster e di monitorare l'andamento del cluster.  
+In ogni cluster un particolare broker viene eletto a _controller_, ovvero un broker con l'incarico di gestire la suddivisione delle partizioni sull'intero cluster e di monitorare l'andamento del cluster.
 
 ![Gestione delle repliche \label{figure_5}](../images/partition-replica.png){ width=90% }
 
-Una funzionalità importante di Kafka è la possibilità di utilizzare i topic come database di messaggi persistenti.  
+Una funzionalità importante di Kafka è la possibilità di utilizzare i topic come database di messaggi persistenti.
 I messaggi vengono tenuti in memoria per un particolare periodo di tempo oppure in base allo spazio di memoria di occupato, entrambe le opzioni sono configurabili alla creazione di un broker, vi è poi la possibilità di abilitare la _log compaction_ ovvero un meccanismo che permette a Kafka di mantenere in memoria _solo gli ultimi messaggi indicizzati su un indicativo specifico_.
 
 \newpage
@@ -512,7 +522,7 @@ Avro è diventato nel tempo lo standard per gli schema nelle applicazioni basate
 - Al contrario di JSON, è possibile scomporre lo schema dei dati dalla definizione dell'oggetto
 - E' un linguaggio maturo ben supportato dalla community; Esistono molte librerie che permettono di creare automaticamente oggetti Java o case classes in Scala partendo da uno schema Avro
 
-Apache Avro è un formato per la serializzazione di dati, ogni messaggio Avro si divide in due parti: i _dati_ e lo _schema dei dati_. 
+Apache Avro è un formato per la serializzazione di dati, ogni messaggio Avro si divide in due parti: i _dati_ e lo _schema dei dati_.
 
 Un esempio di **schema dei dati** di un record con cinque campi:
 \small
@@ -542,12 +552,12 @@ Ed un generico record di **dati** definito in base allo schema:
 \small
 
 ```{ .json }
-{  
-  "time": 1424849130111,     
-  "customer_id": 1234,  
-  "product_id": 5678,  
-  "quantity": 3,  
-  "payment_type": "mastercard"  
+{
+  "time": 1424849130111,
+  "customer_id": 1234,
+  "product_id": 5678,
+  "quantity": 3,
+  "payment_type": "mastercard"
 }
 ```
 
@@ -568,7 +578,7 @@ Un formato dei dati consistente come Avro permette di _disacoppiare i formati ut
 
 Supponiamo ad esempio di utilizzare un formato del tipo seguente per gestire le informazioni riguardando agli acquirenti di un particolare servizio/piattaforma:
 
-\small 
+\small
 
 ```{ .json }
 {
@@ -579,7 +589,7 @@ Supponiamo ad esempio di utilizzare un formato del tipo seguente per gestire le 
          {"name": "id", "type": "int"},
          {"name": "name",  "type": "string"},
          {"name": "faxNumber", "type": ["null", "string"], "default": "null"}
-    ] 
+    ]
 }
 ```
 
@@ -600,16 +610,16 @@ Supponiamo di aver utilizzato lo schema precedente per genere una importante mol
          {"name": "id", "type": "int"},
          {"name": "name",  "type": "string"},
          {"name": "email", "type": ["null", "string"], "default": "null"}
-    ] 
+    ]
 }
 ```
 \normalsize
 
-Ancora una volta l'applicazione che utilizza questo schema avrà dei metodi `getId()`, `getName()` ma invece di `getFaxNumber()` avrà `getEmail()`; Dopo l'aggiornamento dello schema, i vecchi messaggi presenti nel topic conterranno il campo `faxNumber` mentre i nuovi messaggi avranno il campo `email`.  
+Ancora una volta l'applicazione che utilizza questo schema avrà dei metodi `getId()`, `getName()` ma invece di `getFaxNumber()` avrà `getEmail()`; Dopo l'aggiornamento dello schema, i vecchi messaggi presenti nel topic conterranno il campo `faxNumber` mentre i nuovi messaggi avranno il campo `email`.
 
 Dato che il tipo dei campi `faxNumber` e `email` può essere sia `string` che `null`, nessuna delle tue tipologie di applicazioni potrà fallire: la vecchia tipologia di applicazioni semplicemente registrerà i nuovi messaggi come utenti senza un numero di fax, mentre le nuove applicazioni vedranno i vecchi messaggi del topic come utenti senza una email.
 
-Questo genere di _evoluzione_ dello schema dei dati di un topic è il motivo centrale dietro all'uso della tecnologia: garantire la robustezza dei dati senza compromettere la leggibilità dello schema o il funzionamento di applicazioni che utilizzano lo stesso topic.  
+Questo genere di _evoluzione_ dello schema dei dati di un topic è il motivo centrale dietro all'uso della tecnologia: garantire la robustezza dei dati senza compromettere la leggibilità dello schema o il funzionamento di applicazioni che utilizzano lo stesso topic.
 L'evoluzione dello schema è permessa solo secondo determinate regole di compatibilità la cui definizione esula dal contesto di questo tesi ma che possono essere visionate nella [documentazione di Apache Avro](https://avro.apache.org/docs/1.7.7/spec.html#Schema+Resolution  "Schema Resolution").
 
 \newpage
@@ -618,8 +628,8 @@ L'evoluzione dello schema è permessa solo secondo determinate regole di compati
 
 <div id='kafka-schm-re'/>
 
-Uno dei vantaggi di Avro rispetto a JSON è la possibilità di non dover inserire lo schema dei dati "completo" in ogni record permettendo di pubblicare su un topic dei messaggi meno pesanti ed è proprio per sfruttare questo vantaggio che nasce lo _Schema Registry_.  
-Uno _schema registry_ è un servizio di gestione degli schema Avro utilizzato da Kafka per servire ed evolvere i metadati di un topic; E' utilizzato dai producers nella fase di scrittura (serializzazione di un messaggio), dai consumer nella fase di lettura (deserializzazione di un messaggio) ed impone delle regole di forma a tutti i client che intendono utilizzare un topic specificato con formato dati Avro.  
+Uno dei vantaggi di Avro rispetto a JSON è la possibilità di non dover inserire lo schema dei dati "completo" in ogni record permettendo di pubblicare su un topic dei messaggi meno pesanti ed è proprio per sfruttare questo vantaggio che nasce lo _Schema Registry_.
+Uno _schema registry_ è un servizio di gestione degli schema Avro utilizzato da Kafka per servire ed evolvere i metadati di un topic; E' utilizzato dai producers nella fase di scrittura (serializzazione di un messaggio), dai consumer nella fase di lettura (deserializzazione di un messaggio) ed impone delle regole di forma a tutti i client che intendono utilizzare un topic specificato con formato dati Avro.
 
 ![Serializzazione e deserializzazione con schema registry \label{figure_5}](../images/schema-registry.png){ width=90% }
 
@@ -641,7 +651,7 @@ L'utilizzo dello schema registry da parte di un consumer è speculare a quello d
 
 <div id='architettura-intro'/>
 
-Il pattern Event Sourcing e la piattaforma Apache Kafka sono accomunati da uno specifico elemento: _il log_.  
+Il pattern Event Sourcing e la piattaforma Apache Kafka sono accomunati da uno specifico elemento: _il log_.
 
 Entrambe le soluzioni utilizzano la medesima struttura dati per risolvere un particolare problema, è quindi spontaneo che nel tempo ES sia diventato un pattern predominante nelle applicazioni dell'ecosistema Kafka.[^12]
 
@@ -649,19 +659,19 @@ Riassumendo i capitoli precedenti, Event Sourcing utilizza il log come struttura
 
 ![Scrittura e lettura da un log \label{figure_5}](../images/log-kafka.png){ width=80% }
 
-Il log è una struttura dati fondamentale e naturalmente efficiente dato il caso d'uso: sia la lettura che la scrittura di dati da un log (o topic Kafka) sono sequenziali e sfruttano a pieno le funzionalità di batching e caching offerte da Kafka.  
+Il log è una struttura dati fondamentale e naturalmente efficiente dato il caso d'uso: sia la lettura che la scrittura di dati da un log (o topic Kafka) sono sequenziali e sfruttano a pieno le funzionalità di batching e caching offerte da Kafka.
 
-Nel caso di un producer, l'operazione di inserimento di un nuovo elemento nel topic è estremamente efficiente in quanto si tratta di un semplice inserimento in coda di costo $O(1)$, e nel caso di utilizzo di un consumer la lettura da un topic sarà sempre effettuata in batch e sequenziale (che sia dall'inizio del topic o da un particolare offset è irrilevante) e quindi anche in questo caso avrà costo $O(1)$.  
+Nel caso di un producer, l'operazione di inserimento di un nuovo elemento nel topic è estremamente efficiente in quanto si tratta di un semplice inserimento in coda di costo $O(1)$, e nel caso di utilizzo di un consumer la lettura da un topic sarà sempre effettuata in batch e sequenziale (che sia dall'inizio del topic o da un particolare offset è irrilevante) e quindi anche in questo caso avrà costo $O(1)$.
 Il limite imposto dalla lettura sequenziale di un topic permette inoltre una riduzione dei costi di gestione della piattaforma non dovendo gestire in memoria indici tipici di altre strutture dati come tabelle hash o alberi, utilizzati per letture indicizzate o cancellazioni.
 
 La lettura sequenziale di un topic è pur sempre un limite della piattaforma ma che nel caso d'uso di una applicazione sviluppata seguendo event sourcing diventa assolutamente irrilevante in quanto è lo stesso pattern a premere per l'utilizzo di un log come event store.
 
-L'utilizzo di Kafka come Event Store è un altro dei motivi che rende la piattaforma un ottimo strumento da utilizzare con Event Sourcing.  
+L'utilizzo di Kafka come Event Store è un altro dei motivi che rende la piattaforma un ottimo strumento da utilizzare con Event Sourcing.
 Perchè una piattaforma possa funzionare come database/event store è necessario che sia _affidabile_, _modulare_ e dotata di strumenti per la creazione di _viste_ degli eventi registrati.
 
 Kafka è _modulare_ grazie al sistema dei brokers, il quale permette uno svilippo dei consumer orizzontale, performante ed "elastico", facilmente ridimensionabile a seconda della mole di dati presente nel sistema.
 
-Kafka è inoltre _affidabile_ su più fronti: 
+Kafka è inoltre _affidabile_ su più fronti:
 
 
 - nonostante non sia una qualità necessariamente utile in un sistema che utilizza ES, la _temporabilità_ dei messaggi è garantita attraverso la definizione di una chiave al momento della pubblicazione dei messaggi oppure tramite l'utilizzo di una singola partizione.
@@ -676,37 +686,37 @@ Kafka è inoltre _affidabile_ su più fronti:
 - attraverso l'uso di _Kafka Connect API_ è estremamente facile leggere e scrivere dati da/a database _esterni_.
 - per la lettura e pubblicazione di dati da/a Kafka a microservizi _Kafka Streams API_ offre una soluzione semplice e ad-hoc basata su event store.
 
-Il pattern event sourcing si basa sull'idea di avere una sequenza di eventi che, ove necessario, è possibile eseguire per ottenere lo stato corrente del sistema; In genere la costruzione dello stato attuale della piattaforma è una operazione dispendiosa e ES non dovrebbe essere preso in considerazione se l'unico approccio all'analisi o uso dei dati del sistema è una serie di query allo stato attuale, ma è anche vero che avere una vista aggiornata dello stato corrente può essere utile anche per quei sistemi che decidono di abbracciare completamente l'approccio basato sugli eventi.  
+Il pattern event sourcing si basa sull'idea di avere una sequenza di eventi che, ove necessario, è possibile eseguire per ottenere lo stato corrente del sistema; In genere la costruzione dello stato attuale della piattaforma è una operazione dispendiosa e ES non dovrebbe essere preso in considerazione se l'unico approccio all'analisi o uso dei dati del sistema è una serie di query allo stato attuale, ma è anche vero che avere una vista aggiornata dello stato corrente può essere utile anche per quei sistemi che decidono di abbracciare completamente l'approccio basato sugli eventi.
 
 I topic in Kafka sono dei log di eventi immutabili ma con una particolarità: è possibile _comprimerli_ in base al valore della chiave.
 
 ![Log compaction \label{figure_5}](../images/log-compaction.png){ width=80% }
 
-Il sistema di _log compaction_ garantisce che Kafka, dato un topic, conserverà solamente l'ultimo messaggio a parità di chiave pubblicato sullo stesso topic.  
+Il sistema di _log compaction_ garantisce che Kafka, dato un topic, conserverà solamente l'ultimo messaggio a parità di chiave pubblicato sullo stesso topic.
 Questa funzionalità può quindi essere utilizzata come _vista dello stato corrente del sistema_ o di alcune sue parti oppure come _meccanismo di difesa_ per la fase di recovery post-crash del sistema.
 
 Il problema del calcolo del stato corrente è quindi risolto affiancando ai log utilizzati come stream di eventi un topic compresso "istanza" del stato del sistema.
 
 E' da notare che questo meccanismo di compressione dei log può anche essere utilizzato per archiviare parte di un vecchio log in modo da risparmiare spazio in memoria.
 
-[^12]: Narkhede N., (2016), _Event sourcing, CQRS, stream processing and Apache Kafka: What’s the connection?_, https://www.confluent.io/blog/event-sourcing-cqrs-stream-processing-apache-kafka-whats-connection/  
+[^12]: Narkhede N., (2016), _Event sourcing, CQRS, stream processing and Apache Kafka: What’s the connection?_, https://www.confluent.io/blog/event-sourcing-cqrs-stream-processing-apache-kafka-whats-connection/
 
 ## 6.2. Kafka Connect: sistemi legacy, database ed Event Sourcing
 
 <div id='architettura-conn'/>
 
-Se si decide di sviluppare un nuovo progetto partendo da zero ed utilizzando Kafka ed ES, non è difficile immaginare che creare la nuova struttura sarà relativamente semplice in quanto ci ritroveremo a sviluppare soluzioni software basate su eventi e verrà naturale pubblicare questi eventi su Kafka.  
+Se si decide di sviluppare un nuovo progetto partendo da zero ed utilizzando Kafka ed ES, non è difficile immaginare che creare la nuova struttura sarà relativamente semplice in quanto ci ritroveremo a sviluppare soluzioni software basate su eventi e verrà naturale pubblicare questi eventi su Kafka.
 Nel caso in cui si decida di addottare Kafka ed ES su un vecchio progetto sorgono spontanee domande come "Quali sono i miei eventi?", "Come posso utilizzare i database già presenti?" oppure "Ultimata la migrazione che fine faranno i vecchi database e le vecchie applicazioni?". Domande come queste sono risolte dalla _Connect API_ di Kafka.
 
-Kafka Connect è un framework che permette di integrare Kafka con moltissime delle soluzioni database già presenti sul mercato (MySQL, PostgreSQL, Elasticearch, Mongo, ecc.).  
+Kafka Connect è un framework che permette di integrare Kafka con moltissime delle soluzioni database già presenti sul mercato (MySQL, PostgreSQL, Elasticearch, Mongo, ecc.).
 Il framework si basa sull'uso di _Source connectors_ per importare dati da sorgenti esterne e _Sink connectors_ per la fase di scrittura su strutture esterne; Kafka viene rilasciato di base con molti connettori già pronti e testati all'uso e molti altri sviluppati dalla community open-source sono disponibili online. E' inoltre prevista la possibilità di sviluppare connettori custom per soluzioni più particolari del normale.
 
-I source connector funzionano facendo leva sul log transazionale generato con tramite Change Data Capture (CDC) del database sorgente, che non è altro che un log sul quale vengono scritte, in ordine temporale, tutte le operazioni di insert, update e delete fatte sul database in questione. E' facile immaginare che questo log transazionale è facilmente utilizzabile per definire lo stream di eventi necessario a Kafka per funzionare, ed è esattamente cosi che funzionano i connettori: definita una configurazione per il connettore, il transactional log del database viene copiato su di un topic Kafka.  
-Esistono ovviamente delle differenze nel funzionamento di alcuni connettori (alcuni database supportano CDC basato su polling, altri su meccanismi push-pull, ecc.) ma il risultato del procedimento di creazione del topic legato al database sorgente sarà sempre lo stesso.  
-Specularmente i sink connector sono invece utilizzati per operazioni di write/update su dei database partendo da un topic specificato.  
+I source connector funzionano facendo leva sul log transazionale generato con tramite Change Data Capture (CDC) del database sorgente, che non è altro che un log sul quale vengono scritte, in ordine temporale, tutte le operazioni di insert, update e delete fatte sul database in questione. E' facile immaginare che questo log transazionale è facilmente utilizzabile per definire lo stream di eventi necessario a Kafka per funzionare, ed è esattamente cosi che funzionano i connettori: definita una configurazione per il connettore, il transactional log del database viene copiato su di un topic Kafka.
+Esistono ovviamente delle differenze nel funzionamento di alcuni connettori (alcuni database supportano CDC basato su polling, altri su meccanismi push-pull, ecc.) ma il risultato del procedimento di creazione del topic legato al database sorgente sarà sempre lo stesso.
+Specularmente i sink connector sono invece utilizzati per operazioni di write/update su dei database partendo da un topic specificato.
 Di nota è la possibilità, grazie ai sink connectors, di utilizzare svariati database come data store per topic compressi, garatendo cosi al sistema la possibilità di sfruttare le classiche tecnologie basate su database per tutte quelle operazioni di query dei dati per il quale Kafka non è necessariamente la soluzione migliore.
 
-Utilizzando source e sink connectors è quindi possibile creare pipeline complesse di dati tra Kafka, vari database e architetture "legacy" in modo da permettere al sistema di evolversi gradualmente verso una soluzione basata solamente su Kafka (se necessario).  
+Utilizzando source e sink connectors è quindi possibile creare pipeline complesse di dati tra Kafka, vari database e architetture "legacy" in modo da permettere al sistema di evolversi gradualmente verso una soluzione basata solamente su Kafka (se necessario).
 Si immagini ad esempio di utilizzare i vecchi dati presenti in una applicazione legacy per popolare i topic della piattaforma Kafka e parallelamente sviluppare nuove soluzioni basata sulla nuova architettura per raggiungere gli utenti della applicazione.
 
 ![Architettura legacy con servizi Kafka \label{figure_5}](../images/legacy-kafka.png){ width=105% }
@@ -719,9 +729,9 @@ Un esempio potrebbe essere quello di un e-commerce: potremmo immaginare di avere
 
 <div id='architettura-stream'/>
 
-Per poter sviluppare soluzioni software basate sullo stream di eventi di topic è necessario trovare una soluzione per poter avere accesso a questi dati da un qualsiasi linguaggio di programmazione; Questa soluzione è data dalla libreria _Kafka Streams_.  
-Kafka Streams è una libreria che fornisce una astrazione sul concetto di state store proposto da Kafka in modo da creare applicazioni o microservizi con uno qualsiasi dei linguaggi supportati (Java o Scala).  
-Uno state store è un database chiave-valore creato per interfacciarsi con un topic Kafka, è possibile leggere e scrivere da un topic Kafka semplicemente utilizzando le funzioni proposte dalla libreria.  
+Per poter sviluppare soluzioni software basate sullo stream di eventi di topic è necessario trovare una soluzione per poter avere accesso a questi dati da un qualsiasi linguaggio di programmazione; Questa soluzione è data dalla libreria _Kafka Streams_.
+Kafka Streams è una libreria che fornisce una astrazione sul concetto di state store proposto da Kafka in modo da creare applicazioni o microservizi con uno qualsiasi dei linguaggi supportati (Java o Scala).
+Uno state store è un database chiave-valore creato per interfacciarsi con un topic Kafka, è possibile leggere e scrivere da un topic Kafka semplicemente utilizzando le funzioni proposte dalla libreria.
 La libreria offre delle primitive per creare delle applicazioni basato sul concetto di _topologie_, ovvero un grafo di stream processors (i nodi del grafo) connessi tra loro da stream di dati (i lati del grafo.)
 
 ![Generica topologia di una applicazione Kafka Stream \label{figure_5}](../images/topology-stream.png){ width=50% }
@@ -732,7 +742,7 @@ Le operazioni eseguite da ogni nodo possono essere espremesse utilizzando una Do
 
 Un esempio di una stream application che utilizza la stream DSL è dato dal seguente codice Scala[^11]:
 
-\small 
+\small
 
 ```{ .scala }
 package io.confluent.examples.streams
@@ -750,15 +760,15 @@ object MapFunctionScalaExample {
     val streamingConfig = {
       val settings = new Properties()
       settings.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
-      settings.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, 
+      settings.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG,
                     Serdes.ByteArray.getClass.getName)
-      settings.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, 
+      settings.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG,
                     Serdes.String.getClass.getName)
       settings
     }
 
     val text: KStream[Array[Byte], String] = builder.stream("input-topic")
-    val upperCasedText: KStream[Array[Byte], String] = 
+    val upperCasedText: KStream[Array[Byte], String] =
         textLines.mapValues(_.toUpperCase())
     upperCasedText.to("output-topic")
   }
@@ -766,10 +776,10 @@ object MapFunctionScalaExample {
 ```
 \normalsize
 
-Nell'esempio, partendo dal topic `input-topic` viene creato uno stream di record con chiave di tipo `ByteArray` e value (o contenuto del messaggio) di tipo `String`.  
+Nell'esempio, partendo dal topic `input-topic` viene creato uno stream di record con chiave di tipo `ByteArray` e value (o contenuto del messaggio) di tipo `String`.
 Ad ogni messaggio viene applicata la funziona `.toUpperCase()` tramite la funzione `.mapValues()` definita dalla DSL (e quindi nodo della topologia di questa applicazione), infine viene pubblicato un nuovo record con il nuovo messaggio (la stringa in maiuscolo) su un nuovo topic `output-topic`.
 
-[^11]: _Confluent Examples_,   
+[^11]: _Confluent Examples_,
 https://github.com/diegoicosta/kafka-confluent-examples/blob/master/kafka-streams/src/main/scala/io/confluent/examples/streams/MapFunctionScalaExample.scala
 
 \newpage
@@ -780,8 +790,8 @@ https://github.com/diegoicosta/kafka-confluent-examples/blob/master/kafka-stream
 
 Nei capitoli precendenti ho presentato le idee alla base dell'utilizzo di Apache Kafka, la sua architettura e il pattern (Event Sourcing) più comunemente utilizzato per sviluppare soluzioni software con la piattaforma; E' quindi ora necessario spiegare _perchè_ Apache Kafka è una soluzione alternativa ai comuni processi di ETL e il contesto che ha portato al suo sviluppo.
 
-Nell'ultima decade la tipologia e mole di dati e i sistemi di analisi e gestione di questi dati si sono trovati ad affrontare degli importanti cambiamenti nell'ambito dei processi di ETL[^14].  
-In passato si era abituati a sistemi di gestione/analisi dei dati formati da più database operazionali che venivano utilizzati per creare una pipeline di dati diretta verso una o più datawarehouse; Questo processo di migrazione in genere non era richiesto che fosse eseguito più di poche volte al giorno, ed è proprio questa scelta architetturale che ha portato alla creazione dei vecchi tools di ETL.  
+Nell'ultima decade la tipologia e mole di dati e i sistemi di analisi e gestione di questi dati si sono trovati ad affrontare degli importanti cambiamenti nell'ambito dei processi di ETL[^14].
+In passato si era abituati a sistemi di gestione/analisi dei dati formati da più database operazionali che venivano utilizzati per creare una pipeline di dati diretta verso una o più datawarehouse; Questo processo di migrazione in genere non era richiesto che fosse eseguito più di poche volte al giorno, ed è proprio questa scelta architetturale che ha portato alla creazione dei vecchi tools di ETL.
 
 ![Database operazionali e datawarehouse \label{figure_5}](../images/op-dwh.png){ width=90% }
 
@@ -791,13 +801,13 @@ Lo scenario che si è presentanto negli ultimi anni è però completamente diver
 - Le tipologie di fonti di dati con cui interfaciarsi sono in rapida espansione, non esistono più solo database relazionali ma piuttosto, oltre agli stessi database relazionali, le aziende si trovano a dover fare uso di dati provienienti da database NoSQL, sensori, metriche e log delle tipologie più disparate e da un numero sempre crescente di sorgenti.
 - La spinta verso lo _streaming_ dei dati e una richiesta di aggiornamento dei dati "istantanea" porta il comune processo di ETL ad essere troppo lento per i moderni standard di analisi dei dati.
 
-Questo non implica che un comune processo di ETL non può funzionare o che non sia possibile sviluppare delle soluzioni ad-hoc a seconda dei casi, il vero problema è che non avendo uno _standard_, una piattaforma o tecnologia con precise funzionalità atte a risolvere i problemi di questo scenario spesso ci si ritrova davanti a sistemi over-engineered o troppo complessi con capacità di sviluppo modulare basse e difficilmente integrabili con nuove tecnologie emergenti.  
+Questo non implica che un comune processo di ETL non può funzionare o che non sia possibile sviluppare delle soluzioni ad-hoc a seconda dei casi, il vero problema è che non avendo uno _standard_, una piattaforma o tecnologia con precise funzionalità atte a risolvere i problemi di questo scenario spesso ci si ritrova davanti a sistemi over-engineered o troppo complessi con capacità di sviluppo modulare basse e difficilmente integrabili con nuove tecnologie emergenti.
 
 Il risultato è che spesso una soluzione ad-hoc basato su un processo di ETL finisce per essere un groviglio di pipeline tra applicazioni, database e datawarehouse difficile da utilizzare e analizzare, sopratutto in caso di emergenze.
 
 ![Soluzioni ETL ad-hoc \label{figure_5}](../images/etl-adhoc.png){ width=90% }
 
-La necessità di sviluppare soluzioni ETL nasce durante gli anni '90, con la montante richiesta da parte della grande distribuzione di poter analizare le abitudini di acquisto online dei propri clienti.  
+La necessità di sviluppare soluzioni ETL nasce durante gli anni '90, con la montante richiesta da parte della grande distribuzione di poter analizare le abitudini di acquisto online dei propri clienti.
 In genere questo processo era formato da tre fasi, l'estrazione di dati da più database operazionali, la trasformazione di questi dati in modo che aderissero allo schema della data warehouse ed infine il caricamento dei dati nella data warehouse.
 Con l'avanzare del tempo e della ricerca in questo campo si è però giunti alla conclusione che la _data coverage_ nelle datawarehouse è spesso molto bassa rispetto ai dati presenti nei database operazionali, questo problema nasce dalla difficoltà nel analizzare e trasformare moli di dati importanti provenienti da più sorgenti (spesso con schemi di dati diversi) in gruppi di dati omogeni rispetto allo schema delle data warehouse.
 
@@ -805,14 +815,14 @@ Lo scenario moderno ha essenzialmente bisogno di piattaforme di real-time ETL, d
 
 ![Architettura basata su streaming platform \label{figure_5}](../images/streaming-platform.png){ width=90% }
 
-Sono esattamente queste necessità che hanno portato un gruppo di sviluppatori di LinkedIn a sviluppare Apache Kafka, una streaming platform ormai utilizzata da moltissime grandi aziende nel ambito dei servizi web (Netflix, PayPal per citarne alcune). 
+Sono esattamente queste necessità che hanno portato un gruppo di sviluppatori di LinkedIn a sviluppare Apache Kafka, una streaming platform ormai utilizzata da moltissime grandi aziende nel ambito dei servizi web (Netflix, PayPal per citarne alcune).
 Kafka risolve tutti i problemi presentati precedentemente:
 
 - La necessità di gestire grossi volumi di dati in tempo reale è risolta grazie alla sua architettura basata sul concetto di log, l'utilizzo dei producers, consumers e lo schema registry presentati nei capitoli precedenti.
 - L'API Kafka Connect svolge il ruolo delle fasi di *E*xtraction e *L*oad dei processi di ETL, fornendo uno strumento capace di mettere in collegamento la piattaforma Kafka con una moltitudine di fonti di dati sia per la lettura che la scrittura delle trasformazioni.
 - Il ruolo della fase di *T*ransform nei processi ETL è svolto dall'API Kafka Streams, la quale permette di sviluppare soluzioni software con il quale trattare e trasformare i dati pubblicati sulla piattaforma Kafka.
 
-Apache Kafka è una tecnologia importante, in continua crescita e in continua adozione da moltissime realtà internazionali nell'ambito IT, non per questo non ha debolezze.  
+Apache Kafka è una tecnologia importante, in continua crescita e in continua adozione da moltissime realtà internazionali nell'ambito IT, non per questo non ha debolezze.
 Proprio perchè è una nuova tecnologia in continua evoluzione, le capacità di una azienda di adattare i propri sistemi all'utilizzo di Kafka sono strettamente legate alle loro capacità di adozione e studio di nuove tecnologie e soluzioni architetturali.
 
 Nonostante le difficoltà tecnologiche, non ci sono però dubbi che i processi di ETL stiano subendo una forte spinta evolutiva e che le piattaforme di streaming come Kafka rappresentano una valida alternativa ed il futuro dei processi di analisi e gestione di grossi volumi di dati.
@@ -838,35 +848,35 @@ Koshy J. (2016), _Kafka Ecosystem at LinkedIn_, https://engineering.linkedin.com
 
 Kreps J. (2013), _The Log: What every software engineer should know about real-time data's unifying abstraction_, https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
 
-Kreps J. (2015), _Putting Apache Kafka To Use: A Practical Guide to Building a Streaming Platform_, https://www.confluent.io/blog/stream-data-platform-1/  
+Kreps J. (2015), _Putting Apache Kafka To Use: A Practical Guide to Building a Streaming Platform_, https://www.confluent.io/blog/stream-data-platform-1/
 
 Martin F. _Event Sourcing_, https://martinfowler.com/eaaDev/EventSourcing.html
 
 Narkhede N. _ETL Is Dead, Long Live Streams: Real-Time Streams with Apache Kafka_, www.youtube.com/watch?v=I32hmY4diFY
 
-Narkhede N., (2016), _Event sourcing, CQRS, stream processing and Apache Kafka: What’s the connection?_, https://www.confluent.io/blog/event-sourcing-cqrs-stream-processing-apache-kafka-whats-connection/  
+Narkhede N., (2016), _Event sourcing, CQRS, stream processing and Apache Kafka: What’s the connection?_, https://www.confluent.io/blog/event-sourcing-cqrs-stream-processing-apache-kafka-whats-connection/
 
-Stopford B. (2016), _The Data Dichotomy: Rethinking the Way We Treat Data and Services_, https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/  
+Stopford B. (2016), _The Data Dichotomy: Rethinking the Way We Treat Data and Services_, https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/
 
-Stopford B. (2017), _Build Services on a Backbone of Events_, https://www.confluent.io/blog/build-services-backbone-events/  
+Stopford B. (2017), _Build Services on a Backbone of Events_, https://www.confluent.io/blog/build-services-backbone-events/
 
 Stopford B. (2017), _Building a Microservices Ecosystem with Kafka Streams and KSQL_, https://www.confluent.io/blog/building-a-microservices-ecosystem-with-kafka-streams-and-ksql/3
 
-Stopford B. (2017), _Messaging as the Single Source of Truth_, https://www.confluent.io/blog/messaging-single-source-truth/  
+Stopford B. (2017), _Messaging as the Single Source of Truth_, https://www.confluent.io/blog/messaging-single-source-truth/
 
-Stopford B. (2017), _Messaging as the Single Source of Truth_, https://www.confluent.io/blog/messaging-single-source-truth/  
+Stopford B. (2017), _Messaging as the Single Source of Truth_, https://www.confluent.io/blog/messaging-single-source-truth/
 
-Stopford B. (2017), _Using Apache Kafka as a Scalable, Event-Driven Backbone for Service Architectures_, https://www.confluent.io/blog/apache-kafka-for-service-architectures/  
+Stopford B. (2017), _Using Apache Kafka as a Scalable, Event-Driven Backbone for Service Architectures_, https://www.confluent.io/blog/apache-kafka-for-service-architectures/
 
-Stopford B. (2017), _Using Apache Kafka as a Scalable, Event-Driven Backbone for Service Architectures_, https://www.confluent.io/blog/apache-kafka-for-service-architectures/    
+Stopford B. (2017), _Using Apache Kafka as a Scalable, Event-Driven Backbone for Service Architectures_, https://www.confluent.io/blog/apache-kafka-for-service-architectures/
 
-Wikipedia contributors. (2018), _Analisi dei requisiti_, https://it.wikipedia.org/wiki/Analisi_dei_requisiti  
+Wikipedia contributors. (2018), _Analisi dei requisiti_, https://it.wikipedia.org/wiki/Analisi_dei_requisiti
 
-Wikipedia contributors. (2018), _Change data capture_, https://en.wikipedia.org/wiki/Change_data_capture 
+Wikipedia contributors. (2018), _Change data capture_, https://en.wikipedia.org/wiki/Change_data_capture
 
 Wikipedia contributors. (2018), _Event store_, https://en.wikipedia.org/w/index.php?title=Event_store&oldid=824633488
 
-Wikipedia contributors. (2018), _Extract, transform, load_,  https://en.wikipedia.org/wiki/Extract,_transform,_load#Extract 
+Wikipedia contributors. (2018), _Extract, transform, load_,  https://en.wikipedia.org/wiki/Extract,_transform,_load#Extract
 
 Wikipedia contributors. (2018), _Microservices_, https://en.wikipedia.org/wiki/Microservices#History
 
