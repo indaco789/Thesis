@@ -824,54 +824,52 @@ Nonostante le difficoltà tecnologiche, non ci sono però dubbi che i processi d
 ## 8. Bibliografia
 
 <div id='bibliografia'/>
-\small
-[a] Narkhede N. and Shapira G. and Palino T. (2017), _Kafka: The Definitive Guide: Real-Time Data and Stream Processing at Scale_, O'Reilly Media Inc.
+Kleppmann M. (2016), _Making Sense of Stream Processing_, O'Reilly Media Inc.
 
-[b] Kleppmann M. (2016), _Making Sense of Stream Processing_, O'Reilly Media Inc.
+Narkhede N. and Shapira G. and Palino T. (2017), _Kafka: The Definitive Guide: Real-Time Data and Stream Processing at Scale_, O'Reilly Media Inc.
+
+Stopford B. (2018), _Designing Event-Driven Systems_, O'Reilly Media Inc.
 
 ## 9. Sitografia
 
 <div id='sitografia'/>
 \small
+Koshy J. (2016), _Kafka Ecosystem at LinkedIn_, https://engineering.linkedin.com/blog/2016/04/kafka-ecosystem-at-linkedin
 
-[1] Wikipedia contributors. (2018), _Microservices_,   
-https://en.wikipedia.org/wiki/Microservices#History
+Kreps J. (2013), _The Log: What every software engineer should know about real-time data's unifying abstraction_, https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
 
-[2] _What is ETL?_,  
-https://www.sas.com/en_us/insights/data-management/what-is-etl.html
+Kreps J. (2015), _Putting Apache Kafka To Use: A Practical Guide to Building a Streaming Platform_, https://www.confluent.io/blog/stream-data-platform-1/  
 
-[4] Wikipedia contributors. (2018), _Extract, transform, load_,  
-https://en.wikipedia.org/wiki/Extract,_transform,_load  
+Martin F. _Event Sourcing_, https://martinfowler.com/eaaDev/EventSourcing.html
 
-[3] Koshy J. (2016), _Kafka Ecosystem at LinkedIn_,  
-https://engineering.linkedin.com/blog/2016/04/kafka-ecosystem-at-linkedin
+Narkhede N. _ETL Is Dead, Long Live Streams: Real-Time Streams with Apache Kafka_, www.youtube.com/watch?v=I32hmY4diFY
 
-[c] Martin F. _Event Sourcing_,   
-https://martinfowler.com/eaaDev/EventSourcing.html
+Narkhede N., (2016), _Event sourcing, CQRS, stream processing and Apache Kafka: What’s the connection?_, https://www.confluent.io/blog/event-sourcing-cqrs-stream-processing-apache-kafka-whats-connection/  
 
-[d] Wikipedia contributors. (2018), _Event store_,   
-https://en.wikipedia.org/w/index.php?title=Event_store&oldid=824633488
+Stopford B. (2016), _The Data Dichotomy: Rethinking the Way We Treat Data and Services_, https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/  
 
-[] Narkhede N. _ETL Is Dead, Long Live Streams: Real-Time Streams with Apache Kafka_,  
-www.youtube.com/watch?v=I32hmY4diFY
+Stopford B. (2017), _Build Services on a Backbone of Events_, https://www.confluent.io/blog/build-services-backbone-events/  
 
-[4] Kreps J. (2013), _The Log: What every software engineer should know about real-time data's unifying abstraction_,  
-https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
+Stopford B. (2017), _Building a Microservices Ecosystem with Kafka Streams and KSQL_, https://www.confluent.io/blog/building-a-microservices-ecosystem-with-kafka-streams-and-ksql/3
 
-[5] Kreps J. (2015), _Putting Apache Kafka To Use: A Practical Guide to Building a Streaming Platform_,  
-https://www.confluent.io/blog/stream-data-platform-1/  
+Stopford B. (2017), _Messaging as the Single Source of Truth_, https://www.confluent.io/blog/messaging-single-source-truth/  
 
-[6] Stopford B. (2016), _The Data Dichotomy: Rethinking the Way We Treat Data and Services_,  
-https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/  
+Stopford B. (2017), _Messaging as the Single Source of Truth_, https://www.confluent.io/blog/messaging-single-source-truth/  
 
-[7] Stopford B. (2017), _Build Services on a Backbone of Events_,  
-https://www.confluent.io/blog/build-services-backbone-events/  
+Stopford B. (2017), _Using Apache Kafka as a Scalable, Event-Driven Backbone for Service Architectures_, https://www.confluent.io/blog/apache-kafka-for-service-architectures/  
 
-[8] Stopford B. (2017), _Using Apache Kafka as a Scalable, Event-Driven Backbone for Service Architectures_,  
-https://www.confluent.io/blog/apache-kafka-for-service-architectures/  
+Stopford B. (2017), _Using Apache Kafka as a Scalable, Event-Driven Backbone for Service Architectures_, https://www.confluent.io/blog/apache-kafka-for-service-architectures/    
 
-[9] Stopford B. (2017), _Messaging as the Single Source of Truth_,  
-https://www.confluent.io/blog/messaging-single-source-truth/  
+Wikipedia contributors. (2018), _Analisi dei requisiti_, https://it.wikipedia.org/wiki/Analisi_dei_requisiti  
 
-[10] Stopford B. (2017), _Building a Microservices Ecosystem with Kafka Streams and KSQL_,  
-https://www.confluent.io/blog/building-a-microservices-ecosystem-with-kafka-streams-and-ksql/3
+Wikipedia contributors. (2018), _Change data capture_, https://en.wikipedia.org/wiki/Change_data_capture 
+
+Wikipedia contributors. (2018), _Event store_, https://en.wikipedia.org/w/index.php?title=Event_store&oldid=824633488
+
+Wikipedia contributors. (2018), _Extract, transform, load_,  https://en.wikipedia.org/wiki/Extract,_transform,_load#Extract 
+
+Wikipedia contributors. (2018), _Microservices_, https://en.wikipedia.org/wiki/Microservices#History
+
+_Confluent Examples_, https://github.com/diegoicosta/kafka-confluent-examples/blob/master/kafka-streams/src/main/scala/io/confluent/examples/streams/MapFunctionScalaExample.scala
+
+_What is ETL?_, https://www.sas.com/en_us/insights/data-management/what-is-etl.html
