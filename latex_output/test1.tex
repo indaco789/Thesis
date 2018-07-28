@@ -196,6 +196,33 @@ comportamento dei dati, più che i dati in sé.
 
 \newpage
 
+Durante il mio tirocinio curriculare presso Credimi\footnote{\emph{Credimi},
+  https://www.credimi.com/} ho avuto la possibilità di partecipare allo
+studio ed implementazione di Kafka in vari punti del backend
+dell'azienda. Credimi è una startup che opera nell'ambito fintech
+fornendo soluzioni di factoring\footnote{Wikipedia contributors. (2018),
+  \emph{Factoring}, https://it.wikipedia.org/wiki/Factoring} per
+aziende, il backend è sviluppato in Scala e richiede molteplici
+interazioni con sistemi esterni.
+
+Un punto dell'architettura dove è stata studiata ed implementata una
+soluzione tramite Kafka è il sistema di proposta/decisione sulla
+validità di un utente che richiede un anticipo su una fattura caricata
+in piattaforma. Al caricamento di una fattura da parte di un utente nel
+backend inizia un complesso processo di richieste a servizi esterni,
+denominati \emph{centrali rischi}, utilizzati per reperire dati
+finanziari che verranno utilizzati per calcolare preventivamente
+l'affidabilità di questo utente e generare una \emph{proposta di
+finanziamento} che sarà valutata dal back office aziendale.
+
+In questo ambito Kafka è stato utilizzato come tecnologia alternativa ad
+un processo di ETL in modo da, in primo luogo, standarizzare i dati
+ricevuti dalle varie centrali rischi ed infine confrontare ed unire
+queste informazioni in un formato comprensibile ed utilizzabile dal
+backend per generare la proposta di finanziamento.
+
+\newpage
+
 \hypertarget{introduzione}{\subsection{2.
 Introduzione}\label{introduzione}}
 
@@ -265,7 +292,7 @@ Un importante problema legato a questa fase è il processo di
 si ritrova a dover gestire più formati non necessariamente compatibili
 tra loro\footnote{Wikipedia contributors. (2018), \emph{Extract,
   transform, load},\\
-  https://en.wikipedia.org/wiki/Extract,\_transform,\_load\#Extract}.\\
+  https://en.wikipedia.org/wiki/Extract,\_transform,\_load\#Extract}.
 Per poter garantire alla fase di Transform dei dati comprensibili,
 durante la fase di Extract vengono definite delle \emph{regole di
 validazione} per filtrare i dati provenienti dalle varie sorgenti, un
@@ -283,10 +310,9 @@ spesso le varie fonti di dati, nonostante siano state validate, possono
 presentare incongruenze tra loro come caratteri speciali legati
 all'encoding della propria sorgente oppure formati dei dati diversi ma
 compatibili (un esempio può essere la differenza di formattazione tra
-date americane ed europee).\\
-Per garantire un corretto funzionamento delle operazioni di
-trasformazione è quindi necessario pulire i dati ed adattarli ad un
-formato comune.
+date americane ed europee). Per garantire un corretto funzionamento
+delle operazioni di trasformazione è quindi necessario pulire i dati ed
+adattarli ad un formato comune.
 
 Il secondo compito della fase di Transform è la \emph{trasformazione dei
 dati} in nuovi dati richiesti dal business, esempi di trasformazioni
@@ -310,26 +336,25 @@ sono:
 
 Nella fase di \textbf{Load} l'insieme di dati generati dalla fase di
 Transform vengono inseriti in un target, il quale potrebbe essere una
-data warehouse ma anche più semplicemente un file in un formato utile.\\
+data warehouse ma anche più semplicemente un file in un formato utile.
 Business diversi hanno necessità diverse, per questo l'implementazione
 della fase di load può avere più modalità implementative, il punto
 focale di questa fase è proprio stabilire la frequenza e le modalità di
-aggiornamento dei dati presenti nel target.\\
-Decidere la frequenza (giornaliera, mensile, ecc.) e le modalità
-(sovrascrizione dei vecchi dati o meno) del target possono portare ad un
-processo di ETL più o meno utile ad una azienda.
+aggiornamento dei dati presenti nel target. Decidere la frequenza
+(giornaliera, mensile, ecc.) e le modalità (sovrascrizione dei vecchi
+dati o meno) del target possono portare ad un processo di ETL più o meno
+utile ad una azienda.
 
 Per generare un buon target è buona norma definire uno schema
 \emph{preciso e chiaro} della tipologia di dati a cui il target deve
-aderire.\\
-Come detto in precedenza un processo di ETL è utilizzato per aggregare
-più fonti di informazioni comuni ad un processo aziendale, questo
-suppone che le informazioni presenti nella data warehouse potrebbero
-venire usate da più parti di una azienda, le quali potrebbero essere
-abituate a particolari formati dei dati.\\
-Senza definire uno schema dei dati chiaro e preciso, si correrebbe il
-rischio di generare un insieme di dati inutilizzabile da determinati
-reparti in quanto non conforme al formato di dati da loro conosciuto.
+aderire. Come detto in precedenza un processo di ETL è utilizzato per
+aggregare più fonti di informazioni comuni ad un processo aziendale,
+questo suppone che le informazioni presenti nella data warehouse
+potrebbero venire usate da più parti di una azienda, le quali potrebbero
+essere abituate a particolari formati dei dati. Senza definire uno
+schema dei dati chiaro e preciso, si correrebbe il rischio di generare
+un insieme di dati inutilizzabile da determinati reparti in quanto non
+conforme al formato di dati da loro conosciuto.
 
 \newpage
 
@@ -352,7 +377,8 @@ cercando di trovare un linguaggio comune per definire la logica e
 l'utilizzo del software richiesto; Una volta stabiliti i requisti, il
 team di sviluppo generalmente inizia uno studio interno atto a produrre
 un \emph{modello dei dati} che verrà usato come base per definire lo
-schema dei database utilizzati dal sistema.\\
+schema dei database utilizzati dal sistema.
+
 Un cliente comune molto spesso non ha padronanza del concetto di `stato
 di una applicazione', ma piuttosto si limita ad esporre i propri
 requisiti descrivendo i possibili eventi che, traslati sul modello di
@@ -373,7 +399,8 @@ Capture} (CDC)\footnote{Wikipedia contributors. (2018), \emph{Change
   data capture},\\
   https://en.wikipedia.org/wiki/Change\_data\_capture}, generalmente
 utilizzate per generare un transactional log contenente tutte le
-operazioni eseguite sul suddetto database.\\
+operazioni eseguite sul suddetto database.
+
 In questo modello database-driven, un evento genera un cambiamento su
 una base di dati; Gli eventi e lo stato di un database sono però
 concetti diversi e slegati tra loro, l'esecuzione di un evento a volte
@@ -383,13 +410,13 @@ microservizi di una applicazione\footnote{Stopford B. (2017),
   \emph{Messaging as the Single Source of Truth},\\
   https://www.confluent.io/blog/messaging-single-source-truth/}.
 
+\newpage
+
 Una soluzione al problema di più microservizi che utilizzano lo stesso
 database è di utilizzare delle views del database locali ad ogni
 microservizio: ogni servizio lavorerà su una copia locale del database
 ed un job esterno si occuperà di compattare le views e mantenere il
 database aggiornato rispetto a tutti i cambiamenti.
-
-\newpage
 
 Questa soluzione presenta un grosso problema: supponiamo di notare un
 errore sul database e di doverlo correggere, come possiamo decidere
@@ -410,7 +437,7 @@ visione del mondo basata sullo stato di una applicazione fornendo come
 alternativa l'uso degli eventi, ovvero delle azioni o accadimenti che
 l'applicazione è in grado di riconoscere e gestire come \emph{singoli
 cambiamenti} dello stato del ``mondo''. \footnote{Stopford B. (2017),
-  \emph{Messaging as the Single Source of Truth},
+  \emph{Messaging as the Single Source of Truth},\\
   https://www.confluent.io/blog/messaging-single-source-truth/}
 
 Durante l'analisi dei requisiti di una applicazione, spesso ci si trova
@@ -418,25 +445,27 @@ a confronto con esperti di un dominio applicativo che non hanno
 particolare conoscenza delle tecnologie necessarie per implementare le
 loro richieste, è compito del programmatore (o del team di
 programmatore) analizzare le sue richieste e trasformarle in idee
-gestibili.\\
-In genere questi esperti spiegheranno al programmatore le loro necessità
-illustrando il funzionamento del dominio utilizzando concetti molto più
-vicini a degli \emph{eventi} piuttosto che \emph{sequenze di
-richieste/risposte a/da un database}; Supponendo di dover sviluppare una
-piattaforma di e-commerce, è molto più probabile che l'esperto di
-dominio richieda di gestire eventi come ``aggiungere un oggetto al
-carrello'' oppure ``comprare un oggetto'' piuttosto che ``creare dei
-database per gestire carrello, stock oggetti rimamenti, oggetti
-comprati''.
+gestibili. In genere questi esperti spiegheranno al programmatore le
+loro necessità illustrando il funzionamento del dominio utilizzando
+concetti molto più vicini a degli \emph{eventi} piuttosto che
+\emph{sequenze di richieste/risposte a/da un database}; Supponendo di
+dover sviluppare una piattaforma di e-commerce, è molto più probabile
+che l'esperto di dominio richieda di gestire eventi come ``aggiungere un
+oggetto al carrello'' oppure ``comprare un oggetto'' piuttosto che
+``creare dei database per gestire carrello, stock oggetti rimamenti,
+oggetti comprati''.
 
 La struttura dati fondamentale alla base di ES è l'\textbf{event store},
-una tipologia di database ottimizzata per la gestione di eventi.\\
-In un event store, gli eventi vengono inseriti in fondo alla struttura
-in ordine di avvenimento e non possono essere modificati o cancellati;
-Nel caso venga pubblicato per errore un evento sbagliato o inesatto per
-annularlo basterà pubblicare un evento contrario. Questo meccanismo
-garantisce che la ripetizione della storia degli eventi \emph{porterà
-sempre allo stesso stato, errore compreso}.
+una tipologia di database ottimizzata per la gestione di eventi. In un
+event store, gli eventi vengono inseriti in fondo alla struttura in
+ordine di avvenimento e non possono essere modificati o cancellati; Nel
+caso venga pubblicato per errore un evento sbagliato o inesatto per
+annularlo basterà pubblicare un evento contrario.
+
+\newpage
+
+Questo meccanismo garantisce che la ripetizione della storia degli
+eventi \emph{porterà sempre allo stesso stato, errore compreso}.
 
 Un event store è comunemente implementato utilizzando un \textbf{log},
 una sequenza di record append-only e totalmente ordinata in base al
@@ -467,11 +496,11 @@ E' possibile vedere lo stato corrente di una applicazione come una
 \emph{sequenza di operazioni di modifica dello stato eseguite partendo
 da uno stato iniziale}, questo implica che è possibile vedere un evento
 come il \emph{delta tra lo stato iniziale di una applicazione e lo stato
-corrente dell'applicazione dopo l'esecuzione dell'evento}.\\
-La possibilità di trasformare lo stato corrente di una applicazione in
-una funzione dello stato iniziale dell'applicazione e una sequenza di
-eventi è il meccanismo che permette ad event sourcing di avere una
-validità tecnica per la gestione dei dati di una applicazione.
+corrente dell'applicazione dopo l'esecuzione dell'evento}. La
+possibilità di trasformare lo stato corrente di una applicazione in una
+funzione dello stato iniziale dell'applicazione e una sequenza di eventi
+è il meccanismo che permette ad event sourcing di avere una validità
+tecnica per la gestione dei dati di una applicazione.
 
 \begin{figure}
 \centering
@@ -499,13 +528,14 @@ In un qualsiasi database relazionale se durante il normale utilizzo
 dell'applicazione avviene un errore logico che porta il database ad uno
 stato non corretto, è sempre necessario un rollback dell'intero database
 ad un data antecedente l'errore per poter sperare di correggiare
-l'errore.\\
-Tale processo è dispendioso in termini di tempo e non è di facile
-esecuzione in quanto spesso il processo di backup di un database non
-viene eseguito dopo ogni inserimento o update di un record; Per poter
-correggere l'errore sarà quindi necessario calcolare partire dal backup
-più recente e applicare nuovamente tutte le transformazioni del
+l'errore. Tale processo è dispendioso in termini di tempo e non è di
+facile esecuzione in quanto spesso il processo di backup di un database
+non viene eseguito dopo ogni inserimento o update di un record; Per
+poter correggere l'errore sarà quindi necessario calcolare partire dal
+backup più recente e applicare nuovamente tutte le transformazioni del
 database, meno l'errore.
+
+\newpage
 
 L'analisi del motivo dell'errore può inoltre non essere di facile
 realizzazione con un database relazionale a meno che non siano in uso i
@@ -518,19 +548,17 @@ l'errore, che sarà sempre un evento, non ha generato un effetto
 ``domino'' sul sistema (ovvero l'errore non ha portato all'esecuzione di
 uan catena di errori), una volta individuato è possibile pubblicare un
 evento ``contrario'' alla causa dell'errore in modo tale da cancellare
-l'apporto dell'errore sul sistema.\\
-Nel caso contrario, ovvero il caso in cui l'errore ha generato una
-sequenza di errori, per ottenere lo stato corretto del sistema basterà
-ripetere l'esecuzione di tutti gli eventi del sistema escludendo quello
-che ha generato l'errore sulla base di dati.
+l'apporto dell'errore sul sistema. Nel caso contrario, ovvero il caso in
+cui l'errore ha generato una sequenza di errori, per ottenere lo stato
+corretto del sistema basterà ripetere l'esecuzione di tutti gli eventi
+del sistema escludendo quello che ha generato l'errore sulla base di
+dati.
 
 E' bene notare che con ES la gestione degli errori nello stato del
 sistema è strettamente legata all'atomicità e definizione degli eventi
 del sistema: una corretta (semplice) definizione degli eventi del
 sistema porterà ad una cronologia del sistema più chiara e
 comprensibile.
-
-\newpage
 
 \subsubsection{4.4. Svantaggi}\label{svantaggi}
 
@@ -550,8 +578,7 @@ caratteristica).
 Le modalità per risolvere questo problema sono determinate dal dominio e
 uso dell'applicazione che utilizza ES, ma generalmente per ovviare a
 questa debolezza vengono realizzati degli snapshot dello stato
-dell'applicazione da utilizzare per l'esecuzione delle query di
-ricerca.\\
+dell'applicazione da utilizzare per l'esecuzione delle query di ricerca.
 La frequenza di generazione ed aggiornamento di questi snapshot è
 strettamente legata al dominio applicativo dell'applicazione.
 
@@ -591,8 +618,8 @@ elevato e difficile da correggere.
 
 E' in questo contesto che nasce Apache Kafka, una \emph{streaming
 platform} basata su un append-only log utilizzato da dei \emph{producer}
-per pubblicare dei messaggi consumati da dei \emph{consumer}.\\
-I messaggi pubblicati vengono persistiti nel tempo, sono leggibili
+per pubblicare dei messaggi consumati da dei \emph{consumer}. I messaggi
+pubblicati vengono persistiti nel tempo, sono leggibili
 deterministicamente da qualsiasi consumer ed distributi all'interno del
 sistema secondo particolari logiche in modo da garantire protezione da
 crash e scalabità del sistema.
@@ -602,7 +629,9 @@ crash e scalabità del sistema.
 \subsubsection{5.2. Messaggi}\label{messaggi}
 
 L'unità dati fondamentali in Kafka è chiamata \emph{messaggio} o
-\emph{record}.
+\emph{record}\footnote{Narkhede N. and Shapira G. and Palino T. (2017),
+  \emph{Kafka: The Definitive Guide: Real-Time Data and Stream
+  Processing at Scale}, O'Reilly Media Inc., pp.~4}.
 
 Ogni messaggio è suddiviso in \emph{key} (opzionale) e \emph{value} e
 possono essere di qualsiasi formato; Kafka non impone particolari
@@ -630,7 +659,10 @@ di un batch per ogni singolo messaggio.
 \subsubsection{5.3. Topic e partizioni}\label{topic-e-partizioni}
 
 Un \emph{topic} è un elemento utilizzato in Kafka per categorizzare una
-collezione di messaggi, e consiste in un unico stream di dati.
+collezione di messaggi, e consiste in un unico stream di dati\footnote{Narkhede
+  N. and Shapira G. and Palino T. (2017), \emph{Kafka: The Definitive
+  Guide: Real-Time Data and Stream Processing at Scale}, O'Reilly Media
+  Inc., pp.~5}.
 
 Un topic è suddiviso in \emph{partizioni}, append-only logs sui quali
 vengono persisti i messaggi generati dai \emph{producers}.
@@ -676,12 +708,14 @@ Kafka è utilizzata da due tipologie di client: \emph{producers} e
 
 I \emph{producers} hanno il compito di creare messaggi indirizzati a
 specifici topic (indipendentemente dal numero di partizioni da cui sono
-formati).\\
-Come illustrato in precedenza, un topic è formato da un numero variabile
-di partizioni utilizzate come meccanismo di replica e gestione dei
-messaggi; Alla creazione di un messaggio è possibile indicare al
-producer su quale partizione andare a scrivere il record specificando
-l'identificativo di una partizione specifica.
+formati)\footnote{Narkhede N. and Shapira G. and Palino T. (2017),
+  \emph{Kafka: The Definitive Guide: Real-Time Data and Stream
+  Processing at Scale}, O'Reilly Media Inc., pp.~41}. Come illustrato in
+precedenza, un topic è formato da un numero variabile di partizioni
+utilizzate come meccanismo di replica e gestione dei messaggi; Alla
+creazione di un messaggio è possibile indicare al producer su quale
+partizione andare a scrivere il record specificando l'identificativo di
+una partizione specifica.
 
 \begin{figure}
 \centering
@@ -699,12 +733,11 @@ Nella maggior parte dei casi d'uso di Kafka, il producer non si pone mai
 il problema di decidere su quale partizione andare a scrivere un
 particolare messaggio ma piuttosto vengono utilizzati dei meccanismi di
 load-balancing per spartire correttamente i messaggi su tutte le
-partizioni disponibili presenti nel topic.\\
-Tipici esempi di algoritmi di load-balancing sono il calcolo della
-partizione in base ad una hash key derivata dall'offset del messaggio
-oppure utilizzando un algoritmo round robin, se necessario è presente la
-possibilità di specificare un \emph{partioneer} creato su misura al caso
-d'uso.
+partizioni disponibili presenti nel topic. Tipici esempi di algoritmi di
+load-balancing sono il calcolo della partizione in base ad una hash key
+derivata dall'offset del messaggio oppure utilizzando un algoritmo round
+robin, se necessario è presente la possibilità di specificare un
+\emph{partioneer} creato su misura al caso d'uso.
 
 Una volta creato il \texttt{ProducerRecord} il producer serializza
 chiave e value del messaggio in \texttt{ByteArray} in modo da
@@ -759,7 +792,7 @@ Per poter creare un producer sono necessari tre parametri:
 
 Un esempio di producer è dato dal seguente codice Scala:
 
-\small  
+\small
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -771,13 +804,13 @@ Un esempio di producer è dato dal seguente codice Scala:
 \KeywordTok{case} \KeywordTok{class} \FunctionTok{Producer}\NormalTok{(topic: String)\{}
     \KeywordTok{val}\NormalTok{ props = }\KeywordTok{new}\NormalTok{ Properties()}
 \NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"bootstrap.servers"}\NormalTok{, }\StringTok{"localhost:9092"}\NormalTok{)}
-\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"key.serializer"}\NormalTok{, }
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"key.serializer"}\NormalTok{,}
         \StringTok{"org.apache.kafka.common.serialization.StringSerializer"}\NormalTok{)}
-\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"value.serializer"}\NormalTok{, }
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"value.serializer"}\NormalTok{,}
         \StringTok{"org.apache.kafka.common.serialization.StringSerializer"}\NormalTok{)}
-    
-    \KeywordTok{private} \KeywordTok{val}\NormalTok{ producer = }\KeywordTok{new}\NormalTok{ KafkaProducer[String, String](props)    }
-    
+
+    \KeywordTok{private} \KeywordTok{val}\NormalTok{ producer = }\KeywordTok{new}\NormalTok{ KafkaProducer[String, String](props)}
+
     \KeywordTok{def} \FunctionTok{send}\NormalTok{(value: String) = \{}
       \KeywordTok{val}\NormalTok{ record = }\KeywordTok{new}\NormalTok{ ProducerRecord[String, String](topic, value)}
 
@@ -786,14 +819,14 @@ Un esempio di producer è dato dal seguente codice Scala:
 \NormalTok{      \} }\KeywordTok{catch}\NormalTok{ \{}
         \KeywordTok{case}\NormalTok{ e: Exception => e.}\FunctionTok{printStackTrace}
 \NormalTok{      \}}
-\NormalTok{    \}   }
+\NormalTok{    \}}
 
     \KeywordTok{def} \FunctionTok{sendAsync}\NormalTok{(value: String) = \{}
         \KeywordTok{val}\NormalTok{ record = }\KeywordTok{new}\NormalTok{ ProducerRecord[String, String](topic, value)}
         \KeywordTok{val}\NormalTok{ promise = Promise[(RecordMetadata, Exception)]()}
 
 \NormalTok{        producer.}\FunctionTok{send}\NormalTok{(record, }\KeywordTok{new}\NormalTok{ Callback \{}
-            \KeywordTok{override} \KeywordTok{def} \FunctionTok{onCompletion}\NormalTok{(metadata: RecordMetadata, }
+            \KeywordTok{override} \KeywordTok{def} \FunctionTok{onCompletion}\NormalTok{(metadata: RecordMetadata,}
 \NormalTok{                                      exception: Exception) = \{}
 \NormalTok{                promise.}\FunctionTok{success}\NormalTok{((metadata, exception))}
 \NormalTok{            \}}
@@ -867,11 +900,13 @@ Esistono tre possibili valori per \texttt{acks}:
 \subsubsection{5.5. Consumers}\label{consumers}
 
 Un \emph{consumer} è un client Kafka utilizzato per leggere dati da un
-topic e tipicamente è parte di un \emph{consumer group}.\\
-Un consumer group è definito da uno specifico \texttt{group.id} ed un
-topic che tutti i membri del gruppo hanno in comune; Ogni partizione del
-topic è letta da un solo consumer del gruppo e più consumer del gruppo
-non possono leggere dalla stessa partizione.\\
+topic e tipicamente è parte di un \emph{consumer group}\footnote{Narkhede
+  N. and Shapira G. and Palino T. (2017), \emph{Kafka: The Definitive
+  Guide: Real-Time Data and Stream Processing at Scale}, O'Reilly Media
+  Inc., pp.~63}. Un consumer group è definito da uno specifico
+\texttt{group.id} ed un topic che tutti i membri del gruppo hanno in
+comune; Ogni partizione del topic è letta da un solo consumer del gruppo
+e più consumer del gruppo non possono leggere dalla stessa partizione.
 Supponiamo di avere un topic T1 con quattro partizioni, nel caso in cui
 il nostro gruppo è formato da un solo consumer C1 sarà solo lui a
 consumare l'intero topic.
@@ -924,15 +959,15 @@ topic.
 
 Un altro importante vantaggio dell'utilizzo dei consumer group è dato
 dalla possibilità di ribilanciare il gruppo nel caso di crash, morte o
-aggiunta di un consumer.\\
-Per \emph{ribilanciare il consumer group} si intende il processo di
-cambio di proprietà di una partizione da un consumer A ad un consumer B;
-Questo procedimento, insieme alla possibilità di aggiungere e rimuovere
-consumer per ogni partizione, è ciò permette a Kafka di scalare la
-propria architettura su grossi numeri di record e topic. E' importante
-notare che questa funzionalità non è comunque desiderabile: durante un
-rebalance il consumer group non può consumare i dati di un topic,
-comportando quindi un rallentamento nella lettura dei dati.
+aggiunta di un consumer. Per \emph{ribilanciare il consumer group} si
+intende il processo di cambio di proprietà di una partizione da un
+consumer A ad un consumer B; Questo procedimento, insieme alla
+possibilità di aggiungere e rimuovere consumer per ogni partizione, è
+ciò permette a Kafka di scalare la propria architettura su grossi numeri
+di record e topic. E' importante notare che questa funzionalità non è
+comunque desiderabile: durante un rebalance il consumer group non può
+consumare i dati di un topic, comportando quindi un rallentamento nella
+lettura dei dati.
 
 Un consumer per non risultare morto deve inviare degli \emph{heartbeats}
 al broker eletto a \emph{cordinator} del consumer group. Questi ``segni
@@ -957,20 +992,20 @@ Un esempio di consumer sviluppato in Scala è dato dal seguente codice:
 \KeywordTok{case} \KeywordTok{class} \FunctionTok{Consumer}\NormalTok{(topic: String)\{}
     \KeywordTok{val}\NormalTok{ props = }\KeywordTok{new}\NormalTok{ Properties()}
 \NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"bootstrap.servers"}\NormalTok{, }\StringTok{"localhost:9092"}\NormalTok{)}
-\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"key.deserializer"}\NormalTok{, }
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"key.deserializer"}\NormalTok{,}
         \StringTok{"org.apache.kafka.common.serialization.StringSerializer"}\NormalTok{)}
-\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"value.deserializer"}\NormalTok{, }
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"value.deserializer"}\NormalTok{,}
         \StringTok{"org.apache.kafka.common.serialization.StringSerializer"}\NormalTok{)}
-\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"group.id"}\NormalTok{, }\StringTok{"example"}\NormalTok{)    }
-    
-    \KeywordTok{private} \KeywordTok{val}\NormalTok{ consumer = }\KeywordTok{new}\NormalTok{ KafkaConsumer[String, String](props)    }
+\NormalTok{    props.}\FunctionTok{put}\NormalTok{(}\StringTok{"group.id"}\NormalTok{, }\StringTok{"example"}\NormalTok{)}
+
+    \KeywordTok{private} \KeywordTok{val}\NormalTok{ consumer = }\KeywordTok{new}\NormalTok{ KafkaConsumer[String, String](props)}
 \NormalTok{    consumer.}\FunctionTok{subscribe}\NormalTok{(util.}\FunctionTok{Collections}\NormalTok{.}\FunctionTok{singletonList}\NormalTok{(topic))}
 
     \KeywordTok{def} \FunctionTok{readTopic}\NormalTok{()\{}
         \KeywordTok{while}\NormalTok{(}\KeywordTok{true}\NormalTok{)\{}
             \KeywordTok{val}\NormalTok{ records = consumer.}\FunctionTok{poll}\NormalTok{(}\DecValTok{100}\NormalTok{)}
             \KeywordTok{for}\NormalTok{ (r <- records.}\FunctionTok{asScala}\NormalTok{)\{}
-                \FunctionTok{println}\NormalTok{(s}\StringTok{"$\{r.offset\} $\{r.key\} $\{r.value\}"}\NormalTok{) }
+                \FunctionTok{println}\NormalTok{(s}\StringTok{"$\{r.offset\} $\{r.key\} $\{r.value\}"}\NormalTok{)}
 \NormalTok{            \}}
 \NormalTok{        \}}
 \NormalTok{    \}}
@@ -999,8 +1034,8 @@ creare un producer è necessario definire alcune configurazioni minime:
 \end{itemize}
 
 I consumer leggono i dati di un topic attraverso un meccanismo di
-``pull'', ovvero sono loro stessi a richiedere al broker i dati.\\
-Ogni volta che un consumer decide di leggere da un topic è lui stesso a
+``pull'', ovvero sono loro stessi a richiedere al broker i dati. Ogni
+volta che un consumer decide di leggere da un topic è lui stesso a
 tenere traccia dell'ultimo messaggio che è stato letto e per tenerne
 traccia utilizzerà un \emph{offset}: un identificativo corrispondente
 alla posizione del messaggio nella partizione (il primo messaggio avrà
@@ -1024,8 +1059,8 @@ Come si può vedere dalla funziona \texttt{readTopic()} definita
 nell'esempio, un consumer utilizza un loop infinito di chiamate a
 \texttt{.poll()} definito su un intervallo di tempo variabile (ovvero il
 metodo messo a disposizione dall'interfaccia di Kafka) per richiedere al
-broker tutti i messaggi che quel consumer non ha ancora letto.\\
-Per sapere quali messaggi inviare il broker deve riceve dal consumer
+broker tutti i messaggi che quel consumer non ha ancora letto. Per
+sapere quali messaggi inviare il broker deve riceve dal consumer
 l'offset dell'ultimo messaggio letto attraverso una operazione di
 \_commit; Gli offset vengono pubblicati dai consumer su di uno speciale
 topic Kafka chiamato \texttt{\_\_consumer\_offset} al quale tutti i
@@ -1033,11 +1068,10 @@ broker hanno accesso e a cui fanno riferimento per calcolare quali
 messaggi inviare.
 
 Il topic \texttt{\_\_consumer\_offset} è inoltre utilizzato nel caso di
-ribilanciamento di un gruppo.\\
-A seguito di un ribilanciamento un o più consumer del gruppo possono
-ricevere un nuovo insieme di partizioni, e per capire da dove iniziare
-il nuovo processo di lettura, devono interrogare il topic
-\texttt{\_\_consumer\_offset}.
+ribilanciamento di un gruppo. A seguito di un ribilanciamento un o più
+consumer del gruppo possono ricevere un nuovo insieme di partizioni, e
+per capire da dove iniziare il nuovo processo di lettura, devono
+interrogare il topic \texttt{\_\_consumer\_offset}.
 
 Se l'offset pubblicato su \texttt{\_\_consumer\_offset} è \emph{minore}
 dell'offset dell'ultimo messaggio che il consumer client ha in memoria,
@@ -1090,8 +1124,11 @@ del processo di commit:
 
 Un \emph{broker} è un server Kafka con svariati compiti quali ricevere,
 indicizzare e salvare i messaggi inviati dai producers ed inviare i
-messaggi richiesti dai consumers; Un singolo broker è capace di gestire
-migliaia di partizioni e millioni di messaggi al secondo.
+messaggi richiesti dai consumers\footnote{Narkhede N. and Shapira G. and
+  Palino T. (2017), \emph{Kafka: The Definitive Guide: Real-Time Data
+  and Stream Processing at Scale}, O'Reilly Media Inc., pp.~7-9}; Un
+singolo broker è capace di gestire migliaia di partizioni e millioni di
+messaggi al secondo.
 
 I broker sono stati creati per lavorare in \emph{clusters} ovvero gruppi
 di brokers ordinanti secondo una particolare gerarchia.
@@ -1118,13 +1155,13 @@ monitorare l'andamento del cluster.
 \end{figure}
 
 Una funzionalità importante di Kafka è la possibilità di utilizzare i
-topic come database di messaggi persistenti.\\
-I messaggi vengono tenuti in memoria per un particolare periodo di tempo
-oppure in base allo spazio di memoria di occupato, entrambe le opzioni
-sono configurabili alla creazione di un broker, vi è poi la possibilità
-di abilitare la \emph{log compaction} ovvero un meccanismo che permette
-a Kafka di mantenere in memoria \emph{solo gli ultimi messaggi
-indicizzati su un indicativo specifico}.
+topic come database di messaggi persistenti. I messaggi vengono tenuti
+in memoria per un particolare periodo di tempo oppure in base allo
+spazio di memoria di occupato, entrambe le opzioni sono configurabili
+alla creazione di un broker, vi è poi la possibilità di abilitare la
+\emph{log compaction} ovvero un meccanismo che permette a Kafka di
+mantenere in memoria \emph{solo gli ultimi messaggi indicizzati su un
+indicativo specifico}.
 
 \newpage
 
@@ -1135,14 +1172,17 @@ fortemente consigliato l'uso di \emph{schema} per la gestione e l'uso
 della struttura dei record.
 
 Lo \emph{schema} è la struttura o organizzazione logicati dei dati
-contenuti in un topic e nel caso specifico di Kafka, la scelta dei
-formati disponibili ricade spesso su di un singolo formato: Apache Avro.
-Esistono altre scelte possibili come Javascript Object Notation (JSON)
-oppure Extensible Markup Language (XML), ma Avro offre una serie di
-vantaggi rispetto a questo genere di schemi oltre ad avere alcune
-implementazioni ad-hoc in Kafka. Avro è diventato nel tempo lo standard
-per gli schema nelle applicazioni basate su Kafka, gli stessi
-sviluppatori di Kafka ne promuovono l'uso citando una serie di motivi:
+contenuti in un topic\footnote{Narkhede N. and Shapira G. and Palino T.
+  (2017), \emph{Kafka: The Definitive Guide: Real-Time Data and Stream
+  Processing at Scale}, O'Reilly Media Inc., pp.~56-59} e nel caso
+specifico di Kafka, la scelta dei formati disponibili ricade spesso su
+di un singolo formato: Apache Avro. Esistono altre scelte possibili come
+Javascript Object Notation (JSON) oppure Extensible Markup Language
+(XML), ma Avro offre una serie di vantaggi rispetto a questo genere di
+schemi oltre ad avere alcune implementazioni ad-hoc in Kafka. Avro è
+diventato nel tempo lo standard per gli schema nelle applicazioni basate
+su Kafka, gli stessi sviluppatori di Kafka ne promuovono l'uso citando
+una serie di motivi:
 
 \begin{itemize}
 \tightlist
@@ -1185,19 +1225,21 @@ Un esempio di \textbf{schema dei dati} di un record con cinque campi:
 \end{Shaded}
 
 \normalsize
+
 \newpage
+
 Ed un generico record di \textbf{dati} definito in base allo schema:
 
 \small
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{\{}  
-  \DataTypeTok{"time"}\FunctionTok{:} \DecValTok{1424849130111}\FunctionTok{,}     
-  \DataTypeTok{"customer_id"}\FunctionTok{:} \DecValTok{1234}\FunctionTok{,}  
-  \DataTypeTok{"product_id"}\FunctionTok{:} \DecValTok{5678}\FunctionTok{,}  
-  \DataTypeTok{"quantity"}\FunctionTok{:} \DecValTok{3}\FunctionTok{,}  
-  \DataTypeTok{"payment_type"}\FunctionTok{:} \StringTok{"mastercard"}  
+\FunctionTok{\{}
+  \DataTypeTok{"time"}\FunctionTok{:} \DecValTok{1424849130111}\FunctionTok{,}
+  \DataTypeTok{"customer_id"}\FunctionTok{:} \DecValTok{1234}\FunctionTok{,}
+  \DataTypeTok{"product_id"}\FunctionTok{:} \DecValTok{5678}\FunctionTok{,}
+  \DataTypeTok{"quantity"}\FunctionTok{:} \DecValTok{3}\FunctionTok{,}
+  \DataTypeTok{"payment_type"}\FunctionTok{:} \StringTok{"mastercard"}
 \FunctionTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -1237,7 +1279,7 @@ Supponiamo ad esempio di utilizzare un formato del tipo seguente per
 gestire le informazioni riguardando agli acquirenti di un particolare
 servizio/piattaforma:
 
-\small 
+\small
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1249,7 +1291,7 @@ servizio/piattaforma:
          \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:} \StringTok{"id"}\FunctionTok{,} \DataTypeTok{"type"}\FunctionTok{:} \StringTok{"int"}\FunctionTok{\}}\OtherTok{,}
          \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:} \StringTok{"name"}\FunctionTok{,}  \DataTypeTok{"type"}\FunctionTok{:} \StringTok{"string"}\FunctionTok{\}}\OtherTok{,}
          \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:} \StringTok{"faxNumber"}\FunctionTok{,} \DataTypeTok{"type"}\FunctionTok{:} \OtherTok{[}\StringTok{"null"}\OtherTok{,} \StringTok{"string"}\OtherTok{]}\FunctionTok{,} \DataTypeTok{"default"}\FunctionTok{:} \StringTok{"null"}\FunctionTok{\}}
-    \OtherTok{]} 
+    \OtherTok{]}
 \FunctionTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -1281,7 +1323,7 @@ ad un nuovo formato che permetta agli utenti di specificare la loro
          \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:} \StringTok{"id"}\FunctionTok{,} \DataTypeTok{"type"}\FunctionTok{:} \StringTok{"int"}\FunctionTok{\}}\OtherTok{,}
          \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:} \StringTok{"name"}\FunctionTok{,}  \DataTypeTok{"type"}\FunctionTok{:} \StringTok{"string"}\FunctionTok{\}}\OtherTok{,}
          \FunctionTok{\{}\DataTypeTok{"name"}\FunctionTok{:} \StringTok{"email"}\FunctionTok{,} \DataTypeTok{"type"}\FunctionTok{:} \OtherTok{[}\StringTok{"null"}\OtherTok{,} \StringTok{"string"}\OtherTok{]}\FunctionTok{,} \DataTypeTok{"default"}\FunctionTok{:} \StringTok{"null"}\FunctionTok{\}}
-    \OtherTok{]} 
+    \OtherTok{]}
 \FunctionTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -1305,7 +1347,7 @@ messaggi del topic come utenti senza una email.
 Questo genere di \emph{evoluzione} dello schema dei dati di un topic è
 il motivo centrale dietro all'uso della tecnologia: garantire la
 robustezza dei dati senza compromettere la leggibilità dello schema o il
-funzionamento di applicazioni che utilizzano lo stesso topic.\\
+funzionamento di applicazioni che utilizzano lo stesso topic.
 L'evoluzione dello schema è permessa solo secondo determinate regole di
 compatibilità la cui definizione esula dal contesto di questo tesi ma
 che possono essere visionate nella
@@ -1319,13 +1361,16 @@ di Apache Avro}.
 Uno dei vantaggi di Avro rispetto a JSON è la possibilità di non dover
 inserire lo schema dei dati ``completo'' in ogni record permettendo di
 pubblicare su un topic dei messaggi meno pesanti ed è proprio per
-sfruttare questo vantaggio che nasce lo \emph{Schema Registry}.\\
-Uno \emph{schema registry} è un servizio di gestione degli schema Avro
-utilizzato da Kafka per servire ed evolvere i metadati di un topic; E'
-utilizzato dai producers nella fase di scrittura (serializzazione di un
-messaggio), dai consumer nella fase di lettura (deserializzazione di un
-messaggio) ed impone delle regole di forma a tutti i client che
-intendono utilizzare un topic specificato con formato dati Avro.
+sfruttare questo vantaggio che nasce lo \emph{Schema Registry}. Uno
+\emph{schema registry} è un servizio di gestione degli schema Avro
+utilizzato da Kafka per servire ed evolvere i metadati di un
+topic\footnote{Narkhede N. and Shapira G. and Palino T. (2017),
+  \emph{Kafka: The Definitive Guide: Real-Time Data and Stream
+  Processing at Scale}, O'Reilly Media Inc., pp.~56-59}; E' utilizzato
+dai producers nella fase di scrittura (serializzazione di un messaggio),
+dai consumer nella fase di lettura (deserializzazione di un messaggio)
+ed impone delle regole di forma a tutti i client che intendono
+utilizzare un topic specificato con formato dati Avro.
 
 \begin{figure}
 \centering
@@ -1399,8 +1444,8 @@ elemento nel topic è estremamente efficiente in quanto si tratta di un
 semplice inserimento in coda di costo \(O(1)\), e nel caso di utilizzo
 di un consumer la lettura da un topic sarà sempre effettuata in batch e
 sequenziale (che sia dall'inizio del topic o da un particolare offset è
-irrilevante) e quindi anche in questo caso avrà costo \(O(1)\).\\
-Il limite imposto dalla lettura sequenziale di un topic permette inoltre
+irrilevante) e quindi anche in questo caso avrà costo \(O(1)\). Il
+limite imposto dalla lettura sequenziale di un topic permette inoltre
 una riduzione dei costi di gestione della piattaforma non dovendo
 gestire in memoria indici tipici di altre strutture dati come tabelle
 hash o alberi, utilizzati per letture indicizzate o cancellazioni.
@@ -1411,10 +1456,10 @@ seguendo event sourcing diventa assolutamente irrilevante in quanto è lo
 stesso pattern a premere per l'utilizzo di un log come event store.
 
 L'utilizzo di Kafka come Event Store è un altro dei motivi che rende la
-piattaforma un ottimo strumento da utilizzare con Event Sourcing.\\
-Perchè una piattaforma possa funzionare come database/event store è
-necessario che sia \emph{affidabile}, \emph{modulare} e dotata di
-strumenti per la creazione di \emph{viste} degli eventi registrati.
+piattaforma un ottimo strumento da utilizzare con Event Sourcing. Perchè
+una piattaforma possa funzionare come database/event store è necessario
+che sia \emph{affidabile}, \emph{modulare} e dotata di strumenti per la
+creazione di \emph{viste} degli eventi registrati.
 
 Kafka è \emph{modulare} grazie al sistema dei brokers, il quale permette
 uno svilippo dei consumer orizzontale, performante ed ``elastico'',
@@ -1438,7 +1483,9 @@ Kafka è inoltre \emph{affidabile} su più fronti:
   caso di \emph{evoluzione dello schema dei dati}, rendendo disponibile
   uno strumento che automaticamente valida nuove evoluzione della forma
   dei dati aiutando gli sviluppatori nel creare soluzioni
-  ``backward-compatible''.
+  ``backward-compatible''\footnote{Shapira G., (2015), \emph{Yes,
+    Virginia, You Really Do Need a Schema Registry},
+    https://www.confluent.io/blog/schema-registry-kafka-stream-processing-yes-virginia-you-really-need-one/}.
 \item
   il log, con la sua qualità di \emph{immutabilità}, oltre ad essere la
   struttura dati dominante della piattaforma ne è anche il \emph{sistema
@@ -1452,17 +1499,6 @@ Kafka è inoltre \emph{affidabile} su più fronti:
   sviluppare una soluzione con microservizi che utilizzato topic
   `privati' per le loro necessità e topic `publici' per comunicare tra
   loro.
-\end{itemize}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.70000\textwidth]{../images/public-private-topics.png}
-\caption{Topic publici e privati in un sistema distribuito
-\label{figure_5}}
-\end{figure}
-
-\begin{itemize}
-\tightlist
 \item
   Kafka permette di specificare per quanto tempo mantenere l'intero
   stato dei propri topic, rendendo di fatto la piattaforma un ``database
@@ -1475,6 +1511,15 @@ Kafka è inoltre \emph{affidabile} su più fronti:
   \emph{Kafka Streams API} offre una soluzione semplice e ad-hoc basata
   su event store.
 \end{itemize}
+
+\newpage
+
+\begin{figure}
+\centering
+\includegraphics[width=0.70000\textwidth]{../images/public-private-topics.png}
+\caption{Topic publici e privati in un sistema distribuito
+\label{figure_5}}
+\end{figure}
 
 Il pattern event sourcing si basa sull'idea di avere una sequenza di
 eventi che, ove necessario, è possibile eseguire per ottenere lo stato
@@ -1498,11 +1543,10 @@ chiave.
 
 Il sistema di \emph{log compaction} garantisce che Kafka, dato un topic,
 conserverà solamente l'ultimo messaggio a parità di chiave pubblicato
-sullo stesso topic.\\
-Questa funzionalità può quindi essere utilizzata come \emph{vista dello
-stato corrente del sistema} o di alcune sue parti oppure come
-\emph{meccanismo di difesa} per la fase di recovery post-crash del
-sistema.
+sullo stesso topic. Questa funzionalità può quindi essere utilizzata
+come \emph{vista dello stato corrente del sistema} o di alcune sue parti
+oppure come \emph{meccanismo di difesa} per la fase di recovery
+post-crash del sistema.
 
 Il problema del calcolo del stato corrente è quindi risolto affiancando
 ai log utilizzati come stream di eventi un topic compresso ``istanza''
@@ -1519,50 +1563,51 @@ Se si decide di sviluppare un nuovo progetto partendo da zero ed
 utilizzando Kafka ed ES, non è difficile immaginare che creare la nuova
 struttura sarà relativamente semplice in quanto ci ritroveremo a
 sviluppare soluzioni software basate su eventi e verrà naturale
-pubblicare questi eventi su Kafka.\\
-Nel caso in cui si decida di addottare Kafka ed ES su un vecchio
-progetto sorgono spontanee domande come ``Quali sono i miei eventi?'',
-``Come posso utilizzare i database già presenti?'' oppure ``Ultimata la
-migrazione che fine faranno i vecchi database e le vecchie
-applicazioni?''. Domande come queste sono risolte dalla \emph{Connect
-API} di Kafka.
+pubblicare questi eventi su Kafka. Nel caso in cui si decida di
+addottare Kafka ed ES su un vecchio progetto sorgono spontanee domande
+come ``Quali sono i miei eventi?'', ``Come posso utilizzare i database
+già presenti?'' oppure ``Ultimata la migrazione che fine faranno i
+vecchi database e le vecchie applicazioni?''. Domande come queste sono
+risolte dalla \emph{Connect API} di Kafka.
 
 Kafka Connect è un framework che permette di integrare Kafka con
 moltissime delle soluzioni database già presenti sul mercato (MySQL,
-PostgreSQL, Elasticearch, Mongo, ecc.).\\
-Il framework si basa sull'uso di \emph{Source connectors} per importare
-dati da sorgenti esterne e \emph{Sink connectors} per la fase di
-scrittura su strutture esterne; Kafka viene rilasciato di base con molti
-connettori già pronti e testati all'uso e molti altri sviluppati dalla
-community open-source sono disponibili online. E' inoltre prevista la
-possibilità di sviluppare connettori custom per soluzioni più
-particolari del normale.
+PostgreSQL, Elasticearch, Mongo, ecc.). Il framework si basa sull'uso di
+\emph{Source connectors} per importare dati da sorgenti esterne e
+\emph{Sink connectors} per la fase di scrittura su strutture esterne;
+Kafka viene rilasciato di base con molti connettori già pronti e testati
+all'uso e molti altri sviluppati dalla community open-source sono
+disponibili online. E' inoltre prevista la possibilità di sviluppare
+connettori custom per soluzioni più particolari del normale.
 
 I source connector funzionano facendo leva sul log transazionale
-generato con tramite Change Data Capture (CDC) del database sorgente,
-che non è altro che un log sul quale vengono scritte, in ordine
-temporale, tutte le operazioni di insert, update e delete fatte sul
-database in questione. E' facile immaginare che questo log transazionale
-è facilmente utilizzabile per definire lo stream di eventi necessario a
+generato tramite Change Data Capture (CDC) del database sorgente, che
+non è altro che un log sul quale vengono scritte, in ordine temporale,
+tutte le operazioni di insert, update e delete fatte sul database in
+questione. E' facile immaginare che questo log transazionale è
+facilmente utilizzabile per definire lo stream di eventi necessario a
 Kafka per funzionare, ed è esattamente cosi che funzionano i connettori:
 definita una configurazione per il connettore, il transactional log del
-database viene copiato su di un topic Kafka.\\
-Esistono ovviamente delle differenze nel funzionamento di alcuni
-connettori (alcuni database supportano CDC basato su polling, altri su
-meccanismi push-pull, ecc.) ma il risultato del procedimento di
-creazione del topic legato al database sorgente sarà sempre lo stesso.\\
-Specularmente i sink connector sono invece utilizzati per operazioni di
-write/update su dei database partendo da un topic specificato.\\
-Di nota è la possibilità, grazie ai sink connectors, di utilizzare
-svariati database come data store per topic compressi, garatendo cosi al
-sistema la possibilità di sfruttare le classiche tecnologie basate su
-database per tutte quelle operazioni di query dei dati per il quale
-Kafka non è necessariamente la soluzione migliore.
+database viene copiato su di un topic Kafka. Esistono ovviamente delle
+differenze nel funzionamento di alcuni connettori (alcuni database
+supportano CDC basato su polling, altri su meccanismi push-pull, ecc.)
+ma il risultato del procedimento di creazione del topic legato al
+database sorgente sarà sempre lo stesso. Specularmente i sink connector
+sono invece utilizzati per operazioni di write/update su dei database
+partendo da un topic specificato. Di nota è la possibilità, grazie ai
+sink connectors, di utilizzare svariati database come data store per
+topic compressi, garatendo cosi al sistema la possibilità di sfruttare
+le classiche tecnologie basate su database per tutte quelle operazioni
+di query dei dati per il quale Kafka non è necessariamente la soluzione
+migliore.
 
 Utilizzando source e sink connectors è quindi possibile creare pipeline
 complesse di dati tra Kafka, vari database e architetture ``legacy'' in
 modo da permettere al sistema di evolversi gradualmente verso una
-soluzione basata solamente su Kafka (se necessario).\\
+soluzione basata solamente su Kafka (se necessario)\footnote{Stopford B.
+  (2017), \emph{Using Apache Kafka as a Scalable, Event-Driven Backbone
+  for Service Architectures},
+  https://www.confluent.io/blog/apache-kafka-for-service-architectures/}.
 Si immagini ad esempio di utilizzare i vecchi dati presenti in una
 applicazione legacy per popolare i topic della piattaforma Kafka e
 parallelamente sviluppare nuove soluzioni basata sulla nuova
@@ -1584,21 +1629,23 @@ tracking, ecc.) gestito tramite Kafka.
 
 \subsection{6.3. Kafka Streams}\label{kafka-streams}
 
-Per poter sviluppare soluzioni software basate sullo stream di eventi di
-topic è necessario trovare una soluzione per poter avere accesso a
-questi dati da un qualsiasi linguaggio di programmazione; Questa
-soluzione è data dalla libreria \emph{Kafka Streams}.\\
-Kafka Streams è una libreria che fornisce una astrazione sul concetto di
-state store proposto da Kafka in modo da creare applicazioni o
-microservizi con uno qualsiasi dei linguaggi supportati (Java o
-Scala).\\
-Uno state store è un database chiave-valore creato per interfacciarsi
-con un topic Kafka, è possibile leggere e scrivere da un topic Kafka
-semplicemente utilizzando le funzioni proposte dalla libreria.\\
-La libreria offre delle primitive per creare delle applicazioni basato
-sul concetto di \emph{topologie}, ovvero un grafo di stream processors
-(i nodi del grafo) connessi tra loro da stream di dati (i lati del
-grafo.)
+Per poter sviluppare soluzioni software basate sullo stream di eventi su
+topic è necessario trovare una soluzione per poter avere accesso ai dati
+in un topic in un formato modulare, facilmente utilizzabile da qualsiasi
+microservizio che decida di collegarsi allo stream di eventi\footnote{Stopford
+  B. (2017), \emph{Building a Microservices Ecosystem with Kafka Streams
+  and KSQL},
+  https://www.confluent.io/blog/building-a-microservices-ecosystem-with-kafka-streams-and-ksql/};
+Questa soluzione è data dalla libreria/API \emph{Kafka Streams}. Kafka
+Streams è una libreria che fornisce una astrazione sul concetto di state
+store proposto da Kafka in modo da creare applicazioni o microservizi
+con uno qualsiasi dei linguaggi supportati (Java o Scala). Uno state
+store è un database chiave-valore creato per interfacciarsi con un topic
+Kafka, è possibile leggere e scrivere da un topic Kafka semplicemente
+utilizzando le funzioni proposte dalla libreria. La libreria offre delle
+primitive per creare delle applicazioni basato sul concetto di
+\emph{topologie}, ovvero un grafo di stream processors (i nodi del
+grafo) connessi tra loro da stream di dati (i lati del grafo.)
 
 \begin{figure}
 \centering
@@ -1613,6 +1660,8 @@ nodo precedente nella topologia un record alla volta, applica una
 operazione al record e produce uno o più record in output verso tutti i
 suoi successori.
 
+\newpage
+
 Le operazioni eseguite da ogni nodo possono essere espremesse
 utilizzando una Domain-specific Language (DSL) dichiarativa e funzionale
 (esempi tipici sono funzioni come \texttt{map} e \texttt{filter}) oppure
@@ -1620,10 +1669,10 @@ una API di basso livello più vicina allo state store (e quindi più
 lontana dall'astrazione utilizzata con la DSL).
 
 Un esempio di una stream application che utilizza la stream DSL è dato
-dal seguente codice Scala\footnote{\emph{Confluent Examples},\\
+dal seguente codice Scala\footnote{\emph{Confluent Examples},
   https://github.com/diegoicosta/kafka-confluent-examples/blob/master/kafka-streams/src/main/scala/io/confluent/examples/streams/MapFunctionScalaExample.scala}:
 
-\small 
+\small
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1642,15 +1691,15 @@ dal seguente codice Scala\footnote{\emph{Confluent Examples},\\
     \KeywordTok{val}\NormalTok{ streamingConfig = \{}
       \KeywordTok{val}\NormalTok{ settings = }\KeywordTok{new}\NormalTok{ Properties()}
 \NormalTok{      settings.}\FunctionTok{put}\NormalTok{(StreamsConfig.}\FunctionTok{BOOTSTRAP_SERVERS_CONFIG}\NormalTok{, }\StringTok{"localhost:9092"}\NormalTok{)}
-\NormalTok{      settings.}\FunctionTok{put}\NormalTok{(StreamsConfig.}\FunctionTok{DEFAULT_KEY_SERDE_CLASS_CONFIG}\NormalTok{, }
+\NormalTok{      settings.}\FunctionTok{put}\NormalTok{(StreamsConfig.}\FunctionTok{DEFAULT_KEY_SERDE_CLASS_CONFIG}\NormalTok{,}
 \NormalTok{                    Serdes.}\FunctionTok{ByteArray}\NormalTok{.}\FunctionTok{getClass}\NormalTok{.}\FunctionTok{getName}\NormalTok{)}
-\NormalTok{      settings.}\FunctionTok{put}\NormalTok{(StreamsConfig.}\FunctionTok{DEFAULT_VALUE_SERDE_CLASS_CONFIG}\NormalTok{, }
+\NormalTok{      settings.}\FunctionTok{put}\NormalTok{(StreamsConfig.}\FunctionTok{DEFAULT_VALUE_SERDE_CLASS_CONFIG}\NormalTok{,}
 \NormalTok{                    Serdes.}\FunctionTok{String}\NormalTok{.}\FunctionTok{getClass}\NormalTok{.}\FunctionTok{getName}\NormalTok{)}
 \NormalTok{      settings}
 \NormalTok{    \}}
 
     \KeywordTok{val}\NormalTok{ text: KStream[Array[Byte], String] = builder.}\FunctionTok{stream}\NormalTok{(}\StringTok{"input-topic"}\NormalTok{)}
-    \KeywordTok{val}\NormalTok{ upperCasedText: KStream[Array[Byte], String] = }
+    \KeywordTok{val}\NormalTok{ upperCasedText: KStream[Array[Byte], String] =}
 \NormalTok{        textLines.}\FunctionTok{mapValues}\NormalTok{(_.}\FunctionTok{toUpperCase}\NormalTok{())}
 \NormalTok{    upperCasedText.}\FunctionTok{to}\NormalTok{(}\StringTok{"output-topic"}\NormalTok{)}
 \NormalTok{  \}}
@@ -1662,12 +1711,12 @@ dal seguente codice Scala\footnote{\emph{Confluent Examples},\\
 
 Nell'esempio, partendo dal topic \texttt{input-topic} viene creato uno
 stream di record con chiave di tipo \texttt{ByteArray} e value (o
-contenuto del messaggio) di tipo \texttt{String}.\\
-Ad ogni messaggio viene applicata la funziona \texttt{.toUpperCase()}
-tramite la funzione \texttt{.mapValues()} definita dalla DSL (e quindi
-nodo della topologia di questa applicazione), infine viene pubblicato un
-nuovo record con il nuovo messaggio (la stringa in maiuscolo) su un
-nuovo topic \texttt{output-topic}.
+contenuto del messaggio) di tipo \texttt{String}. Ad ogni messaggio
+viene applicata la funziona \texttt{.toUpperCase()} tramite la funzione
+\texttt{.mapValues()} definita dalla DSL (e quindi nodo della topologia
+di questa applicazione), infine viene pubblicato un nuovo record con il
+nuovo messaggio (la stringa in maiuscolo) su un nuovo topic
+\texttt{output-topic}.
 
 \newpage
 
@@ -1683,21 +1732,23 @@ contesto che ha portato al suo sviluppo.
 
 Nell'ultima decade la tipologia e mole di dati e i sistemi di analisi e
 gestione di questi dati si sono trovati ad affrontare degli importanti
-cambiamenti nell'ambito dei processi di ETL\footnote{Narkhede N.
-  \emph{ETL Is Dead, Long Live Streams: Real-Time Streams with Apache
-  Kafka}, www.youtube.com/watch?v=I32hmY4diFY}.\\
-In passato si era abituati a sistemi di gestione/analisi dei dati
-formati da più database operazionali che venivano utilizzati per creare
-una pipeline di dati diretta verso una o più datawarehouse; Questo
-processo di migrazione in genere non era richiesto che fosse eseguito
-più di poche volte al giorno, ed è proprio questa scelta architetturale
-che ha portato alla creazione dei vecchi tools di ETL.
+cambiamenti nell'ambito dei processi di ETL\footnote{Narkhede N. and
+  Shapira G. and Palino T. (2017), \emph{Kafka: The Definitive Guide:
+  Real-Time Data and Stream Processing at Scale}, O'Reilly Media Inc.,
+  pp.~41}. In passato si era abituati a sistemi di gestione/analisi dei
+dati formati da più database operazionali che venivano utilizzati per
+creare una pipeline di dati diretta verso una o più datawarehouse;
+Questo processo di migrazione in genere non era richiesto che fosse
+eseguito più di poche volte al giorno, ed è proprio questa scelta
+architetturale che ha portato alla creazione dei vecchi tools di ETL.
 
 \begin{figure}
 \centering
 \includegraphics[width=0.90000\textwidth]{../images/op-dwh.png}
 \caption{Database operazionali e datawarehouse \label{figure_5}}
 \end{figure}
+
+\newpage 
 
 Lo scenario che si è presentanto negli ultimi anni è però completamente
 diverso e può essere riassunto in pochi punti:
@@ -1742,12 +1793,12 @@ sopratutto in caso di emergenze.
 
 La necessità di sviluppare soluzioni ETL nasce durante gli anni '90, con
 la montante richiesta da parte della grande distribuzione di poter
-analizare le abitudini di acquisto online dei propri clienti.\\
-In genere questo processo era formato da tre fasi, l'estrazione di dati
-da più database operazionali, la trasformazione di questi dati in modo
-che aderissero allo schema della data warehouse ed infine il caricamento
-dei dati nella data warehouse. Con l'avanzare del tempo e della ricerca
-in questo campo si è però giunti alla conclusione che la \emph{data
+analizare le abitudini di acquisto online dei propri clienti. In genere
+questo processo era formato da tre fasi, l'estrazione di dati da più
+database operazionali, la trasformazione di questi dati in modo che
+aderissero allo schema della data warehouse ed infine il caricamento dei
+dati nella data warehouse. Con l'avanzare del tempo e della ricerca in
+questo campo si è però giunti alla conclusione che la \emph{data
 coverage} nelle datawarehouse è spesso molto bassa rispetto ai dati
 presenti nei database operazionali, questo problema nasce dalla
 difficoltà nel analizzare e trasformare moli di dati importanti
@@ -1763,7 +1814,7 @@ o l'utilizzo di nuove sorgenti di dati.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.90000\textwidth]{../images/streaming-platform.png}
+\includegraphics[width=0.80000\textwidth]{../images/streaming-platform.png}
 \caption{Architettura basata su streaming platform \label{figure_5}}
 \end{figure}
 
@@ -1793,13 +1844,17 @@ problemi presentati precedentemente:
   piattaforma Kafka.
 \end{itemize}
 
+\newpage
+
 Apache Kafka è una tecnologia importante, in continua crescita e in
-continua adozione da moltissime realtà internazionali nell'ambito IT,
-non per questo non ha debolezze.\\
-Proprio perchè è una nuova tecnologia in continua evoluzione, le
-capacità di una azienda di adattare i propri sistemi all'utilizzo di
-Kafka sono strettamente legate alle loro capacità di adozione e studio
-di nuove tecnologie e soluzioni architetturali.
+continua adozione da moltissime realtà internazionali nell'ambito IT
+(alcuni esempi sono il New York Times, Zalando e Pinterest\footnote{\emph{Kafka
+  Streams use cases}, https://kafka.apache.org/documentation/streams/}),
+non per questo non ha debolezze. Proprio perchè è una nuova tecnologia
+in continua evoluzione, le capacità di una azienda di adattare i propri
+sistemi all'utilizzo di Kafka sono strettamente legate alle loro
+capacità di adozione e studio di nuove tecnologie e soluzioni
+architetturali.
 
 Nonostante le difficoltà tecnologiche, non ci sono però dubbi che i
 processi di ETL stiano subendo una forte spinta evolutiva e che le
@@ -1812,67 +1867,85 @@ dati.
 \hypertarget{bibliografia}{\subsection{8.
 Bibliografia}\label{bibliografia}}
 
-\small
-[a] Narkhede N. and Shapira G. and Palino T. (2017), \emph{Kafka: The
+Kleppmann M. (2016), \emph{Making Sense of Stream Processing}, O'Reilly
+Media Inc.
+
+Narkhede N. and Shapira G. and Palino T. (2017), \emph{Kafka: The
 Definitive Guide: Real-Time Data and Stream Processing at Scale},
 O'Reilly Media Inc.
 
-{[}b{]} Kleppmann M. (2016), \emph{Making Sense of Stream Processing},
-O'Reilly Media Inc.
+Stopford B. (2018), \emph{Designing Event-Driven Systems}, O'Reilly
+Media Inc.
 
 \hypertarget{sitografia}{\subsection{9. Sitografia}\label{sitografia}}
 
 \small
-
-{[}1{]} Wikipedia contributors. (2018), \emph{Microservices},\\
-https://en.wikipedia.org/wiki/Microservices\#History
-
-{[}2{]} \_What is ETL?\_,\\
-https://www.sas.com/en\_us/insights/data-management/what-is-etl.html
-
-{[}4{]} Wikipedia contributors. (2018), \emph{Extract, transform,
-load},\\
-https://en.wikipedia.org/wiki/Extract,\_transform,\_load
-
-{[}3{]} Koshy J. (2016), \emph{Kafka Ecosystem at LinkedIn},\\
+Koshy J. (2016), \emph{Kafka Ecosystem at LinkedIn},\\
 https://engineering.linkedin.com/blog/2016/04/kafka-ecosystem-at-linkedin
 
-{[}c{]} Martin F. \emph{Event Sourcing},\\
-https://martinfowler.com/eaaDev/EventSourcing.html
-
-{[}d{]} Wikipedia contributors. (2018), \emph{Event store},\\
-https://en.wikipedia.org/w/index.php?title=Event\_store\&oldid=824633488
-
-{[}{]} Narkhede N. \emph{ETL Is Dead, Long Live Streams: Real-Time
-Streams with Apache Kafka},\\
-www.youtube.com/watch?v=I32hmY4diFY
-
-{[}4{]} Kreps J. (2013), \emph{The Log: What every software engineer
-should know about real-time data's unifying abstraction},\\
+Kreps J. (2013), \emph{The Log: What every software engineer should know
+about real-time data's unifying abstraction},
 https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
 
-{[}5{]} Kreps J. (2015), \emph{Putting Apache Kafka To Use: A Practical
-Guide to Building a Streaming Platform},\\
+Kreps J. (2015), \emph{Putting Apache Kafka To Use: A Practical Guide to
+Building a Streaming Platform},
 https://www.confluent.io/blog/stream-data-platform-1/
 
-{[}6{]} Stopford B. (2016), \emph{The Data Dichotomy: Rethinking the Way
-We Treat Data and Services},\\
+Martin F. \emph{Event Sourcing},
+https://martinfowler.com/eaaDev/EventSourcing.html
+
+Narkhede N. \emph{ETL Is Dead, Long Live Streams: Real-Time Streams with
+Apache Kafka}, www.youtube.com/watch?v=I32hmY4diFY
+
+Narkhede N., (2016), \emph{Event sourcing, CQRS, stream processing and
+Apache Kafka: What's the connection?},
+https://www.confluent.io/blog/event-sourcing-cqrs-stream-processing-apache-kafka-whats-connection/
+
+Shapira G., (2015), \emph{Yes, Virginia, You Really Do Need a Schema
+Registry},
+https://www.confluent.io/blog/schema-registry-kafka-stream-processing-yes-virginia-you-really-need-one/
+
+Stopford B. (2016), \emph{The Data Dichotomy: Rethinking the Way We
+Treat Data and Services},
 https://www.confluent.io/blog/data-dichotomy-rethinking-the-way-we-treat-data-and-services/
 
-{[}7{]} Stopford B. (2017), \emph{Build Services on a Backbone of
-Events},\\
+Stopford B. (2017), \emph{Build Services on a Backbone of Events},\\
 https://www.confluent.io/blog/build-services-backbone-events/
 
-{[}8{]} Stopford B. (2017), \emph{Using Apache Kafka as a Scalable,
-Event-Driven Backbone for Service Architectures},\\
-https://www.confluent.io/blog/apache-kafka-for-service-architectures/
+Stopford B. (2017), \emph{Building a Microservices Ecosystem with Kafka
+Streams and KSQL},
+https://www.confluent.io/blog/building-a-microservices-ecosystem-with-kafka-streams-and-ksql/3
 
-{[}9{]} Stopford B. (2017), \emph{Messaging as the Single Source of
-Truth},\\
+Stopford B. (2017), \emph{Messaging as the Single Source of Truth},\\
 https://www.confluent.io/blog/messaging-single-source-truth/
 
-{[}10{]} Stopford B. (2017), \emph{Building a Microservices Ecosystem
-with Kafka Streams and KSQL},\\
-https://www.confluent.io/blog/building-a-microservices-ecosystem-with-kafka-streams-and-ksql/3
+Stopford B. (2017), \emph{Using Apache Kafka as a Scalable, Event-Driven
+Backbone for Service Architectures},
+https://www.confluent.io/blog/apache-kafka-for-service-architectures/
+
+Stopford B. (2017), \emph{Building a Microservices Ecosystem with Kafka
+Streams and KSQL},
+https://www.confluent.io/blog/building-a-microservices-ecosystem-with-kafka-streams-and-ksql/
+
+Wikipedia contributors. (2018), \emph{Analisi dei requisiti},\\
+https://it.wikipedia.org/wiki/Analisi\_dei\_requisiti
+
+Wikipedia contributors. (2018), \emph{Change data capture},\\
+https://en.wikipedia.org/wiki/Change\_data\_capture
+
+Wikipedia contributors. (2018), \emph{Event store},\\
+https://en.wikipedia.org/w/index.php?title=Event\_store\&oldid=824633488
+
+Wikipedia contributors. (2018), \emph{Extract, transform, load},\\
+https://en.wikipedia.org/wiki/Extract,\_transform,\_load\#Extract
+
+Wikipedia contributors. (2018), \emph{Microservices},\\
+https://en.wikipedia.org/wiki/Microservices\#History
+
+\emph{Confluent Examples},\\
+https://github.com/diegoicosta/kafka-confluent-examples/blob/master/kafka-streams/src/main/scala/io/confluent/examples/streams/MapFunctionScalaExample.scala
+
+\emph{What is ETL?},
+https://www.sas.com/en\_us/insights/data-management/what-is-etl.html
 
 \end{document}
